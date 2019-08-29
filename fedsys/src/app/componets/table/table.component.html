@@ -26,18 +26,18 @@ TABLA
             <td>{{ competidor.numero }}</td>
             <td>{{ competidor.nombre + ' ' + competidor.apellido }}</td>
             <td>{{ competidor.estado }}</td>
-            <td *ngFor="let juez of jueces;  let a=index">
+            <td *ngFor="let juez of jueces;  let a=index" [style.background-color]="competidor.resultados[a].juez.libre ? 'white' : 'grey'">
                 <input style="width: 80%; margin: 0 10%" [(ngModel)]="competidor.resultados[a].libre">
             </td>
             <td>{{competidor.subtotal1}}</td>
             <td>{{competidor.subtotal1 * porcentaje1 / 100 | number : '1.2-2'}}</td>
-            <td *ngFor="let juez of jueces;  let a=index">
+            <td *ngFor="let juez of jueces;  let a=index" [style.background-color]="competidor.resultados[a].juez.comparacion ? 'white' : 'grey'">
                 <input style="width: 80%; margin: 0 10%" [(ngModel)]="competidor.resultados[a].comparacion">
             </td>
             <td>{{competidor.subtotal2}}</td>
             <td>{{competidor.subtotal2 * porcentaje2 / 100 | number : '1.2-2'}}</td>
-            <td>{{(competidor.subtotal1 * porcentaje1 / 100) + (competidor.subtotal2 * porcentaje2 / 100) | number : '1.2-2'}}</td>
-            <td></td>
+            <td [style.background-color]="competidor.empate ? 'red' : 'white'">{{(competidor.subtotal1 * porcentaje1 / 100) + (competidor.subtotal2 * porcentaje2 / 100) | number : '1.2-2'}}</td>
+            <td [style.background-color]="competidor.empate ? 'red' : 'white'">{{competidor.lugar}}</td>
         </tr>
     </tbody>
 </table>
