@@ -8,12 +8,20 @@ import { MaterialModule } from './material/material.module';
 import { MatGridListModule, MAT_DATE_LOCALE } from '@angular/material';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { TableComponent } from './componets/table/table.component';
+import { RegCompetidoresComponent } from './componets/reg-competidores/reg-competidores.component';
+import { RegJudgesComponent } from './componets/reg-judges/reg-judges.component';
+import { RegTourneyComponent } from './componets/reg-tourney/reg-tourney.component';
+import { RegCategoriesComponent } from './componets/reg-categories/reg-categories.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     DashboardComponent,
-    TableComponent
+    TableComponent,
+    RegCompetidoresComponent,
+    RegJudgesComponent,
+    RegTourneyComponent,
+    RegCategoriesComponent
   ],
   imports: [
     BrowserModule,

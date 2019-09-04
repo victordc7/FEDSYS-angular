@@ -1,0 +1,187 @@
+<mat-dialog-content>
+    <form [formGroup]="competitorRegistrationForm" (ngSubmit)="onSubmit()">
+      <p>
+        Ingrese los datos del competidor
+      </p>
+
+        <div class="form-group">
+          <label for="firstName">firstNamer</label>
+          <input
+            type="text"
+            id="firstName"
+            formControlName="firstName"
+            class="form-control">
+          <span
+            *ngIf="!competitorRegistrationForm.get('firstName').valid && competitorRegistrationForm.get('firstName').touched"
+            class="help-block">
+            <span *ngIf="competitorRegistrationForm.get('firstName').errors['pattern']">
+              Please introduce a valid firstname / Por favor, introduce un nombre válido.
+            </span>
+            <span *ngIf="competitorRegistrationForm.get('firstName').errors['required']">
+              Please, introduce the firstname / Por favor, introduce el nombre.
+            </span>
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label for="lastName">Category Name</label>
+          <input
+            type="text"
+            id="lastName"
+            formControlName="lastName"
+            class="form-control">
+            <span
+              *ngIf="!competitorRegistrationForm.get('lastName').valid && competitorRegistrationForm.get('lastName').touched"
+              class="help-block">
+              <span *ngIf="competitorRegistrationForm.get('lastName').errors['pattern']">
+                Please introduce a valid lastName / Por favor, introduce un nombre válido.
+              </span>
+              <span *ngIf="competitorRegistrationForm.get('lastName').errors['required']">
+                Please, introduce the lastName / Por favor, introduce el nombre.
+              </span>
+            </span>
+        </div>
+
+        <div class="form-group">
+          <label for="athlete">Category Name</label>
+          <input
+          type="text"
+          id="athlete"
+          formControlName="athlete"
+          class="form-control">
+          <!-- <span
+            *ngIf="!competitorRegistrationForm.get('lastName').valid && competitorRegistrationForm.get('lastName').touched"
+            class="help-block">
+            <span *ngIf="competitorRegistrationForm.get('lastName').errors['nameIsForbidden']">
+              Please introduce a valid athlete number / Por favor, introduce un numero de atleta válido.
+            </span>
+            <span *ngIf="competitorRegistrationForm.get('lastName').errors['required']">
+              Please, introduce the athlete number / Por favor, introduce el numero del atleta.
+            </span>
+          </span> -->
+        </div>
+
+        <div class="form-group">
+          <label for="id">ID/Numero de identidad</label>
+          <input
+            type="text"
+            id="id"
+            formControlName="id"
+            class="form-control">
+            <!-- <span
+              *ngIf="!competitorRegistrationForm.get('id').valid && competitorRegistrationForm.get('id').touched"
+              class="help-block">
+              <span *ngIf="competitorRegistrationForm.get('id').errors['nameIsForbidden']">
+                Please introduce a valid ID / Por favor, introduce un numero de identificación válido.
+              </span>
+              <span *ngIf="competitorRegistrationForm.get('id').errors['required']">
+                Please, introduce the ID / Por favor, introduce el numero de documento de identidad.
+              </span>
+            </span> -->
+          </div>
+
+        <div class="form-group">
+          <label for="age">Age/Edad</label>
+          <input
+          type="text"
+          id="age"
+          formControlName="age"
+          class="form-control">
+          <!-- <span
+            *ngIf="!competitorRegistrationForm.get('age').valid && competitorRegistrationForm.get('age').touched"
+            class="help-block">
+            <span *ngIf="competitorRegistrationForm.get('age').errors['nameIsForbidden']">
+              Please introduce a valid ID / Por favor, introduce un numero de identificación válido.
+            </span>
+            <span *ngIf="competitorRegistrationForm.get('age').errors['required']">
+              Please, introduce the ID / Por favor, introduce el numero de documento de identidad.
+            </span>
+          </span> -->
+        </div>
+
+        <div class="radio" *ngFor="let gender of genders">
+          <label>
+            <input
+            type="radio"
+            formControlName="gender"
+            [value]="gender">{{ gender }}
+          </label>
+        </div>
+
+        <div class="form-group">
+          <label for="city">City</label>
+          <input
+          type="text"
+          id="city"
+          formControlName="city"
+          class="form-control">
+          <!-- <span
+            *ngIf="!competitorRegistrationForm.get('city').valid && competitorRegistrationForm.get('city').touched"
+            class="help-block">
+            <span *ngIf="competitorRegistrationForm.get('city').errors['nameIsForbidden']">
+              Please introduce a valid ID / Por favor, introduce un numero de identificación válido.
+            </span>
+            <span *ngIf="competitorRegistrationForm.get('city').errors['required']">
+              Please, introduce the ID / Por favor, introduce el numero de documento de identidad.
+            </span>
+          </span> -->
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input
+          type="text"
+          id="email"
+          formControlName="email"
+          class="form-control">
+          <span
+            *ngIf="!competitorRegistrationForm.get('email').valid && competitorRegistrationForm.get('email').touched"
+            class="help-block">
+            <span *ngIf="competitorRegistrationForm.get('email').errors['pattern']">
+              Please introduce a valid ID / Por favor, introduce un numero de identificación válido.
+            </span>
+            <span *ngIf="competitorRegistrationForm.get('email').errors['required']">
+              Please, introduce the ID / Por favor, introduce el numero de documento de identidad.
+            </span>
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label for="phone">Phone/Teléfono</label>
+          <input
+          type="text"
+          id="phone"
+          formControlName="phone"
+          class="form-control">
+          <!-- <span
+            *ngIf="!competitorRegistrationForm.get('phone').valid && competitorRegistrationForm.get('phone').touched"
+            class="help-block">
+            <span *ngIf="competitorRegistrationForm.get('phone').errors.pattern">
+              Please introduce a valid ID / Por favor, introduce un numero de identificación válido.
+            </span>
+            <span *ngIf="competitorRegistrationForm.get('phone').errors['required']">
+              Please, introduce the ID / Por favor, introduce el numero de documento de identidad.
+            </span>
+          </span> -->
+        </div>
+
+        <!-- <div formArrayName="categories">
+          <h4>Categories/Categorias</h4>
+          <button
+            class="btn btn-default"
+            type="button"
+            (click)="onAddCategory()">Add Category <br> Agregar Categoria</button>
+          <div
+            class="form-group"
+            *ngFor="let categoryControl of competitorRegistrationForm.get('categories').controls; let i = index">
+            <input type="text" class="form-control" [formControlName]="i">
+          </div>
+        </div> -->
+
+      <!-- <span
+        *ngIf="!competitorRegistrationForm.valid && competitorRegistrationForm.touched"
+        class="help-block">Please enter valid data!</span> -->
+      <button class="btn btn-primary" type="submit">Done <br> /Listo</button>
+    </form>
+
+</mat-dialog-content>

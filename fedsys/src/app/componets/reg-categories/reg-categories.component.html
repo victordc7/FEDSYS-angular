@@ -1,0 +1,55 @@
+<mat-dialog-content>
+        <form [formGroup]="categoryRegistrationForm" (ngSubmit)="onSubmit()">
+
+            <div class="form-group">
+              <label for="categoryNumber">Category Number</label>
+              <input
+                type="text"
+                id="categoryNumber"
+                formControlName="categoryNumber"
+                class="form-control">
+              <span
+                *ngIf="!categoryRegistrationForm.get('categoryNumber').valid && categoryRegistrationForm.get('categoryNumber').touched"
+                class="help-block">
+                <span *ngIf="categoryRegistrationForm.get('categoryNumber').errors['nameIsForbidden']">This name is invalid!</span>
+                <span *ngIf="categoryRegistrationForm.get('categoryNumber').errors['required']">This field is required!</span>
+
+              </span>
+            </div>
+            <div class="form-group">
+              <label for="categoryName">Category Name</label>
+              <input
+                type="text"
+                id="categoryName"
+                formControlName="categoryName"
+                class="form-control">
+              <span
+                *ngIf="!categoryRegistrationForm.get('categoryName').valid && categoryRegistrationForm.get('categoryName').touched"
+                class="help-block">Please enter a valid category name!</span>
+            </div>
+            <div class="radio" *ngFor="let categoryLevel of categoryTypes">
+              <label>
+                <input
+                  type="radio"
+                  formControlName="categoryLevel"
+                  [value]="categoryLevel">{{ categoryLevel }}
+              </label>
+            </div>
+            <!-- <div class="form-group">
+                <label for="categoryParent">Category Parent</label>
+                <input
+                  type="text"
+                  id="categoryParent"
+                  formControlName="categoryParent"
+                  class="form-control">
+                <span
+                  *ngIf="!categoryRegistrationForm.get('categoryParent').valid && categoryRegistrationForm.get('categoryParent').touched"
+                  class="help-block">Please enter a valid category Parent!</span>
+            </div> -->
+          <span
+            *ngIf="!categoryRegistrationForm.valid && categoryRegistrationForm.touched"
+            class="help-block">Please enter valid data!</span>
+          <button class="btn btn-primary" type="submit">Submit</button>
+        </form>
+
+</mat-dialog-content>
