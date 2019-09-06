@@ -3,7 +3,7 @@
       [formGroup]="competitorRegistrationForm"
       (ngSubmit)="onSubmit()"
       class="w-50 center mat-typography"
-      style="background-color: gray; width: 25vw">
+      style="width: 100%">
 
       <p>
         Ingrese los datos del competidor
@@ -188,7 +188,7 @@
         *ngIf="!competitorRegistrationForm.valid && competitorRegistrationForm.touched"
         class="help-block">Please enter valid data!</span> -->
         <br/>
-      <button mat-raised-button color="secondary" type="submit">Done/Listo</button>
+      <button mat-raised-button color="primary" type="submit">Done/Listo</button>
     </form>
 
 </mat-dialog-content>

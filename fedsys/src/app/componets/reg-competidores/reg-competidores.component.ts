@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
 
 import { CompetitorModel } from '../../models/competitor.model';
+import { ServiceService } from 'src/app/service.service';
 
 @Component({
   selector: 'app-reg-competidores',
@@ -14,11 +15,17 @@ genders = ['male', 'female'];
 
   constructor(
     // public _CompetitorService: CompetitorService,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private serverService: ServiceService 
   ) { }
 
   ngOnInit() {
-
+    const body = {
+      query:` {
+        hello
+      }`
+    }
+    this.serverService.graphql(body).subscribe(res => console.log(res))
     /**
   * Form creation and class variables initialization
   */
