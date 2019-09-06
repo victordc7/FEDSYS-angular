@@ -1,40 +1,45 @@
-<mat-dialog-content>
-        <form [formGroup]="categoryRegistrationForm" (ngSubmit)="onSubmit()">
+<mat-dialog-content class="row justify-content-center">
+        <form
+          [formGroup]="categoryRegistrationForm"
+          (ngSubmit)="onSubmit()"
+          class="mat-typography"
+          style="background-color: gray; width: 25vw"
+          >
 
-            <div class="form-group">
-              <label for="categoryNumber">Category Number</label>
+            <mat-form-field color="primary" class="black">
               <input
+                matInput
                 type="text"
-                id="categoryNumber"
                 formControlName="categoryNumber"
-                class="form-control">
-              <span
-                *ngIf="!categoryRegistrationForm.get('categoryNumber').valid && categoryRegistrationForm.get('categoryNumber').touched"
-                class="help-block">
-                <span *ngIf="categoryRegistrationForm.get('categoryNumber').errors['nameIsForbidden']">This name is invalid!</span>
-                <span *ngIf="categoryRegistrationForm.get('categoryNumber').errors['required']">This field is required!</span>
+                placeholder="Category Number"
+                style="padding-right: 5px"/>
+              <mat-error>
 
-              </span>
-            </div>
-            <div class="form-group">
-              <label for="categoryName">Category Name</label>
-              <input
-                type="text"
-                id="categoryName"
-                formControlName="categoryName"
-                class="form-control">
-              <span
-                *ngIf="!categoryRegistrationForm.get('categoryName').valid && categoryRegistrationForm.get('categoryName').touched"
-                class="help-block">Please enter a valid category name!</span>
-            </div>
-            <div class="radio" *ngFor="let categoryLevel of categoryTypes">
-              <label>
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field color="primary" class="black">
                 <input
-                  type="radio"
-                  formControlName="categoryLevel"
-                  [value]="categoryLevel">{{ categoryLevel }}
-              </label>
-            </div>
+                  matInput
+                  type="text" color="primary"
+                  formControlName="categoryName"
+                  placeholder="Category Name"
+                  style="padding-right: 5px"
+                  />
+                <mat-error>
+
+                </mat-error>
+            </mat-form-field>
+
+            <mat-radio-group
+              formControlName="categoryLevel"
+              aria-label="Select an option" color="primary"
+              style="width: 100%; padding-right: 5px">
+              <mat-radio-button
+                *ngFor="let categoryLevel of categoryTypes"
+                [value]="categoryLevel">{{ categoryLevel }}
+              </mat-radio-button>
+            </mat-radio-group>
             <!-- <div class="form-group">
                 <label for="categoryParent">Category Parent</label>
                 <input
@@ -46,10 +51,13 @@
                   *ngIf="!categoryRegistrationForm.get('categoryParent').valid && categoryRegistrationForm.get('categoryParent').touched"
                   class="help-block">Please enter a valid category Parent!</span>
             </div> -->
-          <span
-            *ngIf="!categoryRegistrationForm.valid && categoryRegistrationForm.touched"
-            class="help-block">Please enter valid data!</span>
-          <button class="btn btn-primary" type="submit">Submit</button>
+          <button
+            mat-raised-button
+            color="primary"
+            class="btn btn-primary"
+            type="submit">
+              Submit
+          </button>
         </form>
 
 </mat-dialog-content>

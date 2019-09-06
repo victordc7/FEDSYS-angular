@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
+
 import { CompetitorModel } from '../../models/competitor.model';
 
 @Component({
