@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 
-import { CategoryModel } from '../../models/category.model';
+import { Category } from '../../models/category.model';
 
 @Component({
   selector: 'app-reg-categories',
@@ -44,7 +44,7 @@ export class RegCategoriesComponent implements OnInit {
    * @returns requestBody - Object with the required data for course application requests
    */
   private getRequestBody(): any {
-    const result: CategoryModel = Object.assign({}, this.categoryRegistrationForm.value);
+    const result: Category = Object.assign({}, this.categoryRegistrationForm.value);
     const requestBody: Object = {
       categoryNumber: result.categoryNumber,
       categoryName: result.categoryName,
