@@ -1,4 +1,4 @@
-export class CompetitorModel {
+export class Competitor {
   firstName: string;
   lastName: string;
   athlete: number;
@@ -6,7 +6,7 @@ export class CompetitorModel {
   age: number;
   gender: string;
   city: string;
-  categoryName: string;
+  categories: Array<Object>;
   email?: string;
   phone?: string;
 }

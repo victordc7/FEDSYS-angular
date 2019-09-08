@@ -1,46 +1,83 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormControl, FormArray, FormGroup, FormBuilder, Validators } from '@angular/forms';
 
-import { CompetitorModel } from '../../models/competitor.model';
+import { Competitor } from '../../models/competitor.model';
+import { Category } from '../../models/category.model';
 import { ServiceService } from 'src/app/service.service';
+import { CompetitorService } from 'src/app/services/competitor.service';
 
 @Component({
   selector: 'app-reg-competidores',
   templateUrl: './reg-competidores.component.html',
   styleUrls: ['./reg-competidores.component.css']
 })
+
 export class RegCompetidoresComponent implements OnInit {
-competitorRegistrationForm: FormGroup;
-genders = ['male', 'female'];
+  competitorRegistrationForm: FormGroup;
+  genders = ['male', 'female'];
+  select = '-- Select a category/Elija una categoría --';
+
+  // private categoriesArray: Category[] = []
+
+  private categoriesArray: Category[] = [
+    new Category(
+      1,
+      'Fisico Culturismo',
+      1,
+      null
+    ),
+    new Category(
+      2,
+      'Bikini',
+      1,
+      null
+    ),
+    new Category(
+      3,
+      'Fisicoculturismo junior',
+      2,
+      1
+    ),
+    new Category(
+      4,
+      'Bikini Masculino',
+      2,
+      2
+    )
+  ];
+
 
   constructor(
-    // public _CompetitorService: CompetitorService,
+    private  competitorService: CompetitorService,
     private formBuilder: FormBuilder,
-    private serverService: ServiceService 
+    private serverService: ServiceService
   ) { }
+
 
   ngOnInit() {
     const body = {
       query:` {
-        hello
+        categories
       }`
     }
-    this.serverService.graphql(body).subscribe(res => console.log(res))
+
+  // this.categoriesArray =  this.serverService.graphql(body).subscribe(res => console.log(res));
+
     /**
   * Form creation and class variables initialization
   */
  this.competitorRegistrationForm =  new FormGroup({
-  'firstName': new FormControl(null),
-  'lastName': new FormControl(null),
-  'athlete': new FormControl(null),
-  'id': new FormControl(null),
-  'age': new FormControl(null),
-  'gender': new FormControl('male'),
-  'city': new FormControl(null),
-  'email': new FormControl(null),
-  'phone': new FormControl(null)
-  // categories: result.categories
- });
+    'firstName': new FormControl(null),
+    'lastName': new FormControl(null),
+    'athlete': new FormControl(null),
+    'id': new FormControl(null),
+    'age': new FormControl(null),
+    'gender': new FormControl('male'),
+    'city': new FormControl(null),
+    'categories': new FormArray([]),
+    'email': new FormControl(null),
+    'phone': new FormControl(null)
+  });
 
  this.competitorRegistrationForm.setValue({
   'firstName': '',
@@ -50,6 +87,7 @@ genders = ['male', 'female'];
   'age': '',
   'gender': '',
   'city': '',
+  'categories':[],
   'email': '',
   'phone': '',
   // categories: result.categories
@@ -90,7 +128,7 @@ genders = ['male', 'female'];
    * @returns requestBody - Object with the required data for course application requests
    */
   private getRequestBody(): any {
-    const result: CompetitorModel = Object.assign({}, this.competitorRegistrationForm.value);
+    const result: Competitor = Object.assign({}, this.competitorRegistrationForm.value);
     const requestBody: Object = {
       firstName: result.firstName,
       lastName: result.lastName,
@@ -99,13 +137,23 @@ genders = ['male', 'female'];
       age: result.age,
       gender: result.gender,
       city: result.city,
+      categories: result.categories,
       email: result.email,
       phone: result.phone
-      // categories: result.categories
     };
     console.log("Here the competitor object" + requestBody)
     return requestBody;
   }
+
+  onAddCategory() {
+    const control = new FormControl(null, Validators.required);
+    (<FormArray>this.competitorRegistrationForm.get('categories')).push(control);
+  }
+
+  onDeleteCategory(index: number) {
+    (<FormArray>this.competitorRegistrationForm.get('categories')).removeAt(index);
+  }
+
   onSubmit() {
     const form = this.getRequestBody();
     console.log(form);
@@ -113,9 +161,12 @@ genders = ['male', 'female'];
 
     if (this.competitorRegistrationForm.status === 'VALID'){
           // Llamada a servicio
+          this.competitorService.addCompetitor(form);
           this.competitorRegistrationForm.reset();
         }
 
     return ;
   }
+
+
 }
