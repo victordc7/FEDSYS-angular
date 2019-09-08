@@ -2,82 +2,85 @@
 var jueces = [" juez 1" ," juez 2" ," juez 3" ," juez 4" ," juez 5" ," juez 6" ," juez 7" ," juez 8" ," juez 9"];
 var puntajes = [0, 3, 2, 5, 3];
 var puntajes2 = [4, 3, 1, 5, 3];
-var w = 0;
-var w1 =0;
+var w = 0; //variable de porcentaje poses libres
+var w2 =0; //variable de porcentaje comparaciones
 numeroDeJueces = 5;
 numeroDeJueces2 = 5;
+v = PuntajesDependeDeNroDeJueces(numeroDeJueces, puntajes); //Subcuenta poses libres
+var v2 = PuntajesDependeDeNroDeJueces( numeroDeJueces2, puntajes2); //Subcuenta comparaciones
+var tblBody = document.createElement("tbody");
 
-  var td1 = document.getElementById("primerJ"); //Jueces de poses libres
-  var tblBody = document.createElement("tbody");
+
+var total3 = v + v2;
+document.getElementById("resultados").innerHTML="RESULTADOS = "+total3;
+
+var td1 = document.getElementById("primerJ"); //Jueces de poses libres
+  var tabla1   = document.createElement("table");
+  var fila = document.createElement("tr");
   for (var k = 0 ; k < numeroDeJueces; k++ )
    {
-        var celdita = document.createElement("td");  var textoCelda = document.createTextNode(jueces[k]); celdita.appendChild(textoCelda);  tblBody.appendChild(celdita); td1.appendChild(tblBody);
+    var celdita = document.createElement("td");  var textoCelda = document.createTextNode(jueces[k]); celdita.appendChild(textoCelda);   fila.appendChild(celdita);
    }
+  tblBody.appendChild(fila);
+  var fila = document.createElement("tr");
+  for (var k = 0 ; k < numeroDeJueces; k++ )
+   {
+    var celdita = document.createElement("td");  var textoCelda = document.createTextNode(puntajes[k]); celdita.appendChild(textoCelda);  fila.appendChild(celdita);
+   }
+  tblBody.appendChild(fila);
+  tabla1.appendChild(tblBody);
+  td1.appendChild(tabla1);
+  tabla1.setAttribute("border", 1);
+//   console.log(td1);
 
-   var td11 = document.getElementById("primerJJ"); //Puntajes
+document.getElementById("SC1").innerHTML="SUBCUENTA = " + v //Valor de Subcuenta poses libres
+
+var total1 = (v*w/100);
+ document.getElementById("SC11").innerHTML="SUBCUENTA " + w + "%" + " = " + total1 //valor de Subcuenta porcentaje poses libres
+
+var td2 = document.getElementById("SegundoJ"); //Jueces de Comparaciones
+   var tabla   = document.createElement("table");
    var tblBody = document.createElement("tbody");
+   var fila = document.createElement("tr");
    for (var k = 0 ; k < numeroDeJueces; k++ )
     {
-         var celdita = document.createElement("td");  var textoCelda = document.createTextNode(puntajes[k]); celdita.appendChild(textoCelda);  tblBody.appendChild(celdita); td11.appendChild(tblBody);
+     var celdita = document.createElement("td");  var textoCelda = document.createTextNode(jueces[k]); celdita.appendChild(textoCelda);   fila.appendChild(celdita);
     }
+   tblBody.appendChild(fila);
+   var fila = document.createElement("tr");
+   for (var k = 0 ; k < numeroDeJueces; k++ )
+    {
+     var celdita = document.createElement("td");  var textoCelda = document.createTextNode(puntajes2[k]); celdita.appendChild(textoCelda);  fila.appendChild(celdita);
+    }
+   tblBody.appendChild(fila);
+   tabla.appendChild(tblBody);
+   td2.appendChild(tabla);
+   tabla.setAttribute("border", 1);
 
-  var td111 = document.getElementById("SC1"); //Valor de Subcuenta
-    if ( numeroDeJueces<=6)
-     {
-      var vec1 = EliminarAltos(puntajes);
+document.getElementById("SC2").innerHTML="SUBCUENTA =" + v2 //Valor de Subcuenta Comparaciones
+
+var total2 =  (v*w2/100);
+document.getElementById("SC22").innerHTML="SUBCUENTA " + w2 + "%" + " = " + total2 //valor de Subcuenta porcentaje comparaciones
+
+
+function PuntajesDependeDeNroDeJueces (numeroDeJueces, vectorpuntajes)
+{
+  if ( numeroDeJueces<=6)
+    {
+      var vec1 = EliminarAltos(vectorpuntajes);
       var vec2 = EliminarBajos(vec1);
-      var v = sumarVector(vec2);
-      var celdita = document.createElement("td");  var textoCelda = document.createTextNode("Subcuenta = " + sumarVector(vec2)); celdita.appendChild(textoCelda);  tblBody.appendChild(celdita); td111.appendChild(tblBody);
+      var total = sumarVector(vec2);
      }
-    if (numeroDeJueces>6)
+  if (numeroDeJueces>6)
      {
-      var vec1 = EliminarAltos(puntajes);
+      var vec1 = EliminarAltos(vectorpuntajes);
       var vec2 = EliminarAltos(vec1);
       var vec3 = EliminarBajos(vec2);
       var vec4 = EliminarBajos(vec3);
-      var v = sumarVector(vec4);
-      var celdita = document.createElement("td");  var textoCelda = document.createTextNode("Subcuenta =" + sumarVector(vec4) ); celdita.appendChild(textoCelda);  tblBody.appendChild(celdita); td111.appendChild(tblBody);
+      var total = sumarVector(vec4);
      }
-
-     var td1111 = document.getElementById("SC11"); //valor de Subcuenta porcentaje
-      var celdita = document.createElement("td");  var textoCelda = document.createTextNode("Subcuenta " + w + "%" + " = " + (v*w/100)  ); celdita.appendChild(textoCelda);  tblBody.appendChild(celdita); td111.appendChild(tblBody);
-
-  var td2 = document.getElementById("SegundoJ"); //Jueces de Comparaciones
-   var tblBody = document.createElement("tbody");
-   for (var k = 0 ; k < numeroDeJueces; k++ )
-    {
-         var celdita = document.createElement("td");  var textoCelda = document.createTextNode(jueces[k]); celdita.appendChild(textoCelda);  tblBody.appendChild(celdita); td2.appendChild(tblBody);
-    }
-
-    var td22 = document.getElementById("SegundoJJ");
-     var tblBody = document.createElement("tbody");
-     for (var k = 0 ; k < numeroDeJueces; k++ )
-      {
-           var celdita = document.createElement("td");  var textoCelda = document.createTextNode(puntajes2[k]); celdita.appendChild(textoCelda);  tblBody.appendChild(celdita); td22.appendChild(tblBody);
-      }
-
-      var td222 = document.getElementById("SC2"); //Valor de Subcuenta
-        if ( numeroDeJueces2<=6)
-         {
-          var vec1 = EliminarAltos(puntajes2);
-          var vec2 = EliminarBajos(vec1);
-          var v = sumarVector(vec2);
-          var celdita = document.createElement("td");  var textoCelda = document.createTextNode("Subcuenta = " + sumarVector(vec2)); celdita.appendChild(textoCelda);  tblBody.appendChild(celdita); td222.appendChild(tblBody);
-         }
-        if (numeroDeJueces2>6)
-         {
-          var vec1 = EliminarAltos(puntajes2);
-          var vec2 = EliminarAltos(vec1);
-          var vec3 = EliminarBajos(vec2);
-          var vec4 = EliminarBajos(vec3);
-          var v = sumarVector(vec4);
-          var celdita = document.createElement("td");  var textoCelda = document.createTextNode("Subcuenta = " + sumarVector(vec4)); celdita.appendChild(textoCelda);  tblBody.appendChild(celdita); td222.appendChild(tblBody);
-         }
-
-         var td2222 = document.getElementById("SC22"); //valor de Subcuenta porcentaje
-          var celdita = document.createElement("td");  var textoCelda = document.createTextNode("Subcuenta " + w2 + "%" + " = " + (v*w2/100)  ); celdita.appendChild(textoCelda);  tblBody.appendChild(celdita); td2222.appendChild(tblBody);
-
-
+  return total ;
+}
 
 function sumarVector(vector)
  {

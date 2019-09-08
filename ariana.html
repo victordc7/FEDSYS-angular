@@ -1,35 +1,55 @@
 
 <html lang="en" dir="ltr">
-  <head>
-    <meta charset="utf-8">
-    <style>
+ <head>
+  <meta charset="utf-8">
+  <style>
   table
   {
-    width: 110%;
+  margin: auto;
+	width: 80px;
+  height: 150px;
+	border-collapse: collapse;
+	border: 1px solid black;
   }
 
+  td.vertical
+  {
+   color: blue;
+   border: 1px solid black;
+   -webkit-transform: rotate(-90deg);
+   -moz-transform: rotate(-90deg);
+   text-align: right;
+  }
 
-   </style>
-    <title> tarea 1 </title>
-  </head>
-  <body>
+  th
+  {
+  border: 1px solid black;
+  background-color: #D3D3D3;
+  }
+
+  </style>
+  <title> tarea 1 </title>
+ </head>
+ <body >
+  <h1> Tabla <h1>
+  <br>
   <table>
     <tr>
-      <th> COMPETIDORES </th>  <th>  POSES LIBRES </th>  <th> COMPARACIONES </th> <th> RESULTADOS </th>
-     </tr>
-    <tr>
-       <td rowspan="2" > NUMERO </td> <td rowspan="2" > NOMBRE </td> <td rowspan="2" > ESTADO </td>
-         <td id = "primerJ" >  </td>  <td rowspan="2" id = "SC1"> </td> <td  rowspan="2" id = "SC11"> </td>
-         <td id = "SegundoJ" >  </td> <td rowspan="2" id = "SC2"> </td> <td rowspan="2" id = "SC22"> </td>
-
-        <td rowspan="2"> CUENTA FINAL </td>
-        <td rowspan="2"> LUGAR </td>
+    <th colspan="3" > COMPETIDORES </th>  <th colspan="3"  >  POSES LIBRES </th>  <th colspan="3"   > COMPARACIONES </th> <th colspan="2" id="resultados" >  </th>
     </tr>
-  <tr>
-     <td id = "primerJJ"> </td>  <td id = "SegundoJJ"> </td>
-   </tr>
+    <tr >
+    <td class="vertical" rowspan="12" > NUMERO </td> <td border="1" rowspan="12" > NOMBRE </td> <td  rowspan="12" > ESTADO </td>
+    <td  id = "primerJ"> </td>
+    <td rowspan="12" class="vertical"  id = "SC1"> </td>
+    <td rowspan="12"  class="vertical"  id = "SC11"> </td>
+    <td  id = "SegundoJ"  >  </td>
+    <td rowspan="12" class="vertical" id = "SC2"> </td>
+    <td rowspan="12" class="vertical"  id = "SC22"> </td>
+    <td rowspan="12" class= "vertical" > CUENTA FINAL </td>
+    <td rowspan="12" class="vertical"  > LUGAR </td>
+    </tr>
   </table>
 
   <script src="ariana.js"> </script>
-  </body>
+ </body>
 </html>
