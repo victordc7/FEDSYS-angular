@@ -3,10 +3,12 @@
           [formGroup]="categoryRegistrationForm"
           (ngSubmit)="onSubmit()"
           class="mat-typography"
-          style="background-color: gray; width: 25vw"
           >
 
-            <mat-form-field color="primary" class="black">
+            <mat-form-field
+              color="access"
+              class="black"
+              style="padding: 10px">
               <input
                 matInput
                 type="text"
@@ -18,13 +20,15 @@
               </mat-error>
             </mat-form-field>
 
-            <mat-form-field color="primary" class="black">
+            <mat-form-field
+              color="access"
+              class="black"
+              style="padding: 10px">
                 <input
                   matInput
                   type="text" color="primary"
                   formControlName="categoryName"
                   placeholder="Category Name"
-                  style="padding-right: 5px"
                   />
                 <mat-error>
 
@@ -37,7 +41,9 @@
               style="width: 100%; padding-right: 5px">
               <mat-radio-button
                 *ngFor="let categoryLevel of categoryTypes"
-                [value]="categoryLevel">{{ categoryLevel }}
+                [value]="categoryLevel"
+                style="padding: 10px">
+                  {{ categoryLevel }}
               </mat-radio-button>
             </mat-radio-group>
             <!-- <div class="form-group">
