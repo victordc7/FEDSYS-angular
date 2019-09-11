@@ -1,13 +1,13 @@
 export class Category {
-  categoryNumber: number;
-  categoryName: string;
-  categoryLevel: number;
-  categoryParent?: number;
+  number: number;
+  name: string;
+  level: number;
+  parent?: Category;
 
-  constructor(number: number, name: string, level: number, parent: number) {
-    this.categoryNumber = number;
-    this.categoryName = name;
-    this.categoryLevel = level;
-    this.categoryParent = parent;
+  constructor(number: number, name: string, level: number, parent: Category) {
+    this.number = number;
+    this.name = name;
+    this.level = level;
+    this.parent = parent;
   }
 }

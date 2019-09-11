@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
 import { FormControl, FormArray, FormGroup, FormBuilder, Validators } from '@angular/forms';
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material";
 
-import { Competitor } from '../../models/competitor.model';
-import { Category } from '../../models/category.model';
+import { Competitor } from '../../../models/competitor.model';
+import { Category } from '../../../models/category.model';
 import { ServiceService } from 'src/app/service.service';
 import { CompetitorService } from 'src/app/services/competitor.service';
 
@@ -17,42 +18,12 @@ export class RegCompetidoresComponent implements OnInit {
   genders = ['male', 'female'];
   select = '-- Select a category/Elija una categoría --';
 
-  // private categoriesArray: Category[] = []
-
-  private categoriesArray: Category[] = [
-    new Category(
-      1,
-      'Fisico Culturismo',
-      1,
-      null
-    ),
-    new Category(
-      2,
-      'Bikini',
-      1,
-      null
-    ),
-    new Category(
-      3,
-      'Fisicoculturismo junior',
-      2,
-      1
-    ),
-    new Category(
-      4,
-      'Bikini Masculino',
-      2,
-      2
-    )
-  ];
-
-
   constructor(
     private  competitorService: CompetitorService,
-    private formBuilder: FormBuilder,
-    private serverService: ServiceService
+    private serverService: ServiceService,
+    private dialogRef: MatDialogRef<RegCompetidoresComponent>,
+    @Inject(MAT_DIALOG_DATA) public categoriesArray
   ) { }
-
 
   ngOnInit() {
     const body = {
@@ -61,8 +32,6 @@ export class RegCompetidoresComponent implements OnInit {
       }`
     }
 
-  // this.categoriesArray =  this.serverService.graphql(body).subscribe(res => console.log(res));
-
     /**
   * Form creation and class variables initialization
   */
@@ -70,7 +39,7 @@ export class RegCompetidoresComponent implements OnInit {
     'firstName': new FormControl(null),
     'lastName': new FormControl(null),
     'athlete': new FormControl(null),
-    'id': new FormControl(null),
+    'personalId': new FormControl(null),
     'age': new FormControl(null),
     'gender': new FormControl('male'),
     'city': new FormControl(null),
@@ -83,14 +52,13 @@ export class RegCompetidoresComponent implements OnInit {
   'firstName': '',
   'lastName': '',
   'athlete': '',
-  'id': '',
+  'personalId': '',
   'age': '',
   'gender': '',
   'city': '',
   'categories':[],
   'email': '',
   'phone': '',
-  // categories: result.categories
  });
 
  this.competitorRegistrationForm.valueChanges.subscribe(
@@ -115,7 +83,7 @@ export class RegCompetidoresComponent implements OnInit {
         if (key === 'firstName' || key === 'lastName' ||
                    key === 'city' || key === '') {
           validators.push(Validators.pattern(nameRegEx));
-        } else if (key === 'id') {
+        } else if (key === 'personalId') {
           validators.push(Validators.pattern(numberRegEx));
         }
         this.competitorRegistrationForm.get(key).setValidators(validators);
@@ -133,7 +101,7 @@ export class RegCompetidoresComponent implements OnInit {
       firstName: result.firstName,
       lastName: result.lastName,
       athlete: result.athlete,
-      id: result.idNumber,
+      personalId: result.personalId,
       age: result.age,
       gender: result.gender,
       city: result.city,
@@ -161,12 +129,32 @@ export class RegCompetidoresComponent implements OnInit {
 
     if (this.competitorRegistrationForm.status === 'VALID'){
           // Llamada a servicio
-          this.competitorService.addCompetitor(form);
+          const body = {
+            mutation:` {
+              createUser(input: {
+                firstName: ${form.firstName},
+                lastName:${form.lastName} ,
+                athlete: ${form.athlete},
+                personalId: ${form.personalId},
+                age: ${form.age},
+                gender: ${form.gender},
+                city: ${form.city},
+                categories:${form.categories},
+                email: ${form.email},
+                phone: ${form.phone},
+              })
+            }`
+          }
+          // this.serverService.graphql(body)
+          //   .subscribe(res => {console.log(res)})
+          this.dialogRef.close(form);
           this.competitorRegistrationForm.reset();
         }
 
     return ;
   }
 
-
+  close():void {
+    this.dialogRef.close();
+  }
 }

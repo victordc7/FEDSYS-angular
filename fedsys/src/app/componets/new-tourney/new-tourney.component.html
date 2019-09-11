@@ -1,0 +1,50 @@
+<h4>Choose the tournament type / Elige el tipo de torneo</h4>
+
+<!-- <mat-form-field
+  class="row"
+  style="padding-right: 5px">
+  <mat-label> -- Select a tournament type/Elija un tipo de torneo -- </mat-label>
+  <mat-select
+    formControlName="tournament"
+    id="tournaments"
+    [value]='select'>
+    <mat-option [value]="null">None</mat-option>
+    <mat-option
+      *ngFor="let item of tournamentsArray"
+      [value]="item"
+      required>
+      Type - {{item.name}} / Tipo - {{item.name}}
+    </mat-option>
+  </mat-select>
+</mat-form-field>
+
+<div class="col-xs-12"
+    *ngFor="let category of tournamentsArray.categories; let i = index"
+    index="i">
+    <h4 class="list-group-item-heading">{{ category.number }} {{ category.name }}</h4>
+</div> -->
+
+<router-outlet></router-outlet>
+
+<button
+  mat-raised-button
+  (click)="onNewTourney()"
+  *ngIf="!started">
+  Begin/Empezar
+</button>
+
+<button
+  mat-raised-button
+  (click)="onStart()"
+  routerLink="tabla"
+  *ngIf="started">
+  Begin/Empezar
+</button>
+
+<button
+  mat-raised-button
+  (click)="onBack()"
+  *ngIf="started">
+  Back/Atrás
+</button>
+

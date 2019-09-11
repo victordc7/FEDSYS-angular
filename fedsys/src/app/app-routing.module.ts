@@ -2,8 +2,8 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { TableComponent } from './componets/table/table.component';
-import { RegCategoriesComponent } from './componets/reg-categories/reg-categories.component';
-import { RegCompetidoresComponent } from './componets/reg-competidores/reg-competidores.component';
+import { RegisterComponent } from './componets/register/register.component';
+import { NewTourneyComponent } from './componets/new-tourney/new-tourney.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'inicio', pathMatch: 'full' },
@@ -16,12 +16,11 @@ const routes: Routes = [
     component: TableComponent
   },
   {
-    path: 'categories',
-    component: RegCategoriesComponent
-  },
-  {
-    path: 'competitors',
-    component: RegCompetidoresComponent
+    path: 'newTourney',
+    component: NewTourneyComponent,
+    children: [
+      { path: 'register', component: RegisterComponent }
+    ]
   },
   { path: '**', redirectTo: 'inicio' },
 ];
