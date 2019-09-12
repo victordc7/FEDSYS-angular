@@ -19,7 +19,7 @@ export class RegCompetidoresComponent implements OnInit {
 
   // private categoriesArray: Category[] = []
 
-  private categoriesArray: Category[] = [
+  public categoriesArray: Category[] = [
     new Category(
       1,
       'Fisico Culturismo',
