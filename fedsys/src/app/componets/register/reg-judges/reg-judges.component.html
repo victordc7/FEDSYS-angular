@@ -1,0 +1,102 @@
+
+<mat-dialog-content>
+  <form
+    [formGroup]="judgesRegistrationForm"
+    (ngSubmit)="onSubmit()"
+    class="w-50 center mat-typography"
+    style="width: 100%">
+
+    <p>
+      Ingrese los datos del competidor
+    </p>
+
+      <mat-form-field
+        class="w-50 black form-group"
+        style="padding-right: 5px">
+        <input
+          matInput
+          type="text"
+          formControlName="firstName"
+          placeholder="Nombre"/>
+        <mat-error
+          *ngIf="!judgesRegistrationForm.get('firstName').valid && judgesRegistrationForm.get('firstName').touched"
+          class="help-block">
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field
+        class="w-50 black form-group"
+        style="padding-right: 5px">
+        <input
+          matInput
+          type="text"
+          formControlName="lastName"
+          placeholder="Apellido"/>
+          <span
+            *ngIf="!judgesRegistrationForm.get('lastName').valid && judgesRegistrationForm.get('lastName').touched"
+            class="help-block">
+          </span>
+      </mat-form-field>
+
+      <mat-form-field
+        class="w-50 white form-group"
+        style="padding-right: 5px">
+        <input
+          matInput
+          type="text"
+          formControlName="personalId"
+          placeholder="ID/Numero de identidad"/>
+      </mat-form-field>
+
+      <mat-form-field
+        class="form-group"
+        style="padding-right: 5px">
+        <input
+          matInput
+          type="text"
+          formControlName="email"
+          placeholder="Email"/>
+        <span
+          *ngIf="!judgesRegistrationForm.get('email').valid && judgesRegistrationForm.get('email').touched"
+          class="help-block">
+        </span>
+    </mat-form-field >
+
+    <br/>
+
+      <mat-form-field
+        class="w-50 white"
+        style="padding-right: 5px">
+        <input
+          matInput
+          type="text"
+          formControlName="age"
+          placeholder="Age/Edad"/>
+      </mat-form-field>
+
+      <mat-form-field
+        class="w-50 white"
+        style="padding-right: 5px">
+        <input
+          matInput
+          type="text"
+          formControlName="city"
+          placeholder="City/Ciudad"/>
+      </mat-form-field>
+
+
+      <br/>
+
+      <mat-form-field class="w-50 white">
+        <input
+          matInput
+          type="text"
+          formControlName="charge"
+          placeholder="Charge/Cargo"/>
+      </mat-form-field>
+
+      <br/>
+    <button mat-raised-button color="primary" type="submit">Done/Listo</button>
+  </form>
+
+</mat-dialog-content>

@@ -1,0 +1,33 @@
+<p>
+  register works!
+</p>
+<button mat-raised-button (click)="addCategory()">
+  Add Category/Agregar Categoria
+</button>
+
+<br/>
+<hr/>
+<br/>
+<div class="col-xs-12"
+    *ngFor="let competitor of competitors; let i = index"
+    index="i">
+    <h4 class="list-group-item-heading">{{ competitor.firstName }} {{ competitor.lastName }}</h4>
+    <p class="list-group-item-text">{{ competitor.personalId }}</p>
+  </div>
+
+<button mat-raised-button (click)="addCompetitor()">
+  Add Competitor/Agregar Competidor
+</button>
+
+<br/>
+<hr/>
+<br/>
+<div class="col-xs-12"
+    *ngFor="let judge of judges; let i = index"
+    index="i">
+    <h4 class="list-group-item-heading">{{ judge.firstName }} {{ judge.lastName }}</h4>
+    <p class="list-group-item-text">{{ judge.personalId }}</p>
+</div>
+<button mat-raised-button (click)="addJudge()">
+  Add Judge/Agregar Juez
+</button>

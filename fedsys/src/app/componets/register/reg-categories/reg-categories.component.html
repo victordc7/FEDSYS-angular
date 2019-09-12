@@ -12,7 +12,7 @@
               <input
                 matInput
                 type="text"
-                formControlName="categoryNumber"
+                formControlName="number"
                 placeholder="Category Number"
                 style="padding-right: 5px"/>
               <mat-error>
@@ -27,7 +27,7 @@
                 <input
                   matInput
                   type="text" color="primary"
-                  formControlName="categoryName"
+                  formControlName="name"
                   placeholder="Category Name"
                   />
                 <mat-error>
@@ -35,28 +35,39 @@
                 </mat-error>
             </mat-form-field>
 
+            <br/>
+
             <mat-radio-group
-              formControlName="categoryLevel"
+              formControlName="level"
               aria-label="Select an option" color="primary"
               style="width: 100%; padding-right: 5px">
               <mat-radio-button
-                *ngFor="let categoryLevel of categoryTypes"
-                [value]="categoryLevel"
+                *ngFor="let level of categoryTypes"
+                [value]="level"
                 style="padding: 10px">
-                  {{ categoryLevel }}
+                  {{ level }}
               </mat-radio-button>
             </mat-radio-group>
-            <!-- <div class="form-group">
-                <label for="categoryParent">Category Parent</label>
-                <input
-                  type="text"
-                  id="categoryParent"
-                  formControlName="categoryParent"
-                  class="form-control">
-                <span
-                  *ngIf="!categoryRegistrationForm.get('categoryParent').valid && categoryRegistrationForm.get('categoryParent').touched"
-                  class="help-block">Please enter a valid category Parent!</span>
-            </div> -->
+
+            <h4>Category Parent/Categoria Padre</h4>
+            <mat-form-field
+              class="row"
+              style="padding-right: 5px">
+              <mat-label> -- Select a category/Elija una categoría -- </mat-label>
+              <mat-select
+                formControlName="parent"
+                id="categories"
+                [value]='select'>
+                <mat-option [value]="null">None</mat-option>
+                <mat-option
+                  *ngFor="let item of categoriesArray"
+                  [value]="item"
+                  required>
+                  {{item.number}} - {{item.name}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
           <button
             mat-raised-button
             color="primary"
