@@ -42,22 +42,21 @@
               aria-label="Select an option" color="primary"
               style="width: 100%; padding-right: 5px">
               <mat-radio-button
-                *ngFor="let level of categoryTypes"
-                [value]="level"
+                *ngFor="let level of categoryTypes; let i = index"
+                [value]="i+1"
                 style="padding: 10px">
                   {{ level }}
               </mat-radio-button>
             </mat-radio-group>
 
-            <h4>Category Parent/Categoria Padre</h4>
+            <h4>Categoria Padre</h4>
             <mat-form-field
               class="row"
               style="padding-right: 5px">
-              <mat-label> -- Select a category/Elija una categoría -- </mat-label>
+              <mat-label> -- Seleccione una categoría -- </mat-label>
               <mat-select
                 formControlName="parent"
-                id="categories"
-                [value]='select'>
+                id="categories">
                 <mat-option [value]="null">None</mat-option>
                 <mat-option
                   *ngFor="let item of categoriesArray"

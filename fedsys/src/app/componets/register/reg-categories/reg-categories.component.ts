@@ -20,7 +20,7 @@ export class RegCategoriesComponent implements OnInit {
     private serverService: ServiceService,
     private dialogRef: MatDialogRef<RegCategoriesComponent>,
     @Inject(MAT_DIALOG_DATA) public categoriesArray) {
-      // console.log(data)
+      console.log(categoriesArray)
       // this.descripcion =  data.titulo;
       // console.log(this.descripcion);
     }
@@ -68,30 +68,12 @@ export class RegCategoriesComponent implements OnInit {
 
   onSubmit() {
     const form = this.getRequestBody();
-    const body = {
-      mutation:` {
-        createCategory(input: {
-          number: ${form.number},
-          name: ${form.name},
-          level: ${form.level},
-          parent: ${form.parent}
-        }) {
-          number:,
-          name:,
-        }
-      }`
-    }
     console.log(form);
     console.log(this.categoryRegistrationForm);
 
     if (this.categoryRegistrationForm.status === 'VALID'){
-          // Llamada a servicio
 
-          // this.serverService.graphql(body)
-          //   .subscribe(res => {
-          //     console.log(res);
-          //     this.categoriesArray.push(res);
-          //   });
+          this.dialogRef.close(form);
           this.categoryRegistrationForm.reset();
         }
 

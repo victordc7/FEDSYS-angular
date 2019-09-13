@@ -19,33 +19,36 @@ export class NewTourneyComponent implements OnInit {
 
   ngOnInit() {
 
-    const body = {
-      query: `{
-        getTourney{
-          type: ,
-          categories: ,
-        }
-      }`
-    }
+    this.started = false;
 
-    this.serverService.graphql(body)
-      .subscribe(res => {
-        this.tournamentsArray = res;
-      });
+    // const body = {
+    //   query: `{
+    //     getTourney{
+    //       type: ,
+    //       categories: ,
+    //     }
+    //   }`
+    // }
+
+    // this.serverService.graphql(body)
+    //   .subscribe(res => {
+    //     this.tournamentsArray = res;
+    // });
   }
 
   onNewTourney() {
     this.started = true;
-    this.router.navigate(['register'], {relativeTo: this.route});
+    this.router.navigate(['registro'], {relativeTo: this.route});
   }
 
   onBack() {
     this.started = false;
-    this.router.navigate(['newTourney']);
+    this.router.navigate(['nuevo_torneo']);
   }
 
   onStart() {
-
+    // this.started = false;
+    this.router.navigate(['tabla']);
   }
 
 }

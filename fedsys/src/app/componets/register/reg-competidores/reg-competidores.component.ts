@@ -25,6 +25,7 @@ export class RegCompetidoresComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public categoriesArray
   ) { }
 
+
   ngOnInit() {
     const body = {
       query:` {
@@ -155,6 +156,8 @@ export class RegCompetidoresComponent implements OnInit {
   }
 
   close():void {
-    this.dialogRef.close();
+    if (this.competitorRegistrationForm.status === 'VALID'){
+      this.dialogRef.close();
+    }
   }
 }

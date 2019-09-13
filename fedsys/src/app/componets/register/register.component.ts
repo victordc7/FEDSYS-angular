@@ -48,43 +48,29 @@ export class RegisterComponent implements OnInit {
   //   )
   // ];
 
-  public categoriesArray = [
-    {  categoryNumber: 1,
-      categoryName:'Fisico Culturismo'
-    },
-    {
-      categoryNumber: 2,
-      categoryName:'Bikini'
-    },
-    {
-      categoryNumber: 3,
-      categoryName: 'Fisicoculturismo junior'
-    },
-    {
-      categoryNumber: 4,
-      categoryName: 'Bikini Masculino'
-    }
-  ];
+  public categoriesArray = [];
   constructor(
     private serverService: ServiceService,
     public dialog: MatDialog
   ) { }
 
   ngOnInit() {
-    // console.log(this.categoriesArray)
-    // const body = {
-    //   mutation:` {
-    //     category{
-    //       number:,
-    //       name:,
-    //     }
-    //   }`
-    // };
-    // this.serverService.graphql(body)
-    // .subscribe(res => {
-    //   console.log(res);
-    //   this.categoriesArray.push(res);
-    // });
+
+    const body = {
+      query:` query {
+        categories
+        { name
+          number
+        }
+      }`
+    };
+
+    this.serverService.graphql(body)
+    .subscribe(res => {
+      console.log(res);
+      this.categoriesArray.push(res['data']['categories']);
+      console.log(this.categoriesArray)
+    });
   }
 
   addCategory() {
@@ -96,6 +82,7 @@ export class RegisterComponent implements OnInit {
     // console.log('hello' + dialogRef.data);
     dialogRef.afterClosed().subscribe(result => {
         console.log("Dialog output:", result)
+        this.createCategory(result)
       });
   }
 
@@ -123,6 +110,70 @@ export class RegisterComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
         console.log("Dialog output:", result);
         this.judges.push(result);
+      });
+  }
+
+  createCategory(form) {
+    const body = {
+      query: `mutation {
+        createCategory(input: {
+          number: ${form.number}
+          name: "${form.name}"
+          level: ${form.level}
+          parent: ${form.parent}
+        }) {
+          number
+          name
+        }
+      }`
+    };
+
+    // Llamada a servicio
+    this.serverService.graphql(body)
+      .subscribe(res => {
+        console.log(res);
+        this.categoriesArray.push(res['data']['createCategory']);
+      });
+  }
+
+
+
+  createCompetitor(form) {
+    const body = {
+      query: `mutation {
+        createCompetitor(input: {
+          firstName: "${form.firstName}",
+          lastName:"${form.lastName}" ,
+          athlete: ${form.athlete},
+          personalId: ${form.personalId},
+          age: ${form.age},
+          gender: "${form.gender}",
+          city: "${form.city}",
+          categories:${form.categories},
+          email: "${form.email}",
+          phone: ${form.phone},
+        }) {
+          firstName
+          lastName
+          athlete
+          personalId
+          age
+          gender
+          categories
+        }
+      }`
+    }
+
+    // Llamada a servicio
+    this.serverService.graphql(body)
+      .subscribe(res => {
+        if(res['data']){
+          console.log(res);
+          this.categoriesArray.push(res['data']['createCompetitor']);
+        } else {
+          return
+        }
+        return
       });
   }
 }

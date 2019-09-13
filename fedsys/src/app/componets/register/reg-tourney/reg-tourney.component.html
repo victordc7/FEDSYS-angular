@@ -1,1 +1,87 @@
-<p>reg-tourney works!</p>
+<mat-dialog-content>
+  <form
+    [formGroup]="tourneyRegistrationForm"
+    (ngSubmit)="onSubmit()"
+    class="w-50 center mat-typography"
+    style="width: 100%">
+
+    <mat-form-field
+    color="primary"
+    class="black"
+    style="padding: 10px">
+    <input
+      matInput
+      type="text"
+      formControlName="number"
+      placeholder="Category Number"
+      style="padding-right: 5px"/>
+    <mat-error>
+
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field
+    color="access"
+    class="black"
+    style="padding: 10px">
+      <input
+        matInput
+        type="text" color="primary"
+        formControlName="name"
+        placeholder="Category Name"
+        />
+      <mat-error>
+
+      </mat-error>
+  </mat-form-field>
+
+  <br/>
+
+<div formArrayName="categories">
+  <h4>Categories/Categorias</h4>
+    <mat-form-field
+      class="row"
+      style="padding-right: 5px"
+      *ngFor="let categoriesControl of tourneyRegistrationForm.get('categories')['controls']; let i = index">
+      <mat-label> -- Select a category/Elija una categoría -- </mat-label>
+      <mat-select
+        class="col-10"
+        id="categories"
+        color="warn"
+        [formControlName]="i"
+        required>
+        <mat-option
+          *ngFor="let item of categoriesArray"
+          [value]="item"
+          required>
+          {{item.number}} - {{item.name}}
+        </mat-option>
+      </mat-select>
+      <button
+        class="col-2"
+        mat-raised-button
+        type="button"
+        (click)="onDeleteCategory(i)">X
+      </button>
+  </mat-form-field>
+</div>
+
+<br/>
+
+<button
+  mat-raised-button
+  color="warn"
+  type="button"
+  (click)="onAddCategory()">+
+</button>
+
+<button
+  mat-raised-button
+  color="primary"
+  class="btn btn-primary"
+  type="submit">
+    Submit
+</button>
+</form>
+
+</mat-dialog-content>
