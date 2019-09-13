@@ -54,6 +54,7 @@ import { PreRegistrationComponent } from './componets/pre-registration/pre-regis
     RegCategoriesComponent,
     RegCompetidoresComponent,
     RegJudgesComponent,
+    RegTourneyComponent
   ],
 
   providers: [

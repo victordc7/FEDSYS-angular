@@ -101,20 +101,21 @@
             <mat-form-field
               class="row"
               style="padding-right: 5px"
-              *ngFor="let categoriesControl of competitorRegistrationForm.get('categories'); let i = index">
+              *ngFor="let categoriesControl of competitorRegistrationForm.get('categories')['controls']; let i = index">
+
               <mat-label> -- Select a category/Elija una categoría -- </mat-label>
               <mat-select
                 class="col-10"
                 id="categories"
                 color="warn"
                 [formControlName]="i"
-                [value]='select'
+
                 required>
                 <mat-option
                   *ngFor="let item of categoriesArray"
                   [value]="item"
                   required>
-                  {{item.categoryNumber}} - {{item.categoryName}}
+                  {{item.number}} - {{item.name}}
                 </mat-option>
               </mat-select>
               <button

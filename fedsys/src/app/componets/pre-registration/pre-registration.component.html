@@ -1,1 +1,29 @@
-<p>pre-registration works!</p>
+<button mat-raised-button (click)="addCategory()">
+  Agregar Categoria
+</button>
+
+<br/>
+<hr/>
+<br/>
+<div class="col-xs-12"
+    *ngFor="let category of categoriesArray; let i = index"
+    index="i">
+    <h4 class="list-group-item-heading" *ngIf="category[i]">{{ category[i]['number'] }} - {{ category[i]['name'] }}</h4>
+</div>
+
+<button mat-raised-button (click)="addTourneyType()">
+  Agregar tipo de torneo
+</button>
+
+<br/>
+<hr/>
+<br/>
+<div class="col-xs-12"
+    *ngFor="let type of tourneyType; let i = index"
+    index="i">
+    <h4 class="list-group-item-heading">{{ type.number }} {{ type.name }}</h4>
+    <div class="col-xs-12"
+    *ngFor="let category of type.categories; let i = index"
+    index="i">
+      <p class="list-group-item-text">{{ type.category.number }} - {{ type.category.name }} </p>
+</div>
