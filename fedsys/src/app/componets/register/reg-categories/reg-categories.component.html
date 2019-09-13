@@ -57,7 +57,7 @@
               <mat-select
                 formControlName="parent"
                 id="categories"
-                [value]='select'>
+                [value]="'select'">
                 <mat-option [value]="null">None</mat-option>
                 <mat-option
                   *ngFor="let item of categoriesArray"
