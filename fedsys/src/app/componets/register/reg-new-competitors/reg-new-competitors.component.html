@@ -1,0 +1,117 @@
+<mat-dialog-content>
+  <form
+    [formGroup]="competitorRegistrationForm"
+    (ngSubmit)="onSubmit()"
+    class="w-50 center mat-typography"
+    style="width: 100%">
+
+    <p>
+      Ingrese los datos del competidor
+    </p>
+
+      <mat-form-field
+        class="w-50 black form-group"
+        style="padding-right: 5px">
+        <input
+          matInput
+          type="text"
+          formControlName="firstName"
+          placeholder="Nombre"/>
+        <mat-error
+          *ngIf="!competitorRegistrationForm.get('firstName').valid && competitorRegistrationForm.get('firstName').touched"
+          class="help-block">
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field
+        class="w-50 black form-group"
+        style="padding-right: 5px">
+        <input
+          matInput
+          type="text"
+          formControlName="lastName"
+          placeholder="Apellido"/>
+          <span
+            *ngIf="!competitorRegistrationForm.get('lastName').valid && competitorRegistrationForm.get('lastName').touched"
+            class="help-block">
+          </span>
+      </mat-form-field>
+
+      <mat-form-field
+        class="w-50 white form-group"
+        style="padding-right: 5px">
+        <input
+          matInput
+          type="text"
+          formControlName="personalId"
+          placeholder="Numero de identidad"/>
+        </mat-form-field>
+
+      <mat-form-field
+        class="w-50 white"
+        style="padding-right: 5px">
+        <input
+          matInput
+          type="text"
+          formControlName="age"
+          placeholder="Edad"/>
+
+      </mat-form-field>
+
+      <br/>
+
+      <mat-radio-group
+        formControlName="gender"
+        aria-label="Select an option"
+        style="padding-right: 5px">
+
+          <mat-label>Género</mat-label>
+          <br/>
+          <mat-radio-button
+            *ngFor="let gender of genders"
+            style="padding-right: 5px"
+            [value]="gender">
+              {{ gender }}
+          </mat-radio-button>
+      </mat-radio-group>
+
+
+      <mat-form-field
+        class="w-50 white"
+        style="padding-right: 5px; margin-left: 15%">
+        <input
+          matInput
+          type="text"
+          formControlName="city"
+          placeholder="Ciudad"/>
+      </mat-form-field>
+
+      <br/>
+
+      <mat-form-field
+        class="form-group"
+        style="padding-right: 5px">
+        <input
+          matInput
+          type="text"
+          formControlName="email"
+          placeholder="Email"/>
+        <span
+          *ngIf="!competitorRegistrationForm.get('email').valid && competitorRegistrationForm.get('email').touched"
+          class="help-block">
+        </span>
+      </mat-form-field >
+
+      <mat-form-field class="w-50 white">
+        <input
+          matInput
+          type="text"
+          formControlName="phone"
+          placeholder="Teléfono"/>
+      </mat-form-field>
+
+      <br/>
+    <button mat-raised-button color="primary" type="submit">Listo</button>
+  </form>
+
+</mat-dialog-content>

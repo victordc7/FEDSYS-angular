@@ -1,11 +1,9 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { FormControl, FormArray, FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormControl, FormGroup,  Validators } from '@angular/forms';
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material";
 
-import { Competitor } from '../../../models/competitor.model';
-import { Category } from '../../../models/category.model';
 import { Judge } from '../../../models/judge.model';
-import { ServiceService } from 'src/app/service.service';
+
 
 @Component({
   selector: 'app-reg-judges',
@@ -16,7 +14,6 @@ export class RegJudgesComponent implements OnInit {
   judgesRegistrationForm: FormGroup;
 
   constructor(
-    private serverService: ServiceService,
     private dialogRef: MatDialogRef<RegJudgesComponent>,
     @Inject(MAT_DIALOG_DATA) public data
   ) { }
@@ -33,31 +30,31 @@ export class RegJudgesComponent implements OnInit {
       /**
     * Form creation and class variables initialization
     */
-  this.judgesRegistrationForm =  new FormGroup({
-      'firstName': new FormControl(null),
-      'lastName': new FormControl(null),
-      'personalId': new FormControl(null),
-      'email': new FormControl(null),
-      'age': new FormControl(null),
-      'city': new FormControl(null),
-      'charge': new FormControl(null)
+    this.judgesRegistrationForm =  new FormGroup({
+        'firstName': new FormControl(null),
+        'lastName': new FormControl(null),
+        'personalId': new FormControl(null),
+        'email': new FormControl(null),
+        'age': new FormControl(null),
+        'city': new FormControl(null),
+        'charge': new FormControl(null)
+      });
+
+    this.judgesRegistrationForm.setValue({
+      'firstName': '',
+      'lastName': '',
+      'personalId': '',
+      'email': '',
+      'age': '',
+      'city': '',
+      'charge': '',
     });
 
-  this.judgesRegistrationForm.setValue({
-    'firstName': '',
-    'lastName': '',
-    'personalId': '',
-    'email': '',
-    'age': '',
-    'city': '',
-    'charge': '',
-  });
-
-  this.judgesRegistrationForm.valueChanges.subscribe(
-    (value) => console.log(value)
-  );
-  this.setFormControlsValidators();
-}
+    this.judgesRegistrationForm.valueChanges.subscribe(
+      (value) => console.log(value)
+    );
+    this.setFormControlsValidators();
+  }
 
   private setFormControlsValidators() {
     const numberRegEx = /^[0-9]+$/;
@@ -97,7 +94,7 @@ export class RegJudgesComponent implements OnInit {
       city: result.city,
       charge: result.charge
     };
-    console.log("Here the competitor object" + requestBody)
+    console.log("Here the competitor object" + requestBody);
     return requestBody;
   }
 
@@ -108,7 +105,7 @@ export class RegJudgesComponent implements OnInit {
 
     if (this.judgesRegistrationForm.status === 'VALID'){
       const body = {
-        mutation:` {
+        mutation: ` {
           createUser(input: {
             firstName: ${form.firstName},
             lastName:${form.lastName} ,
@@ -126,10 +123,10 @@ export class RegJudgesComponent implements OnInit {
       this.judgesRegistrationForm.reset();
     }
 
-  return ;
+    return;
   }
 
-  close():void {
+  close(): void {
   this.dialogRef.close();
   }
 }

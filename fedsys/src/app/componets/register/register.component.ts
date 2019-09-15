@@ -1,9 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { MatDialog } from "@angular/material";
 
 import { Judge } from '../../models/judge.model';
-import { Competitor } from '../../models/competitor.model';
-import { Category } from '../../models/category.model';
 import { ServiceService } from 'src/app/service.service';
 import { RegCategoriesComponent } from './reg-categories/reg-categories.component';
 import { RegCompetidoresComponent } from './reg-competidores/reg-competidores.component';
@@ -16,59 +14,36 @@ import { RegJudgesComponent } from './reg-judges/reg-judges.component';
 })
 
 export class RegisterComponent implements OnInit {
-
-  public competitors: Competitor[] = [];
+  @Input() tournamentType;
+  public competitors = [];
   public judges: Judge[] = [];
-  // public categoriesArray= [];
-
-  // public categoriesArray: Category[] = [
-  //   new Category(
-  //     1,
-  //     'Fisico Culturismo',
-  //     1,
-  //     null
-  //   ),
-  //   new Category(
-  //     2,
-  //     'Bikini',
-  //     1,
-  //     null
-  //   ),
-  //   new Category(
-  //     3,
-  //     'Fisicoculturismo junior',
-  //     2,
-  //     1
-  //   ),
-  //   new Category(
-  //     4,
-  //     'Bikini Masculino',
-  //     2,
-  //     2
-  //   )
-  // ];
-
+  private body;
   public categoriesArray = [];
+  public subcategoriesArray = [];
+
   constructor(
     private serverService: ServiceService,
     public dialog: MatDialog
   ) { }
 
   ngOnInit() {
-
-    const body = {
+    console.log(this.tournamentType)
+    this.body = {
       query:` query {
         categories
-        { name
+        { _id
           number
-        }
+          name
+        },
       }`
     };
 
-    this.serverService.graphql(body)
+    // Initialize categories and subcategories
+    this.serverService.graphql(this.body)
     .subscribe(res => {
       console.log(res);
       this.categoriesArray.push(res['data']['categories']);
+      // this.categoriesArray.push(res['data']['subcategories']);
       console.log(this.categoriesArray)
     });
   }
@@ -77,12 +52,16 @@ export class RegisterComponent implements OnInit {
 
     const dialogRef = this.dialog.open(RegCategoriesComponent, {
       width: '50%',
-      data: this.categoriesArray
+      data: this.categoriesArray[0]
     });
     // console.log('hello' + dialogRef.data);
     dialogRef.afterClosed().subscribe(result => {
         console.log("Dialog output:", result)
-        this.createCategory(result)
+        if (result.level === 'Sub-category'){
+          this.createSubcategory(result);
+        } else {
+          this.createCategory(result);
+        }
       });
   }
 
@@ -90,13 +69,13 @@ export class RegisterComponent implements OnInit {
 
     const dialogRef = this.dialog.open(RegCompetidoresComponent, {
       width: '50%',
-      data: this.categoriesArray
+      data: this.subcategoriesArray[0]
     });
     // console.log('hello' + dialogRef.data);
     dialogRef.afterClosed().subscribe(result => {
         console.log("Dialog output:", result)
-        this.competitors.push(result);
-        // this.serverService.graphql(body).subscribe(res => console.log(res));
+        this.splitCompetitorByCategory(result);
+        // this.serverService.graphql(this.body).subscribe(res => console.log(res));
       });
   }
 
@@ -104,7 +83,7 @@ export class RegisterComponent implements OnInit {
 
     const dialogRef = this.dialog.open(RegJudgesComponent, {
       width: '50%',
-      data: this.categoriesArray
+      data: this.categoriesArray[0]
     });
     // console.log('hello' + dialogRef.data);
     dialogRef.afterClosed().subscribe(result => {
@@ -113,23 +92,41 @@ export class RegisterComponent implements OnInit {
       });
   }
 
-  createCategory(form) {
-    const body = {
+  createSubcategory(form) {
+    this.body = {
       query: `mutation {
         createCategory(input: {
-          number: ${form.number}
           name: "${form.name}"
-          level: ${form.level}
           parent: ${form.parent}
-        }) {
-          number
+        }) {.
+          _id
           name
         }
       }`
     };
-
     // Llamada a servicio
-    this.serverService.graphql(body)
+    this.serverService.graphql(this.body)
+    .subscribe(res => {
+      console.log(res);
+      this.subcategoriesArray.push(res['data']['createSubcategory']);
+    });
+  }
+
+  createCategory(form) {
+
+      this.body = {
+        query: `mutation {
+          createCategory(input: {
+            name: "${form.name}"
+          }) {
+            _id
+            name
+          }
+        }`
+      };
+
+      // Llamada a servicio
+      this.serverService.graphql(this.body)
       .subscribe(res => {
         console.log(res);
         this.categoriesArray.push(res['data']['createCategory']);
@@ -137,43 +134,64 @@ export class RegisterComponent implements OnInit {
   }
 
 
+  splitCompetitorByCategory(form) {
 
-  createCompetitor(form) {
-    const body = {
-      query: `mutation {
-        createCompetitor(input: {
-          firstName: "${form.firstName}",
-          lastName:"${form.lastName}" ,
-          athlete: ${form.athlete},
-          personalId: ${form.personalId},
-          age: ${form.age},
-          gender: "${form.gender}",
-          city: "${form.city}",
-          categories:${form.categories},
-          email: "${form.email}",
-          phone: ${form.phone},
-        }) {
-          firstName
-          lastName
-          athlete
-          personalId
-          age
-          gender
-          categories
-        }
-      }`
+    for (let i = 0; i < form.categories.length; i++) {
+      const competitor = {
+        firstName: form.firstName,
+        lastName: form.lastName,
+        personalId: form.personalId,
+        age: form.age,
+        gender: form.gender,
+        city: form.city,
+        category: form.categories[i],
+        email: form.email,
+        phone: form.phone,
+      }
+      this.competitors.push(competitor);
     }
+    this.modifyTourney(this.competitors);
+  }
 
+  modifyTourney(modification) {
+    if(modification === this.competitors){
+      this.body = {
+        query: `mutation {
+          updateTourney(input: {
+            competitors: "${modification}"
+          }) {
+            _id
+            competitors
+          }
+        }`
+      };
+    } else if(modification === this.categoriesArray) {
+      this.body = {
+        query: `mutation {
+          updateTourney(input: {
+            categories: "${modification}"
+          }) {
+            _id
+            categories
+          }
+        }`
+      };
+    } else if(modification === this.subcategoriesArray){
+      this.body = {
+        query: `mutation {
+          updateTourney(input: {
+            subcategories: "${modification}"
+          }) {
+            _id
+            categories
+          }
+        }`
+      };
+    }
     // Llamada a servicio
-    this.serverService.graphql(body)
-      .subscribe(res => {
-        if(res['data']){
-          console.log(res);
-          this.categoriesArray.push(res['data']['createCompetitor']);
-        } else {
-          return
-        }
-        return
-      });
+    this.serverService.graphql(this.body)
+    .subscribe(res => {
+      console.log(res);
+    });
   }
 }
