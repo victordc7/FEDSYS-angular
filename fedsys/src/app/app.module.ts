@@ -22,6 +22,7 @@ import { RegCategoriesComponent } from './componets/register/reg-categories/reg-
 import { RegisterComponent } from './componets/register/register.component';
 import { NewTourneyComponent } from './componets/new-tourney/new-tourney.component';
 import { PreRegistrationComponent } from './componets/pre-registration/pre-registration.component';
+import { NavbarComponent } from './navbar/navbar.component';
 
 
 @NgModule({
@@ -36,6 +37,7 @@ import { PreRegistrationComponent } from './componets/pre-registration/pre-regis
     RegJudgesComponent,
     NewTourneyComponent,
     PreRegistrationComponent,
+    NavbarComponent,
   ],
 
   imports: [
