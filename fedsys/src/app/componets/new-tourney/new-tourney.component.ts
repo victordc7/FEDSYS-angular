@@ -16,7 +16,9 @@ export class NewTourneyComponent implements OnInit {
   public tournamentsArray = [];
   public started = false;
 
-  constructor(private serverService: ServiceService,
+  constructor(
+    private serverService: ServiceService,
+    private router: Router,
     ) { }
 
   ngOnInit() {
@@ -70,9 +72,9 @@ export class NewTourneyComponent implements OnInit {
     this.started = false;
     // this.router.navigate(['nuevo_torneo']);
   }
-
   onStart() {
-    // this.started = false;
+    // this.creatTourney();
+    this.router.navigate(['tabla']);
   }
 
 }

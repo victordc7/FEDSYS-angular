@@ -44,16 +44,16 @@
 
 <button
   mat-raised-button
-  (click)="onStart()"
-  routerLink="tabla"
-  *ngIf="started">
-  Empezar
-</button>
-
-<button
-  mat-raised-button
   (click)="onBack()"
   *ngIf="started">
   Atrás
 </button>
 
+<button
+  mat-raised-button
+  color="primary"
+  (click)="onStart()"
+  routerLink="tabla"
+  *ngIf="started">
+  Empezar
+</button>

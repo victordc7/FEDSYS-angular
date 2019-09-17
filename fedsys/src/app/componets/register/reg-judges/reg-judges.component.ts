@@ -2,6 +2,7 @@ import { Component, OnInit, Inject } from '@angular/core';
 import { FormControl, FormGroup,  Validators } from '@angular/forms';
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material";
 
+import { ServiceService } from 'src/app/service.service';
 import { Judge } from '../../../models/judge.model';
 
 
@@ -12,42 +13,49 @@ import { Judge } from '../../../models/judge.model';
 })
 export class RegJudgesComponent implements OnInit {
   judgesRegistrationForm: FormGroup;
+  public judgesArray = [];
 
   constructor(
+    private serverService: ServiceService,
     private dialogRef: MatDialogRef<RegJudgesComponent>,
-    @Inject(MAT_DIALOG_DATA) public data
+    @Inject(MAT_DIALOG_DATA) public categoriesArray
   ) { }
 
   ngOnInit() {
       const body = {
-        query:` {
-          categories
+        query: ` query {
+          judges
+          { _id
+            firstName
+          }
         }`
       }
 
     // this.categoriesArray =  this.serverService.graphql(body).subscribe(res => console.log(res));
-
+    // Initialize judges
+    this.serverService.graphql(body)
+    .subscribe(res => {
+      this.judgesArray.push(res['data']['judges']);
+    });
       /**
     * Form creation and class variables initialization
     */
     this.judgesRegistrationForm =  new FormGroup({
         'firstName': new FormControl(null),
         'lastName': new FormControl(null),
-        'personalId': new FormControl(null),
+        'personalID': new FormControl(null),
         'email': new FormControl(null),
         'age': new FormControl(null),
         'city': new FormControl(null),
-        'charge': new FormControl(null)
       });
 
     this.judgesRegistrationForm.setValue({
       'firstName': '',
       'lastName': '',
-      'personalId': '',
+      'personalID': '',
       'email': '',
       'age': '',
       'city': '',
-      'charge': '',
     });
 
     this.judgesRegistrationForm.valueChanges.subscribe(
@@ -70,9 +78,9 @@ export class RegJudgesComponent implements OnInit {
       if (key !== 'email') {
         const validators = [Validators.required];
         if (key === 'firstName' || key === 'lastName' ||
-                  key === 'city' || key === 'charge') {
+                  key === 'city' ) {
           validators.push(Validators.pattern(nameRegEx));
-        } else if (key === 'personalId') {
+        } else if (key === 'personalID') {
           validators.push(Validators.pattern(numberRegEx));
         }
         this.judgesRegistrationForm.get(key).setValidators(validators);
@@ -88,11 +96,10 @@ export class RegJudgesComponent implements OnInit {
     const requestBody: Object = {
       firstName: result.firstName,
       lastName: result.lastName,
-      personalId: result.personalId,
+      personalID: result.personalID,
       email: result.email,
       age: result.age,
-      city: result.city,
-      charge: result.charge
+      city: result.city
     };
     console.log("Here the competitor object" + requestBody);
     return requestBody;
@@ -104,19 +111,18 @@ export class RegJudgesComponent implements OnInit {
     console.log(this.judgesRegistrationForm);
 
     if (this.judgesRegistrationForm.status === 'VALID'){
-      const body = {
-        mutation: ` {
-          createUser(input: {
-            firstName: ${form.firstName},
-            lastName:${form.lastName} ,
-            personalId: ${form.personalId},
-            email: ${form.email},
-            age: ${form.age},
-            city: ${form.city},
-            charge: ${form.charge},
-          })
-        }`
-      }
+      // const body = {
+      //   mutation: ` {
+      //     createJudge(input: {
+      //       firstName: "${form.firstName}",
+      //       lastName: "${form.lastName}",
+      //       personalID: ${form.personalID},
+      //       email: "${form.email}",
+      //       age: ${form.age},
+      //       city: "${form.city}",
+      //     })
+      //   }`
+      // }
       // this.serverService.graphql(body)
       //   .subscribe(res => {console.log(res)})
       this.dialogRef.close(form);

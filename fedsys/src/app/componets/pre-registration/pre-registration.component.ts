@@ -100,7 +100,7 @@ export class PreRegistrationComponent implements OnInit {
     .subscribe(res => {
       console.log("dentro del request")
       console.log(res);
-      this.subcategoriesArray.push(res['data']['createSubcategory']);
+      this.subcategoriesArray[0].push(res['data']['createSubcategory']);
     });
   }
 
@@ -134,8 +134,6 @@ export class PreRegistrationComponent implements OnInit {
           deleteTourneyType(_id:"${tourneyID}"){
             _id
             name
-            createdAt
-            updatedAt
           }
         }`
       };
@@ -148,8 +146,6 @@ export class PreRegistrationComponent implements OnInit {
           deleteCategory(_id:"${categoryID}"){
             _id
             name
-            createdAt
-            updatedAt
           }
         }`
       };
