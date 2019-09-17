@@ -15,8 +15,10 @@ export class TableComponent implements OnInit {
     {numero: 3, nombre: 'Luis'},
     {numero: 4, nombre: 'Ramon'},
     {numero: 5, nombre: 'Jorge'},
-    // {numero: 6, nombre: 'Matias'},
-    // {numero: 7, nombre: 'Laura'},
+    {numero: 6, nombre: 'Matias'},
+    {numero: 7, nombre: 'Laura'},
+    {numero: 8, nombre: 'Matias'},
+    {numero: 9, nombre: 'Laura'},
   ]
   competidores = [
     {numero: 1, nombre: 'Juan', apellido: 'Lopez', estado: 'Barinas', resultados: [], subtotal1: 0, subtotal2: 0, total: 0, lugar: 0, empate: 0},
@@ -101,7 +103,7 @@ export class TableComponent implements OnInit {
       this.desempatar(this.posicionesEmpate);
     }
   }
-  
+
   calcResultadosFinal() {
     this.isCalc = true;
     this.reiciarTachados(this.competidores);
@@ -127,7 +129,7 @@ export class TableComponent implements OnInit {
   }
 
   calcularTotales(array, aTachar, tipo) {
-    array.forEach(competidor => { 
+    array.forEach(competidor => {
       this.tacharResultados(aTachar, competidor, tipo);
 
       competidor.subtotal1 = 0;
@@ -159,7 +161,7 @@ export class TableComponent implements OnInit {
     });
     for (let index = 0; index < cantidad; index++) {
       competidor.resultados[index].juez[tipo] = false;
-      competidor.resultados[competidor.resultados.length - index - 1].juez[tipo] = false;  
+      competidor.resultados[competidor.resultados.length - index - 1].juez[tipo] = false;
     }
     competidor.resultados.sort(function (a, b) {
       if (a.numero > b.numero) {
@@ -219,13 +221,13 @@ export class TableComponent implements OnInit {
         this.calcularTotales(posEmp, 2, 'libre');
       } else {
         this.calcularTotales(posEmp, 2, 'comparacion');
-      } 
+      }
     } else if (this.jueces.length === 7 || this.jueces.length === 8) {
       if (posEmp[0].empate === 2 || this.tabla === 'salida1') {
         this.calcularTotales(posEmp, 3, 'libre');
       } else {
         this.calcularTotales(posEmp, 3, 'comparacion');
-      } 
+      }
     } else if (this.jueces.length === 9) {
       if (posEmp[0].empate === 2 || this.tabla === 'salida1') {
         this.calcularTotales(posEmp, 4, 'libre');

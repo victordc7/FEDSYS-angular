@@ -2,7 +2,6 @@ import { Component, OnInit, Inject } from '@angular/core';
 import { FormControl, FormArray, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material";
 
-import { Category } from '../../../models/category.model';
 import { ServiceService } from 'src/app/service.service';
 import { TourneyType } from 'src/app/models/tourney-type.model';
 
@@ -17,7 +16,7 @@ export class RegTourneyComponent implements OnInit {
   constructor(
     private serverService: ServiceService,
     private dialogRef: MatDialogRef<RegTourneyComponent>,
-    @Inject(MAT_DIALOG_DATA) public categoriesArray
+    @Inject(MAT_DIALOG_DATA) public subcategoriesArray
   ) { }
 
 
@@ -72,18 +71,7 @@ export class RegTourneyComponent implements OnInit {
     console.log(this.tourneyRegistrationForm);
 
     if (this.tourneyRegistrationForm.status === 'VALID'){
-          // Llamada a servicio
-          const body = {
-            mutation:` {
-              createTourneyType(input: {
-                number: ${form.number},
-                name:${form.name} ,
-                categories:${form.categories}
-              })
-            }`
-          }
-          // this.serverService.graphql(body)
-          //   .subscribe(res => {console.log(res)})
+
           this.dialogRef.close(form);
           this.tourneyRegistrationForm.reset();
         }
