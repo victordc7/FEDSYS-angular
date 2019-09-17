@@ -1,5 +1,5 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { FormControl, FormArray, FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormControl, FormArray, FormGroup, Validators } from '@angular/forms';
 import {MAT_DIALOG_DATA, MatDialogRef, MatDialog} from "@angular/material";
 
 import { Competitor } from '../../../models/competitor.model';
@@ -34,18 +34,15 @@ export class RegCompetidoresComponent implements OnInit {
       query:` query {
         competitors
         { _id
-          number
-          name
-        },
+          firstName
+        }
       }`
     };
 
     // Initialize competitors
     this.serverService.graphql(body)
     .subscribe(res => {
-      console.log(res);
       this.competitorsArray.push(res['data']['competitors']);
-      console.log(this.competitorsArray)
     });
     /**
     * Form creation and class variables initialization
@@ -53,7 +50,7 @@ export class RegCompetidoresComponent implements OnInit {
     this.competitorRegistrationForm =  new FormGroup({
         'firstName': new FormControl(null),
         'lastName': new FormControl(null),
-        'personalId': new FormControl(null),
+        'personalID': new FormControl(null),
         'age': new FormControl(null),
         'gender': new FormControl('male'),
         'city': new FormControl(null),
@@ -65,7 +62,7 @@ export class RegCompetidoresComponent implements OnInit {
     this.competitorRegistrationForm.setValue({
         'firstName': '',
         'lastName': '',
-        'personalId': '',
+        'personalID': '',
         'age': '',
         'gender': '',
         'city': '',
@@ -96,7 +93,7 @@ export class RegCompetidoresComponent implements OnInit {
         if (key === 'firstName' || key === 'lastName' ||
                    key === 'city' || key === '') {
           validators.push(Validators.pattern(nameRegEx));
-        } else if (key === 'personalId') {
+        } else if (key === 'personalID') {
           validators.push(Validators.pattern(numberRegEx));
         }
         this.competitorRegistrationForm.get(key).setValidators(validators);
@@ -113,7 +110,7 @@ export class RegCompetidoresComponent implements OnInit {
     const requestBody: Object = {
       firstName: result.firstName,
       lastName: result.lastName,
-      personalId: result.personalId,
+      personalID: result.personalID,
       age: result.age,
       gender: result.gender,
       city: result.city,
@@ -149,20 +146,19 @@ export class RegCompetidoresComponent implements OnInit {
         createCompetitor(input: {
           firstName: "${form.firstName}",
           lastName:"${form.lastName}" ,
-          personalId: ${form.personalId},
+          personalID: ${form.personalID},
           age: ${form.age},
           gender: "${form.gender}",
           city: "${form.city}",
           email: "${form.email}",
-          phone: ${form.phone},
+          phone: "${form.phone}",
         }) {
           firstName
           lastName
           athlete
-          personalId
+          personalID
           age
           gender
-          categories
         }
       }`
     }
@@ -185,7 +181,7 @@ export class RegCompetidoresComponent implements OnInit {
     this.competitorRegistrationForm.setValue({
       'firstName': `${form.firstName}`,
       'lastName': `${form.lastName}`,
-      'personalId': `${form.personalId}`,
+      'personalID': `${form.personalID}`,
       'age': `${form.age}`,
       'gender': `${form.gender}`,
       'city': `${form.city}`,
@@ -219,7 +215,7 @@ export class RegCompetidoresComponent implements OnInit {
 
   close():void {
     if (this.competitorRegistrationForm.status === 'VALID'){
-      this.dialogRef.close();
+      this.dialogRef.close(null);
     }
   }
 }

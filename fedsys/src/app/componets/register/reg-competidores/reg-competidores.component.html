@@ -50,7 +50,7 @@
           <input
             matInput
             type="text"
-            formControlName="personalId"
+            formControlName="personalID"
             placeholder="Numero de identidad"/>
           </mat-form-field>
 
@@ -111,7 +111,7 @@
                   *ngFor="let item of categoriesArray"
                   [value]="item"
                   required>
-                  {{item['number']}} - {{item['name']}}
+                  {{item['name']}}/{{item['name']}}
                 </mat-option>
               </mat-select>
               <button

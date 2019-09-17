@@ -32,9 +32,12 @@ export class RegisterComponent implements OnInit {
       query:` query {
         categories
         { _id
-          number
           name
         },
+        subcategories
+        { _id
+          name
+        }
       }`
     };
 
@@ -43,7 +46,7 @@ export class RegisterComponent implements OnInit {
     .subscribe(res => {
       console.log(res);
       this.categoriesArray.push(res['data']['categories']);
-      // this.categoriesArray.push(res['data']['subcategories']);
+      this.subcategoriesArray.push(res['data']['subcategories']);
       console.log(this.categoriesArray)
     });
   }
@@ -69,11 +72,11 @@ export class RegisterComponent implements OnInit {
 
     const dialogRef = this.dialog.open(RegCompetidoresComponent, {
       width: '50%',
-      data: this.subcategoriesArray[0]
+      data: this.subcategoriesArray[0],
     });
     // console.log('hello' + dialogRef.data);
     dialogRef.afterClosed().subscribe(result => {
-        console.log("Dialog output:", result)
+        console.log("Dialog competitor output:", result)
         this.splitCompetitorByCategory(result);
         // this.serverService.graphql(this.body).subscribe(res => console.log(res));
       });
@@ -95,18 +98,20 @@ export class RegisterComponent implements OnInit {
   createSubcategory(form) {
     this.body = {
       query: `mutation {
-        createCategory(input: {
+        createSubcategory(input: {
           name: "${form.name}"
-          parent: ${form.parent}
-        }) {.
+          parent: "${form.parent}"
+        }) {
           _id
           name
         }
       }`
     };
+    console.log('fuera  del request')
     // Llamada a servicio
     this.serverService.graphql(this.body)
     .subscribe(res => {
+      console.log("dentro del request")
       console.log(res);
       this.subcategoriesArray.push(res['data']['createSubcategory']);
     });

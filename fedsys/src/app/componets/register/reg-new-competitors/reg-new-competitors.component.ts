@@ -27,7 +27,7 @@ export class RegNewCompetitorsComponent implements OnInit {
     this.competitorRegistrationForm =  new FormGroup({
       'firstName': new FormControl(null),
       'lastName': new FormControl(null),
-      'personalId': new FormControl(null),
+      'personalID': new FormControl(null),
       'age': new FormControl(null),
       'gender': new FormControl('male'),
       'city': new FormControl(null),
@@ -38,7 +38,7 @@ export class RegNewCompetitorsComponent implements OnInit {
     this.competitorRegistrationForm.setValue({
       'firstName': '',
       'lastName': '',
-      'personalId': '',
+      'personalID': '',
       'age': '',
       'gender': '',
       'city': '',
@@ -68,7 +68,7 @@ export class RegNewCompetitorsComponent implements OnInit {
         if (key === 'firstName' || key === 'lastName' ||
                    key === 'city' || key === '') {
           validators.push(Validators.pattern(nameRegEx));
-        } else if (key === 'personalId') {
+        } else if (key === 'personalID') {
           validators.push(Validators.pattern(numberRegEx));
         }
         this.competitorRegistrationForm.get(key).setValidators(validators);
@@ -84,7 +84,7 @@ export class RegNewCompetitorsComponent implements OnInit {
     const requestBody: Object = {
       firstName: result.firstName,
       lastName: result.lastName,
-      personalId: result.personalId,
+      personalID: result.personalID,
       age: result.age,
       gender: result.gender,
       city: result.city,

@@ -13,7 +13,7 @@
       matInput
       type="text"
       formControlName="number"
-      placeholder="Category Number"
+      placeholder="Numero del tipo de torneo"
       style="padding-right: 5px"/>
     <mat-error>
 
@@ -28,7 +28,7 @@
         matInput
         type="text" color="primary"
         formControlName="name"
-        placeholder="Category Name"
+        placeholder="Nombre del tipo de torneo"
         />
       <mat-error>
 
@@ -38,12 +38,12 @@
   <br/>
 
 <div formArrayName="categories">
-  <h4>Categories/Categorias</h4>
+  <h4>Categorias</h4>
     <mat-form-field
       class="row"
       style="padding-right: 5px"
       *ngFor="let categoriesControl of tourneyRegistrationForm.get('categories')['controls']; let i = index">
-      <mat-label> -- Select a category/Elija una categoría -- </mat-label>
+      <mat-label> -- Elija una categoría -- </mat-label>
       <mat-select
         class="col-10"
         id="categories"
@@ -51,8 +51,8 @@
         [formControlName]="i"
         required>
         <mat-option
-          *ngFor="let item of categoriesArray"
-          [value]="item"
+          *ngFor="let item of subcategoriesArray"
+          [value]="item._id"
           required>
           {{item.number}} - {{item.name}}
         </mat-option>
@@ -80,7 +80,7 @@
   color="primary"
   class="btn btn-primary"
   type="submit">
-    Submit
+    Aceptar
 </button>
 </form>
 

@@ -6,11 +6,23 @@
 <hr/>
 <br/>
 <div class="col-xs-12"
-    *ngFor="let category of categoriesArray; let i = index"
+    *ngFor="let category of categoriesArray[0]; let i = index"
     index="i">
-    <h4 class="list-group-item-heading" *ngIf="category[i]">{{ category[i]['number'] }} - {{ category[i]['name'] }}</h4>
+    <h4
+      class="list-group-item-heading"
+      *ngIf="category">
+      {{ i + 1 }} - {{ category['name'] }}
+      <span
+        (click)="deleteItem(i,'category')"
+        style="cursor: pointer">
+        <mat-icon>
+          cancel
+        </mat-icon>
+      </span>
+    </h4>
 </div>
 
+<br>
 <button mat-raised-button (click)="addTourneyType()">
   Agregar tipo de torneo
 </button>
@@ -19,11 +31,23 @@
 <hr/>
 <br/>
 <div class="col-xs-12"
-    *ngFor="let type of tourneyType; let i = index"
+    *ngFor="let type of tourneyType[0]; let i = index"
     index="i">
-    <h4 class="list-group-item-heading">{{ type.number }} {{ type.name }}</h4>
+    <h4
+      class="list-group-item-heading">
+      {{ type.number }} {{ type.name }}
+      <span
+        (click)="deleteItem(i,'tourney')"
+        style="cursor: pointer">
+        <mat-icon>
+          cancel
+        </mat-icon>
+      </span>
+    </h4>
+
     <div class="col-xs-12"
-    *ngFor="let category of type.categories; let i = index"
+    *ngFor="let subcategory of type.subcategories; let i = index"
     index="i">
-      <p class="list-group-item-text">{{ type.category.number }} - {{ type.category.name }} </p>
+      <p class="list-group-item-text"> - {{ subcategory.name }} </p>
+
 </div>

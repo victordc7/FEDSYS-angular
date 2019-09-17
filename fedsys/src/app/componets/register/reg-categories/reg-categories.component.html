@@ -48,7 +48,7 @@
                 <mat-option [value]="null">None</mat-option>
                 <mat-option
                   *ngFor="let item of categoriesArray; let i = index"
-                  [value]="item"
+                  [value]="item._id"
                   required>
                   {{i+1}} - {{item.name}}
                 </mat-option>

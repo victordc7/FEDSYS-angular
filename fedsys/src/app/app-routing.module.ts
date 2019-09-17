@@ -23,9 +23,9 @@ const routes: Routes = [
   {
     path: 'nuevo_torneo',
     component: NewTourneyComponent,
-    children: [
-      { path: 'registro', component: RegisterComponent }
-    ]
+    // children: [
+    //   { path: 'registro', component: RegisterComponent }
+    // ]
   },
   { path: '**', redirectTo: 'inicio' },
 ];

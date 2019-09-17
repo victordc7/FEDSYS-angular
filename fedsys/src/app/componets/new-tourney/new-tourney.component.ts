@@ -11,35 +11,40 @@ import { ServiceService } from 'src/app/service.service';
 })
 export class NewTourneyComponent implements OnInit {
   public tourneyRegistrationForm: FormGroup;
-  public selectedTourney: {type: string, categories: Array<string>};
+  public selectedTourney: {_id: string, name: string, subcategories: Array<string>};
 
   public tournamentsArray = [];
   public started = false;
 
   constructor(private serverService: ServiceService,
-              private router: Router,
-              private route: ActivatedRoute
     ) { }
 
   ngOnInit() {
 
     this.started = false;
-    this.selectedTourney = { type: 'A', categories: ['Fisico', 'fitness']};
+    this.selectedTourney = { _id: '', name: '', subcategories: []};
 
     /**
     * Initial request body
     */
     const body = {
       query: `{
-        getTourney{
-          type: ,
-          categories: ,
+        tourneyTypes{
+          _id
+          name
+          subcategories{
+            _id
+            name
+          }
         }
       }`
     };
     this.serverService.graphql(body)
       .subscribe(res => {
-        this.tournamentsArray.push(res);
+        console.log(res);
+        this.tournamentsArray.push(res['data']['tourneyTypes']);
+        console.log("AQUI")
+        console.log(this.tournamentsArray);
     });
 
         /**
@@ -48,13 +53,17 @@ export class NewTourneyComponent implements OnInit {
     this.tourneyRegistrationForm = new FormGroup({
       'type': new FormControl(null, [Validators.required]),
     });
+    this.tourneyRegistrationForm.valueChanges.subscribe(
+      (value) => console.log(value)
+    );
   }
 
   onNewTourney() {
     this.started = true;
-    // this.router.navigate(['registro'], {relativeTo: this.route});
-    // this.selectedTourney.type = this.tournamentsArray[this.tourneyRegistrationForm.value];
-    // this.selectedTourney.categories = this.tournamentsArray[this.tourneyRegistrationForm.value];
+    console.log(this.tourneyRegistrationForm.value.type._id);
+    this.selectedTourney._id = this.tourneyRegistrationForm.value.type._id;
+    this.selectedTourney.name = this.tourneyRegistrationForm.value.type.name;
+    this.selectedTourney.subcategories = this.tourneyRegistrationForm.value.type.subcategories;
   }
 
   onBack() {
@@ -64,7 +73,6 @@ export class NewTourneyComponent implements OnInit {
 
   onStart() {
     // this.started = false;
-    this.router.navigate(['tabla']);
   }
 
 }

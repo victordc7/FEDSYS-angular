@@ -3,7 +3,6 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef} from "@angular/material";
 
 import { Category } from '../../../models/category.model';
-import { ServiceService } from 'src/app/service.service';
 
 @Component({
   selector: 'app-reg-categories',
@@ -15,12 +14,9 @@ export class RegCategoriesComponent implements OnInit {
   categoryTypes = ['Category', 'Sub-category'];
 
   constructor(
-    private serverService: ServiceService,
     private dialogRef: MatDialogRef<RegCategoriesComponent>,
     @Inject(MAT_DIALOG_DATA) public categoriesArray) {
       console.log(categoriesArray)
-      // this.descripcion =  data.titulo;
-      // console.log(this.descripcion);
     }
 
   ngOnInit() {
