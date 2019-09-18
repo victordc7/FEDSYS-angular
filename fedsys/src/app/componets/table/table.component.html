@@ -37,9 +37,9 @@
         </thead>
         <tbody>
             <tr *ngFor="let competidor of competidores; let i=index" [style.background-color]="(clasificados >= competidor.lugar && competidor.lugar > 0) ? 'green' : 'white'">
-                <td>{{ competidor.numero }}</td>
-                <td>{{ competidor.nombre + ' ' + competidor.apellido }}</td>
-                <td>{{ competidor.estado }}</td>
+                <td>{{ competidor.athlete }}</td>
+                <td>{{ competidor.firstName + ' ' + competidor.lastName }}</td>
+                <td>{{ competidor.city }}</td>
                 <td *ngFor="let juez of jueces;  let a=index" [style.background-color]="competidor.resultados[a].juez.libre ? 'white' : 'grey'">
                     <input type="checkbox" style="max-width: 100px;;width: 80%; margin: 0 10%" [(ngModel)]="competidor.resultados[a].libre">
                 </td>
@@ -74,9 +74,9 @@
         </thead>
         <tbody>
             <tr *ngFor="let competidor of competidores; let i=index" [style.background-color]="(clasificados >= competidor.lugar && competidor.lugar > 0) ? 'green' : 'white'">
-                <td>{{ competidor.numero }}</td>
-                <td>{{ competidor.nombre + ' ' + competidor.apellido }}</td>
-                <td>{{ competidor.estado }}</td>
+                <td>{{ competidor.athlete }}</td>
+                <td>{{ competidor.firstName + ' ' + competidor.lastName }}</td>
+                <td>{{ competidor.city }}</td>
                 <td *ngFor="let juez of jueces;  let a=index" [style.background-color]="competidor.resultados[a].juez.libre ? 'white' : 'grey'">
                     <input style="max-width: 100px;;width: 80%; margin: 0 10%" [(ngModel)]="competidor.resultados[a].libre">
                 </td>
@@ -117,9 +117,9 @@
         </thead>
         <tbody>
             <tr *ngFor="let competidor of competidores; let i=index">
-                <td>{{ competidor.numero }}</td>
-                <td>{{ competidor.nombre + ' ' + competidor.apellido }}</td>
-                <td>{{ competidor.estado }}</td>
+                <td>{{ competidor.athlete }}</td>
+                <td>{{ competidor.firstName + ' ' + competidor.lastName }}</td>
+                <td>{{ competidor.city }}</td>
                 <td *ngFor="let juez of jueces;  let a=index" [style.background-color]="competidor.resultados[a].juez.libre ? 'white' : 'grey'">
                     <input style="width: 80%; margin: 0 10%" [(ngModel)]="competidor.resultados[a].libre">
                 </td>
