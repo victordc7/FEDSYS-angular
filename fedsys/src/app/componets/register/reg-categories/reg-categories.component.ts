@@ -1,9 +1,8 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef} from "@angular/material";
 
 import { Category } from '../../../models/category.model';
-import { ServiceService } from 'src/app/service.service';
 
 @Component({
   selector: 'app-reg-categories',
@@ -15,14 +14,9 @@ export class RegCategoriesComponent implements OnInit {
   categoryTypes = ['Category', 'Sub-category'];
 
   constructor(
-    // public _categoryService: CategoryService,
-    private  formBuilder: FormBuilder,
-    private serverService: ServiceService,
     private dialogRef: MatDialogRef<RegCategoriesComponent>,
     @Inject(MAT_DIALOG_DATA) public categoriesArray) {
       console.log(categoriesArray)
-      // this.descripcion =  data.titulo;
-      // console.log(this.descripcion);
     }
 
   ngOnInit() {
@@ -31,13 +25,11 @@ export class RegCategoriesComponent implements OnInit {
     * Form creation and class variables initialization
     */
     this.categoryRegistrationForm = new FormGroup({
-      'number': new FormControl(null, [Validators.required]),
       'name': new FormControl(null, [Validators.required]),
       'level': new FormControl('Category'),
       'parent': new FormControl(null)
     });
     this.categoryRegistrationForm.setValue({
-      'number': '',
       'name': '',
       'level': 'Category',
       'parent': ''
@@ -57,7 +49,6 @@ export class RegCategoriesComponent implements OnInit {
   private getRequestBody(): any {
     const result: Category = Object.assign({}, this.categoryRegistrationForm.value);
     const requestBody: Object = {
-      number: result.number,
       name: result.name,
       level: result.level,
       parent: result.parent || null

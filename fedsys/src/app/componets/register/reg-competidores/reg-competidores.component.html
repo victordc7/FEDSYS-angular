@@ -8,6 +8,13 @@
       <p>
         Ingrese los datos del competidor
       </p>
+      <br>
+      <p>
+        <span (click)="newCompetitor()" style="cursor: pointer"><mat-icon>add_circle_outline</mat-icon></span>
+        Crear nuevo usuario
+      </p>
+
+      <br>
 
         <mat-form-field
           class="w-50 black form-group"
@@ -38,23 +45,13 @@
         </mat-form-field>
 
         <mat-form-field
-          class="w-50 white"
-          style="padding-right: 5px">
-          <input
-            matInput
-            type="text"
-            formControlName="athlete"
-            placeholder="Athlete No/Atleta Nro"/>
-        </mat-form-field>
-
-        <mat-form-field
           class="w-50 white form-group"
           style="padding-right: 5px">
           <input
             matInput
             type="text"
-            formControlName="personalId"
-            placeholder="ID/Numero de identidad"/>
+            formControlName="personalID"
+            placeholder="Numero de identidad"/>
           </mat-form-field>
 
         <mat-form-field
@@ -64,7 +61,7 @@
             matInput
             type="text"
             formControlName="age"
-            placeholder="Age/Edad"/>
+            placeholder="Edad"/>
 
         </mat-form-field>
 
@@ -75,7 +72,7 @@
           aria-label="Select an option"
           style="padding-right: 5px">
 
-            <mat-label>Gender/Género</mat-label>
+            <mat-label>Género</mat-label>
             <br/>
             <mat-radio-button
               *ngFor="let gender of genders"
@@ -93,29 +90,28 @@
             matInput
             type="text"
             formControlName="city"
-            placeholder="City/Ciudad"/>
+            placeholder="Ciudad"/>
         </mat-form-field>
 
         <div formArrayName="categories">
-          <h4>Categories/Categorias</h4>
+          <h4>Categorias</h4>
             <mat-form-field
               class="row"
               style="padding-right: 5px"
               *ngFor="let categoriesControl of competitorRegistrationForm.get('categories')['controls']; let i = index">
 
-              <mat-label> -- Select a category/Elija una categoría -- </mat-label>
+              <mat-label> -- Elija una categoría -- </mat-label>
               <mat-select
                 class="col-10"
                 id="categories"
                 color="warn"
                 [formControlName]="i"
-
                 required>
                 <mat-option
                   *ngFor="let item of categoriesArray"
                   [value]="item"
                   required>
-                  {{item.number}} - {{item.name}}
+                  {{item['name']}}/{{item['name']}}
                 </mat-option>
               </mat-select>
               <button
@@ -157,11 +153,11 @@
             matInput
             type="text"
             formControlName="phone"
-            placeholder="Phone/Teléfono"/>
+            placeholder="Teléfono"/>
         </mat-form-field>
 
         <br/>
-      <button mat-raised-button color="primary" type="submit">Done/Listo</button>
+      <button mat-raised-button color="primary" type="submit">Listo</button>
     </form>
 
 </mat-dialog-content>

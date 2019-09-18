@@ -1,4 +1,21 @@
-
+<!-- <br>
+<div class="col-xs-12"
+*ngFor="let subcategory of subcategoriesArray; let i = index"
+index="i">
+<h4
+  class="list-group-item-heading">
+  {{ subcategory.firstName }} {{ subcategory.lastName }}
+  <span
+    (click)="deleteItem(i,'subcategories')"
+    style="cursor: pointer">
+    <mat-icon>
+      cancel
+    </mat-icon>
+  </span>
+</h4>
+<p class="list-group-item-text">{{ subcategory.personalId }}</p>
+</div>
+<br> -->
 <button mat-raised-button (click)="addCategory()">
   Agregar Categoria
 </button>
@@ -9,7 +26,17 @@
 <div class="col-xs-12"
     *ngFor="let competitor of competitors; let i = index"
     index="i">
-    <h4 class="list-group-item-heading">{{ competitor.firstName }} {{ competitor.lastName }}</h4>
+    <h4
+      class="list-group-item-heading">
+      {{ competitor.firstName }} {{ competitor.lastName }}s
+      <span
+        (click)="deleteItem(i,'competitor')"
+        style="cursor: pointer">
+        <mat-icon>
+          cancel
+        </mat-icon>
+      </span>
+    </h4>
     <p class="list-group-item-text">{{ competitor.personalId }}</p>
 </div>
 
@@ -21,11 +48,24 @@
 <hr/>
 <br/>
 <div class="col-xs-12"
-    *ngFor="let judge of judges; let i = index"
+    *ngFor="let judge of judges[0]; let i = index"
     index="i">
-    <h4 class="list-group-item-heading">{{ judge.firstName }} {{ judge.lastName }}</h4>
+    <h4
+      class="list-group-item-heading">
+      {{ judge.firstName }} {{ judge.lastName }}
+      <span
+        (click)="deleteItem(i,'judge')"
+        style="cursor: pointer">
+        <mat-icon>
+          cancel
+        </mat-icon>
+      </span>
+    </h4>
     <p class="list-group-item-text">{{ judge.personalId }}</p>
 </div>
 <button mat-raised-button (click)="addJudge()">
   Agregar Juez
 </button>
+<br>
+
+

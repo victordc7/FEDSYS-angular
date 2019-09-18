@@ -23,6 +23,7 @@ import { RegisterComponent } from './componets/register/register.component';
 import { NewTourneyComponent } from './componets/new-tourney/new-tourney.component';
 import { PreRegistrationComponent } from './componets/pre-registration/pre-registration.component';
 import { NavbarComponent } from './navbar/navbar.component';
+import { RegNewCompetitorsComponent } from './componets/register/reg-new-competitors/reg-new-competitors.component';
 
 
 @NgModule({
@@ -34,6 +35,7 @@ import { NavbarComponent } from './navbar/navbar.component';
     RegTourneyComponent,
     RegCategoriesComponent,
     RegCompetidoresComponent,
+    RegNewCompetitorsComponent,
     RegJudgesComponent,
     NewTourneyComponent,
     PreRegistrationComponent,
@@ -56,7 +58,8 @@ import { NavbarComponent } from './navbar/navbar.component';
     RegCategoriesComponent,
     RegCompetidoresComponent,
     RegJudgesComponent,
-    RegTourneyComponent
+    RegTourneyComponent,
+    RegNewCompetitorsComponent
   ],
 
   providers: [

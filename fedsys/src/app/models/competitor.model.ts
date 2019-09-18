@@ -1,8 +1,7 @@
 export class Competitor {
   firstName: string;
   lastName: string;
-  athlete: number;
-  personalId: number;
+  personalID: number;
   age: number;
   gender: string;
   city: string;
