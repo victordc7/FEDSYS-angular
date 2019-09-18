@@ -1,7 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { MatDialog } from "@angular/material";
 
-import { Judge } from '../../models/judge.model';
 import { ServiceService } from 'src/app/service.service';
 import { RegCategoriesComponent } from './reg-categories/reg-categories.component';
 import { RegCompetidoresComponent } from './reg-competidores/reg-competidores.component';
@@ -15,11 +14,17 @@ import { RegJudgesComponent } from './reg-judges/reg-judges.component';
 
 export class RegisterComponent implements OnInit {
   @Input() tournamentType;
-  public competitors = [];
-  public judges = [];
   private body;
+
+  // Global database categories and subcategories
   public categoriesArray = [];
   public subcategoriesArray = [];
+
+  // Local variables for the tourney
+  public categories = [];
+  public subcategories = [];
+  public competitors = [];
+  public judges = [];
 
   constructor(
     private serverService: ServiceService,
@@ -51,7 +56,7 @@ export class RegisterComponent implements OnInit {
     });
   }
 
-  addCategory() {
+  addCategory(action: string) {
 
     const dialogRef = this.dialog.open(RegCategoriesComponent, {
       width: '50%',
@@ -60,10 +65,17 @@ export class RegisterComponent implements OnInit {
     // console.log('hello' + dialogRef.data);
     dialogRef.afterClosed().subscribe(res => {
         console.log("Dialog output:", res)
-        if (res.level === 'Sub-category'){
-          this.createSubcategory(res);
-        } else {
-          this.createCategory(res);
+        if (action === "create"){
+          if (res.level === 'Sub-category'){
+            this.createSubcategory(res);
+          } else {
+            this.createCategory(res);
+        }} else {
+          if (res.level === 'Sub-category'){
+            this.subcategories.push(res);
+          } else {
+            this.categories.push(res);
+          }
         }
       });
   }
@@ -76,21 +88,19 @@ export class RegisterComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe(res => {
         console.log("Dialog competitor output:", res)
-        // this.splitCompetitorByCategory(result);
+        // this.splitCompetitorByCategory(res);
         this.competitors.push(res);
       });
   }
 
   addJudge() {
-
     const dialogRef = this.dialog.open(RegJudgesComponent, {
       width: '50%',
       data: this.categoriesArray[0]
     });
-    // console.log('hello' + dialogRef.data);
     dialogRef.afterClosed().subscribe(result => {
         console.log("Dialog output:", result);
-        this.creatJudge(result);
+        this.createJudge(result);
       });
   }
 
@@ -139,7 +149,7 @@ export class RegisterComponent implements OnInit {
     });
   }
 
-  creatJudge(form) {
+  createJudge(form) {
 
     this.body = {
       query: `mutation {
@@ -253,6 +263,53 @@ export class RegisterComponent implements OnInit {
   //   });
   // }
 
+  editItem(index, itemType, itemObject){
+    if(itemType === 'judge'){
+      const dialogRef = this.dialog.open(RegJudgesComponent, {
+        width: '50%',
+        data: itemObject
+      });
+      console.log('AQUIIIIII')
+      console.log(itemObject)
+      dialogRef.afterClosed().subscribe(res => {
+          console.log("Dialog output:", res);
+          // this.createJudge(result);
+        });
+    } else
+      if(itemType === 'competitor'){
+      const dialogRef = this.dialog.open(RegCompetidoresComponent, {
+        width: '50%',
+        data: itemObject
+      });
+      console.log('AQUIIIIII')
+      console.log(itemObject)
+      dialogRef.afterClosed().subscribe(res => {
+          console.log("Dialog output:", res);
+          // this.createJudge(result);
+      });
+    } else
+      if(itemType === 'category'){
+      const dialogRef = this.dialog.open(RegCategoriesComponent, {
+        width: '50%',
+        data: itemObject
+      });
+      dialogRef.afterClosed().subscribe(res => {
+          console.log("Dialog output:", res);
+          // this.createJudge(result);
+      });
+    } else
+    if(itemType === 'subcategory'){
+      const dialogRef = this.dialog.open(RegCategoriesComponent, {
+        width: '50%',
+        data: itemObject
+      });
+      dialogRef.afterClosed().subscribe(res => {
+          console.log("Dialog output:", res);
+          // this.createJudge(result);
+      });
+    }
+  }
+
   deleteItem(index, item){
 
       if(item === 'judge'){
@@ -260,6 +317,12 @@ export class RegisterComponent implements OnInit {
       } else
       if(item === 'competitor'){
         this.competitors.splice(index, 1);
+      } else
+      if(item === 'category'){
+        this.categories.splice(index, 1);
+      } else
+      if(item === 'subcategory'){
+        this.subcategories.splice(index, 1);
       }
   }
 

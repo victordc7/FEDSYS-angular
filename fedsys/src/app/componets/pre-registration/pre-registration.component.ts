@@ -110,6 +110,7 @@ export class PreRegistrationComponent implements OnInit {
         createCategory(input: {
           name: "${form.name}"
         }) {
+          _id
           name
         }
       }`

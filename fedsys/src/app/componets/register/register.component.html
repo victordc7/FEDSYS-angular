@@ -1,25 +1,36 @@
-<!-- <br>
+<br>
 <div class="col-xs-12"
-*ngFor="let subcategory of subcategoriesArray; let i = index"
+*ngFor="let subcategory of subcategories; let i = index"
 index="i">
 <h4
   class="list-group-item-heading">
-  {{ subcategory.firstName }} {{ subcategory.lastName }}
+  {{ subcategory.name }}
   <span
-    (click)="deleteItem(i,'subcategories')"
+    (click)="deleteItem(i,'subcategory')"
     style="cursor: pointer">
     <mat-icon>
       cancel
     </mat-icon>
   </span>
+  <span
+  (click)="editItem(i, 'subcategory', subcategory)"
+  style="cursor: pointer">
+  <mat-icon>
+    mode_edit
+  </mat-icon>
+</span>
 </h4>
-<p class="list-group-item-text">{{ subcategory.personalId }}</p>
+<!-- <p class="list-group-item-text">{{ subcategory.personalId }}</p> -->
 </div>
-<br> -->
-<button mat-raised-button (click)="addCategory()">
-  Agregar Categoria
-</button>
-
+<br>
+<div class="row">
+  <button mat-raised-button color="primary" (click)="addCategory('add')">
+    Agregar Categoria
+  </button>
+  <button mat-raised-button (click)="addCategory('create')">
+    Crear Categoria
+  </button>
+</div>
 <br/>
 <hr/>
 <br/>
@@ -28,7 +39,7 @@ index="i">
     index="i">
     <h4
       class="list-group-item-heading">
-      {{ competitor.firstName }} {{ competitor.lastName }}s
+      {{ competitor.firstName }} {{ competitor.lastName }}
       <span
         (click)="deleteItem(i,'competitor')"
         style="cursor: pointer">
@@ -36,6 +47,13 @@ index="i">
           cancel
         </mat-icon>
       </span>
+      <span
+      (click)="editItem(i, 'competitor', competitor)"
+      style="cursor: pointer">
+      <mat-icon>
+        mode_edit
+      </mat-icon>
+    </span>
     </h4>
     <p class="list-group-item-text">{{ competitor.personalId }}</p>
 </div>
@@ -60,6 +78,13 @@ index="i">
           cancel
         </mat-icon>
       </span>
+      <span
+      (click)="editItem(i, 'judge', judge)"
+      style="cursor: pointer">
+      <mat-icon>
+        mode_edit
+      </mat-icon>
+    </span>
     </h4>
     <p class="list-group-item-text">{{ judge.personalId }}</p>
 </div>
