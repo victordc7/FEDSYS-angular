@@ -1,9 +1,8 @@
 export class Judge {
   firstName: string;
   lastName: string;
-  email: string;
   personalID: number;
+  email: string;
   age: number;
   city: string;
-  charge: string;
 }

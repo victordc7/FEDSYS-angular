@@ -73,12 +73,13 @@ export class PreRegistrationComponent implements OnInit {
 
     const dialogRef = this.dialog.open(RegTourneyComponent, {
       width: '50%',
-      data: this.subcategoriesArray[0]
+      data: 'Add tourney'
     });
     // console.log('hello' + dialogRef.data);
-    dialogRef.afterClosed().subscribe(result => {
-        console.log("Dialog output:", result);
-        this.createTourneyType(result);
+    dialogRef.afterClosed().subscribe(res => {
+        console.log("Dialog output:", res);
+        this.updateTourney();
+        // this.tourneyType[0].push(res['data']['tourneyType']);
       });
   };
 
@@ -110,6 +111,7 @@ export class PreRegistrationComponent implements OnInit {
         createCategory(input: {
           name: "${form.name}"
         }) {
+          _id
           name
         }
       }`
@@ -167,28 +169,24 @@ export class PreRegistrationComponent implements OnInit {
     });
   }
 
-  createTourneyType(form){
+  updateTourney() {
     this.body = {
-      query: `mutation {
-        createTourneyType(input: {
-          number: ${form.number}
-          name:"${form.name}"
-          subcategories: "${form.categories}"
-        }){
+      query:` query {
+        tourneyTypes{
           number
           name
-          subcategories{name,parent{name}}
+          _id
+          subcategories{name}
         }
       }`
-    }
-     // Llamada a servicio
-     this.serverService.graphql(this.body)
-     .subscribe(res => {
-       console.log(res);
-       if(res['errors']){
-         return;
-       }
-       this.tourneyType[0].push(res['data']['tourneyType']);
-     });
+    };
+    this.serverService.graphql(this.body)
+    .subscribe(res => {
+      console.log(res)
+      this.tourneyType.push(res['data']['tourneyType']);
+    });
   }
+  // createTourneyType(form){
+
+  // }
 }

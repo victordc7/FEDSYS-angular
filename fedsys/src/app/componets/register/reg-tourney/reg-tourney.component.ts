@@ -12,15 +12,33 @@ import { TourneyType } from 'src/app/models/tourney-type.model';
 })
 export class RegTourneyComponent implements OnInit {
   tourneyRegistrationForm: FormGroup;
-
+  public body;
+  public subcategoriesArray = [];
   constructor(
     private serverService: ServiceService,
     private dialogRef: MatDialogRef<RegTourneyComponent>,
-    @Inject(MAT_DIALOG_DATA) public subcategoriesArray
+    @Inject(MAT_DIALOG_DATA) public dataInput
   ) { }
 
 
   ngOnInit() {
+    this.body = {
+      query:` query {
+        subcategories
+        { _id
+          name
+          parent
+          { _id
+            name
+          }
+        }
+      }`
+    };
+    this.serverService.graphql(this.body)
+    .subscribe(res => {
+      this.subcategoriesArray.push(res['data']['subcategories']);
+    });
+
           /**
       * Form creation and class variables initialization
       */
@@ -71,12 +89,32 @@ export class RegTourneyComponent implements OnInit {
     console.log(this.tourneyRegistrationForm);
 
     if (this.tourneyRegistrationForm.status === 'VALID'){
-
-          this.dialogRef.close(form);
-          this.tourneyRegistrationForm.reset();
-        }
-
-    return ;
+      if (this.dataInput === "Add tourney") {
+        const body = {
+          query: `mutation {
+            createTourneyType(input: {
+              number: ${form.number}
+              name:"${form.name}"
+              subcategories: "${form.categories}"
+            }){
+              number
+              name
+              subcategories{name,parent{name}}
+            }
+          }`
+        };
+        // Llamada a servicio
+        this.serverService.graphql(body)
+          .subscribe(res => {
+            console.log(res);
+            this.dialogRef.close(form);
+            this.tourneyRegistrationForm.reset();
+          });
+        } else if (this.dataInput['name'] !== undefined) {
+        this.dialogRef.close(form);
+        this.tourneyRegistrationForm.reset();
+      }
+    }
   }
 
   close():void {

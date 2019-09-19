@@ -1,59 +1,61 @@
-<h4>Elige el tipo de torneo</h4>
-<form
-    [formGroup]="tourneyRegistrationForm"
-    (ngSubmit)="onNewTourney()"
-    class="w-50 center mat-typography"
-    style="width: 100%">
+<div class="container">
+  <h4>Elige el tipo de torneo</h4>
+  <form
+      [formGroup]="tourneyRegistrationForm"
+      (ngSubmit)="onNewTourney()"
+      class="w-50 center mat-typography"
+      style="width: 100%">
 
-  <mat-form-field
-    class="row"
-    style="padding-right: 5px">
-    <mat-label> -- Elija un tipo de torneo -- </mat-label>
-    <mat-select
-      formControlName="type"
-      id="type">
-      <mat-option [value]="null">None</mat-option>
-      <mat-option
-        *ngFor="let item of tournamentsArray[0]; let i = index"
-        [value]="item"
-        required>
-        Tipo - {{item.name}}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
+    <mat-form-field
+      class="row"
+      style="padding-right: 5px">
+      <mat-label> -- Elija un tipo de torneo -- </mat-label>
+      <mat-select
+        formControlName="type"
+        id="type">
+        <mat-option [value]="null">None</mat-option>
+        <mat-option
+          *ngFor="let item of tournamentsArray[0]; let i = index"
+          [value]="item"
+          required>
+          Tipo - {{item.name}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
 
-  <div class="col-xs-12"
-      *ngFor="let category of selectedTourney['subcategories']; let i = index"
-      index="i">
-      <h4 class="list-group-item-heading" *ngIf="category"> {{ category.name }}</h4>
+    <div class="col-xs-12"
+        *ngFor="let category of selectedTourney['subcategories']; let i = index"
+        index="i">
+        <h4 class="list-group-item-heading" *ngIf="category"> {{ category.name }}</h4>
+    </div>
+  </form>
+
+  <!-- <router-outlet></router-outlet> -->
+  <div *ngIf="started">
+    <app-register
+      [tournamentType]="selectedTourney"
+    ></app-register>
   </div>
-</form>
+  <button
+    mat-raised-button
+    (click)="onNewTourney()"
+    *ngIf="!started">
+    Empezar
+  </button>
 
-<!-- <router-outlet></router-outlet> -->
-<div *ngIf="started">
-  <app-register
-    [tournamentType]="selectedTourney"
-  ></app-register>
+  <button
+    mat-raised-button
+    (click)="onBack()"
+    *ngIf="started">
+    Atrás
+  </button>
+
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="onStart()"
+    routerLink="tabla"
+    *ngIf="started">
+    Empezar
+  </button>
 </div>
-<button
-  mat-raised-button
-  (click)="onNewTourney()"
-  *ngIf="!started">
-  Empezar
-</button>
-
-<button
-  mat-raised-button
-  (click)="onBack()"
-  *ngIf="started">
-  Atrás
-</button>
-
-<button
-  mat-raised-button
-  color="primary"
-  (click)="onStart()"
-  routerLink="tabla"
-  *ngIf="started">
-  Empezar
-</button>

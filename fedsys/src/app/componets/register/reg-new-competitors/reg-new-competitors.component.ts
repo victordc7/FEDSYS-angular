@@ -13,7 +13,7 @@ import { ServiceService } from 'src/app/service.service';
 export class RegNewCompetitorsComponent implements OnInit {
   competitorRegistrationForm: FormGroup;
   genders = ['male', 'female'];
-
+  public submit =false;
   constructor(
     private serverService: ServiceService,
     private dialogRef: MatDialogRef<RegNewCompetitorsComponent>,
@@ -46,8 +46,8 @@ export class RegNewCompetitorsComponent implements OnInit {
       'phone': '',
      });
 
-    this.competitorRegistrationForm.valueChanges.subscribe(
-      (value) => console.log(value)
+    this.competitorRegistrationForm.statusChanges.subscribe(
+      (value) => {this.submit = (value === 'VALID') ? true : false; }
     );
     this.setFormControlsValidators();
 
@@ -102,10 +102,36 @@ export class RegNewCompetitorsComponent implements OnInit {
     console.log(this.competitorRegistrationForm);
 
     if (this.competitorRegistrationForm.status === 'VALID'){
+      const body = {
+        query: `mutation {
+          createCompetitor(input: {
+            firstName: "${form.firstName}",
+            lastName:"${form.lastName}" ,
+            personalID: ${form.personalID},
+            age: ${form.age},
+            gender: "${form.gender}",
+            city: "${form.city}",
+            email: "${form.email}",
+            phone: "${form.phone}",
+          }) {
+            firstName
+            lastName
+            personalID
+            age
+            gender
+            city
+            email
+            phone
+          }
+        }`
+      };
+      // Llamada a servicio
+      this.serverService.graphql(body)
+        .subscribe(res => {
           this.dialogRef.close(form);
           this.competitorRegistrationForm.reset();
-        }
-
+        });
+      }
     return ;
   }
 
@@ -113,5 +139,6 @@ export class RegNewCompetitorsComponent implements OnInit {
     if (this.competitorRegistrationForm.status === 'VALID'){
       this.dialogRef.close();
     }
+
   }
 }

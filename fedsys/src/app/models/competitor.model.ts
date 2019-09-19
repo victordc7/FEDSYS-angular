@@ -5,7 +5,7 @@ export class Competitor {
   age: number;
   gender: string;
   city: string;
-  categories: Array<Object>;
+  categories: [];
   email?: string;
   phone?: string;
 }
