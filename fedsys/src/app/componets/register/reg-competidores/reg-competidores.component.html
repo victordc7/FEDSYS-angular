@@ -23,7 +23,8 @@
             matInput
             type="text"
             formControlName="firstName"
-            placeholder="Nombre"/>
+            placeholder="Nombre"
+            readonly/>
           <mat-error
             *ngIf="!competitorRegistrationForm.get('firstName').valid && competitorRegistrationForm.get('firstName').touched"
             class="help-block">
@@ -37,7 +38,8 @@
             matInput
             type="text"
             formControlName="lastName"
-            placeholder="Apellido"/>
+            placeholder="Apellido"
+            readonly/>
             <span
               *ngIf="!competitorRegistrationForm.get('lastName').valid && competitorRegistrationForm.get('lastName').touched"
               class="help-block">
@@ -61,7 +63,8 @@
             matInput
             type="text"
             formControlName="age"
-            placeholder="Edad"/>
+            placeholder="Edad"
+            readonly/>
 
         </mat-form-field>
 
@@ -70,14 +73,17 @@
         <mat-radio-group
           formControlName="gender"
           aria-label="Select an option"
-          style="padding-right: 5px">
+          style="padding-right: 5px"
+          disabled
+          >
 
             <mat-label>Género</mat-label>
             <br/>
             <mat-radio-button
               *ngFor="let gender of genders"
               style="padding-right: 5px"
-              [value]="gender">
+              [value]="gender"
+              >
                 {{ gender }}
             </mat-radio-button>
         </mat-radio-group>
@@ -90,7 +96,8 @@
             matInput
             type="text"
             formControlName="city"
-            placeholder="Ciudad"/>
+            placeholder="Ciudad"
+            readonly/>
         </mat-form-field>
 
         <div formArrayName="categories">
@@ -108,10 +115,10 @@
                 [formControlName]="i"
                 required>
                 <mat-option
-                  *ngFor="let item of categoriesArray"
+                  *ngFor="let item of categoriesArray[0]; let i = index"
                   [value]="item"
                   required>
-                  {{item['name']}}/{{item['name']}}
+                  {{item['parent']['name']}}/{{item['name']}}
                 </mat-option>
               </mat-select>
               <button
@@ -141,7 +148,8 @@
             matInput
             type="text"
             formControlName="email"
-            placeholder="Email"/>
+            placeholder="Email"
+            readonly/>
           <span
             *ngIf="!competitorRegistrationForm.get('email').valid && competitorRegistrationForm.get('email').touched"
             class="help-block">
@@ -153,11 +161,15 @@
             matInput
             type="text"
             formControlName="phone"
-            placeholder="Teléfono"/>
+            placeholder="Teléfono"
+            readonly/>
         </mat-form-field>
 
         <br/>
-      <button mat-raised-button color="primary" type="submit">Listo</button>
+      <button
+        mat-raised-button
+        color="primary"
+        type="submit">Listo</button>
     </form>
 
 </mat-dialog-content>

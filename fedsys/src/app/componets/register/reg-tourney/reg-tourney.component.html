@@ -51,10 +51,10 @@
         [formControlName]="i"
         required>
         <mat-option
-          *ngFor="let item of subcategoriesArray"
+          *ngFor="let item of subcategoriesArray[0]"
           [value]="item._id"
           required>
-          {{item.number}} - {{item.name}}
+          {{item['parent']['name']}}/{{item['name']}}
         </mat-option>
       </mat-select>
       <button

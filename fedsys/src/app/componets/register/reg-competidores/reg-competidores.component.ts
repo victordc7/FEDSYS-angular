@@ -3,9 +3,7 @@ import { FormControl, FormArray, FormGroup, Validators } from '@angular/forms';
 import {MAT_DIALOG_DATA, MatDialogRef, MatDialog} from "@angular/material";
 
 import { Competitor } from '../../../models/competitor.model';
-import { Category } from '../../../models/category.model';
 import { ServiceService } from 'src/app/service.service';
-import { CompetitorService } from 'src/app/services/competitor.service';
 import { RegNewCompetitorsComponent } from '../reg-new-competitors/reg-new-competitors.component';
 
 @Component({
@@ -17,24 +15,42 @@ import { RegNewCompetitorsComponent } from '../reg-new-competitors/reg-new-compe
 export class RegCompetidoresComponent implements OnInit {
   competitorRegistrationForm: FormGroup;
   genders = ['male', 'female'];
-
+  public categoriesArray = [];
   public competitorsArray = [];
+  public competitorToModify: {
+    firstName: string,
+    lastName: string,
+    personalID: number,
+    age: number,
+    gender: string,
+    city: string,
+    categories:[],
+    email: string,
+    phone: string,
+  };
 
   constructor(
-    private  competitorService: CompetitorService,
     private serverService: ServiceService,
     public dialog: MatDialog,
     private dialogRef: MatDialogRef<RegCompetidoresComponent>,
-    @Inject(MAT_DIALOG_DATA) public categoriesArray
-  ) { }
-
+    @Inject(MAT_DIALOG_DATA) public dataInput
+  ) {}
 
   ngOnInit() {
+    console.log(this.dataInput)
     const body = {
       query:` query {
         competitors
         { _id
           firstName
+        },
+        subcategories
+        { _id
+          name
+          parent {
+            _id
+            name
+          }
         }
       }`
     };
@@ -43,6 +59,8 @@ export class RegCompetidoresComponent implements OnInit {
     this.serverService.graphql(body)
     .subscribe(res => {
       this.competitorsArray.push(res['data']['competitors']);
+      this.categoriesArray.push(res['data']['subcategories']);
+      console.log(this.categoriesArray)
     });
     /**
     * Form creation and class variables initialization
@@ -75,6 +93,14 @@ export class RegCompetidoresComponent implements OnInit {
       (value) => console.log(value)
     );
     this.setFormControlsValidators();
+
+    if(this.dataInput === 'Add competitor') {
+      console.log('Subcategory!!!');
+      } else if (this.dataInput['firstName'] !== undefined) {
+       console.log('Competitor modification!!!');
+       this.competitorToModify = this.dataInput;
+       this.fillForm(this.competitorToModify);
+    }
   }
 
   private setFormControlsValidators() {
@@ -129,55 +155,19 @@ export class RegCompetidoresComponent implements OnInit {
       data: this.competitorsArray[0]
     });
     // console.log('hello' + dialogRef.data);
-    dialogRef.afterClosed().subscribe(result => {
-        console.log("Dialog output:", result)
+    dialogRef.afterClosed().subscribe(res => {
+      console.log("Dialog output:", res);
+      if (res === undefined) {
+        return;
+      } else {
         // this.competitorsArray.push(result);
-        this.createCompetitor(result);
-        this.fillForm(result);
+        this.fillForm(res);
         // this.serverService.graphql(this.body).subscribe(res => console.log(res));
-      });
-
+      }
+    });
   }
 
-  createCompetitor(form) {
-
-    const body = {
-      query: `mutation {
-        createCompetitor(input: {
-          firstName: "${form.firstName}",
-          lastName:"${form.lastName}" ,
-          personalID: ${form.personalID},
-          age: ${form.age},
-          gender: "${form.gender}",
-          city: "${form.city}",
-          email: "${form.email}",
-          phone: "${form.phone}",
-        }) {
-          firstName
-          lastName
-          athlete
-          personalID
-          age
-          gender
-        }
-      }`
-    }
-
-    // Llamada a servicio
-    this.serverService.graphql(body)
-      .subscribe(res => {
-        // if(res['data']){
-          console.log(res);
-          // this.categoriesArray.push(res['data']['createCompetitor']);
-        // } else {
-          return;
-        // }
-        // return
-      });
-      return;
-  }
-
-  fillForm(form){
+  fillForm(form) {
     this.competitorRegistrationForm.setValue({
       'firstName': `${form.firstName}`,
       'lastName': `${form.lastName}`,
@@ -215,7 +205,7 @@ export class RegCompetidoresComponent implements OnInit {
 
   close():void {
     if (this.competitorRegistrationForm.status === 'VALID'){
-      this.dialogRef.close(null);
+      this.dialogRef.close();
     }
   }
 }

@@ -13,41 +13,52 @@ import { Judge } from '../../../models/judge.model';
 })
 export class RegJudgesComponent implements OnInit {
   judgesRegistrationForm: FormGroup;
+  public categoriesArray = [];
   public judgesArray = [];
+  public judgeToModify: Judge;
 
   constructor(
     private serverService: ServiceService,
     private dialogRef: MatDialogRef<RegJudgesComponent>,
-    @Inject(MAT_DIALOG_DATA) public categoriesArray
-  ) { }
+    @Inject(MAT_DIALOG_DATA) public dataInput
+  ) {}
 
   ngOnInit() {
-      const body = {
-        query: ` query {
-          judges
-          { _id
-            firstName
+    const body = {
+      query: ` query {
+        judges
+        { _id
+          firstName
+        },
+        subcategories
+        { _id
+          name
+          parent {
+            _id
+            name
           }
-        }`
-      }
+        }
+      }`
+    }
 
     // this.categoriesArray =  this.serverService.graphql(body).subscribe(res => console.log(res));
     // Initialize judges
     this.serverService.graphql(body)
     .subscribe(res => {
       this.judgesArray.push(res['data']['judges']);
+      this.categoriesArray.push(res['data']['subcategories']);
     });
-      /**
+    /**
     * Form creation and class variables initialization
     */
     this.judgesRegistrationForm =  new FormGroup({
-        'firstName': new FormControl(null),
-        'lastName': new FormControl(null),
-        'personalID': new FormControl(null),
-        'email': new FormControl(null),
-        'age': new FormControl(null),
-        'city': new FormControl(null),
-      });
+      'firstName': new FormControl(null),
+      'lastName': new FormControl(null),
+      'personalID': new FormControl(null),
+      'email': new FormControl(null),
+      'age': new FormControl(null),
+      'city': new FormControl(null),
+    });
 
     this.judgesRegistrationForm.setValue({
       'firstName': '',
@@ -62,6 +73,13 @@ export class RegJudgesComponent implements OnInit {
       (value) => console.log(value)
     );
     this.setFormControlsValidators();
+
+    if(this.dataInput === 'Add judge') {
+      console.log('Subcategory!!!');
+      } else if(this.dataInput['firstName'] !== undefined) {
+       this.judgeToModify = this.dataInput;
+       this.fillForm(this.judgeToModify);
+    }
   }
 
   private setFormControlsValidators() {
@@ -101,8 +119,19 @@ export class RegJudgesComponent implements OnInit {
       age: result.age,
       city: result.city
     };
-    console.log("Here the competitor object" + requestBody);
     return requestBody;
+  }
+
+  fillForm(form){
+    this.judgesRegistrationForm.setValue({
+      'firstName': `${form.firstName}`,
+      'lastName': `${form.lastName}`,
+      'personalID': `${form.personalID}`,
+      'email': `${form.email}`,
+      'age': `${form.age}`,
+      'city': `${form.city}`,
+
+    });
   }
 
   onSubmit() {
@@ -110,25 +139,35 @@ export class RegJudgesComponent implements OnInit {
     console.log(form);
     console.log(this.judgesRegistrationForm);
 
-    if (this.judgesRegistrationForm.status === 'VALID'){
-      // const body = {
-      //   mutation: ` {
-      //     createJudge(input: {
-      //       firstName: "${form.firstName}",
-      //       lastName: "${form.lastName}",
-      //       personalID: ${form.personalID},
-      //       email: "${form.email}",
-      //       age: ${form.age},
-      //       city: "${form.city}",
-      //     })
-      //   }`
-      // }
-      // this.serverService.graphql(body)
-      //   .subscribe(res => {console.log(res)})
-      this.dialogRef.close(form);
-      this.judgesRegistrationForm.reset();
+    if (this.judgesRegistrationForm.status === 'VALID') {
+      if (this.dataInput === 'Add judge') {
+      const body = {
+        query: ` mutation {
+          createJudge(input: {
+            firstName: "${form.firstName}"
+            lastName: "${form.lastName}"
+            personalID: ${form.personalID}
+            age: ${form.age}
+            city: "${form.city}"
+            email: "${form.email}"
+          }) {
+            _id
+            firstName
+            lastName
+          }
+        }`
+      }
+      this.serverService.graphql(body)
+        .subscribe(res => {
+          console.log(res);
+          this.dialogRef.close(form);
+          this.judgesRegistrationForm.reset();
+        });
+      } else if(this.dataInput['firstName'] !== undefined) {
+        this.dialogRef.close(form);
+        this.judgesRegistrationForm.reset();
+      }
     }
-
     return;
   }
 
