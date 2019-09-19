@@ -87,6 +87,11 @@ export class RegTourneyComponent implements OnInit {
     const form = this.getRequestBody();
     console.log(form);
     console.log(this.tourneyRegistrationForm);
+    let subcategories = "["
+    form.categories.forEach(subcategory => {
+      subcategories = subcategories + '"' + subcategory + '",';
+    });
+    subcategories = subcategories + "]";
 
     if (this.tourneyRegistrationForm.status === 'VALID'){
       if (this.dataInput === "Add tourney") {
@@ -94,15 +99,19 @@ export class RegTourneyComponent implements OnInit {
           query: `mutation {
             createTourneyType(input: {
               number: ${form.number}
-              name:"${form.name}"
-              subcategories: "${form.categories}"
+              name: "${form.name}"
+              subcategories: ${subcategories}
             }){
               number
               name
-              subcategories{name,parent{name}}
+              subcategories{
+                name
+                parent{name}
+              }
             }
           }`
         };
+        console.log(body);
         // Llamada a servicio
         this.serverService.graphql(body)
           .subscribe(res => {
