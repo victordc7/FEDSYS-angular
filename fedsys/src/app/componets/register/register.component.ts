@@ -121,10 +121,10 @@ export class RegisterComponent implements OnInit {
 
     const dialogRef = this.dialog.open(RegCategoriesComponent, {
       width: '50%',
-      data: this.categoriesArray[0]
+      data: [this.categoriesArray[0], action]
     });
     dialogRef.afterClosed().subscribe(res => {
-      console.log("Dialog output:", res)
+      console.log("Dialog output:", res);
       if (res === undefined) {
           return;
         } else {
@@ -136,8 +136,22 @@ export class RegisterComponent implements OnInit {
         }} else {
           if (res.level === 'Sub-category') {
             this.subcategories.push(res);
-          } else {
-            this.categories.push(res);
+            console.log('Arbol de categorias');
+            console.log(this.categoryTree);
+            console.log(this.categoryTree[0]['_id']);
+            console.log(Object.keys(this.categoryTree).length);
+            console.log("SUBCATEGORIAS")
+            console.log(this.subcategories[0]['name']);
+            for (let i = 0; i < Object.keys(this.categoryTree).length; i++) {
+              for (let j = 0; j < Object.keys(this.subcategories).length; j++) {
+                if (this.categoryTree[i]['_id'] === this.subcategories[j]['parent']['_id']){
+                  this.categoryTree[i]['children'].push({_id: null, name: this.subcategories[j]['name']});
+
+                }
+              }
+            }
+            console.log('Arbol de categorias');
+            console.log(this.categoryTree);
           }
         }
       }

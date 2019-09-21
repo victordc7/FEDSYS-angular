@@ -12,11 +12,16 @@ import { Category } from '../../../models/category.model';
 export class RegCategoriesComponent implements OnInit {
   categoryRegistrationForm: FormGroup;
   categoryTypes = ['Category', 'Sub-category'];
+  public categoriesArray = [];
+
+  // Subcategory addition: true, Category creation: false
+  public action: boolean;
 
   constructor(
     private dialogRef: MatDialogRef<RegCategoriesComponent>,
-    @Inject(MAT_DIALOG_DATA) public categoriesArray) {
-      console.log(categoriesArray)
+    @Inject(MAT_DIALOG_DATA) public dataInput) {
+      this.categoriesArray = dataInput[0];
+      this.action = (this.dataInput[1] === 'add') ? true : false;
     }
 
   ngOnInit() {
@@ -34,9 +39,15 @@ export class RegCategoriesComponent implements OnInit {
       'level': 'Category',
       'parent': ''
     });
-    this.categoryRegistrationForm.patchValue({
-      'level': 'Category'
-    });
+    if (this.dataInput[1] === 'create') {
+      this.categoryRegistrationForm.patchValue({
+        'level': 'Category'
+      });
+    } else if (this.dataInput[1] === 'add'){
+      this.categoryRegistrationForm.patchValue({
+        'level': 'Sub-category'
+      });
+    }
     this.categoryRegistrationForm.valueChanges.subscribe(
       (value) => console.log(value)
     );
