@@ -16,7 +16,7 @@ import { ConnectedPositionStrategy } from '@angular/cdk/overlay';
 interface CategoryNode {
   name: string;
   _id: string;
-  children?: CategoryNode[];
+  children?: Array<CategoryNode>;
 }
 
 /** Flat node with expandable and level information */
@@ -46,33 +46,41 @@ export class RegisterComponent implements OnInit {
   public subcategories = [];
   public competitors = [];
   public judges = [];
-  public categoryTree: CategoryNode[] = [];
+  public categoryTree: Array<CategoryNode> = [
+    {_id: '', name: 'Fisicoculturismo', children: [{_id: '', name: '20Kg'}, {_id: '', name: '40Kg'}]},
+    {_id: '', name: 'Musculatura', children: [{_id: '', name: 'Hipertrofia'}]},
+    {_id: '', name: 'Fitness', children: [{_id: '', name: 'top'}]},
+    {_id: '', name: 'Peso', children: [{_id: '', name: '20Kg'}]}];
 
-  // private _transformer = (node: CategoryNode, level: number) => {
-  //   return {
-  //     expandable: !!node.children && node.children.length > 0,
-  //     name: node.name,
-  //     level: level,
-  //   };
-  // }
+  private _transformer = (node: CategoryNode, level: number) => {
+    return {
+      expandable: !!node.children && node.children.length > 0,
+      name: node.name,
+      level: level,
+    };
+  }
 
-  // treeControl = new FlatTreeControl<ExampleFlatNode>(
-  //     node => node.level, node => node.expandable);
+  treeControl = new FlatTreeControl<ExampleFlatNode>(
+      node => node.level, node => node.expandable);
 
-  // treeFlattener = new MatTreeFlattener(
-  //     this._transformer, node => node.level, node => node.expandable, node => node.children);
+  treeFlattener = new MatTreeFlattener(
+      this._transformer, node => node.level, node => node.expandable, node => node.children);
 
-  // dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
+  dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
 
 
   constructor(
     private serverService: ServiceService,
     public dialog: MatDialog,
-  ) {}
+
+  ) {
+    this.dataSource.data = this.categoryTree
+  }
 
   hasChild = (_: number, node: ExampleFlatNode) => node.expandable;
 
   ngOnInit() {
+    // this.dataSource.data = [];
     console.log(this.tournamentType)
     if (this.tournamentType['subcategories'].length > 1){
       this.subcategories.push(this.tournamentType['subcategories'])
@@ -101,23 +109,25 @@ export class RegisterComponent implements OnInit {
       this.categoriesArray.push(res['data']['categories']);
       this.subcategoriesArray.push(res['data']['subcategories']);
       console.log(this.categoriesArray);
-      this.categoryTree = Object.assign({}, this.categoriesArray[0]);
+      // this.categoryTree = Object.assign({}, this.categoriesArray[0]);
       // this.categoryTree.splice(this.categoryTree.length - 1, 1);
       console.log('Arbol de categorias');
       console.log(this.categoryTree);
-      for (let i = 0; i < this.categoryTree.length; i++) {
-        for (let j = 0; j < this.subcategories.length; j++) {
-          if (this.categoryTree[i]['_id'] === this.subcategories[j]['parent']['_id']){
-            this.categoryTree[0]['children'] = this.subcategories[j]['parent'];
-          }
-        }
-      }
+      // for (let i = 0; i < this.categoryTree.length; i++) {
+      //   for (let j = 0; j < this.subcategories.length; j++) {
+      //     if (this.categoryTree[i]['_id'] === this.subcategories[j]['parent']['_id']){
+      //       this.categoryTree[0]['children'] = this.subcategories[j]['parent'];
+      //     }
+      //   }
+      // }
+
       // this.categoryTree[0]['children'] = [{_id:"ID1", name:'Hipertrofia'},{_id:"ID2", name:'Hipertrofia2'}];
       // console.log(this.categoryTree);
     });
   }
 
   addCategory(action: string) {
+    // let auxiliarCategoryTree: CategoryNode[] = Object.assign({}, this.categoriesArray[0]);
 
     const dialogRef = this.dialog.open(RegCategoriesComponent, {
       width: '50%',
@@ -138,20 +148,30 @@ export class RegisterComponent implements OnInit {
             this.subcategories.push(res);
             console.log('Arbol de categorias');
             console.log(this.categoryTree);
-            console.log(this.categoryTree[0]['_id']);
-            console.log(Object.keys(this.categoryTree).length);
-            console.log("SUBCATEGORIAS")
-            console.log(this.subcategories[0]['name']);
-            for (let i = 0; i < Object.keys(this.categoryTree).length; i++) {
-              for (let j = 0; j < Object.keys(this.subcategories).length; j++) {
-                if (this.categoryTree[i]['_id'] === this.subcategories[j]['parent']['_id']){
-                  this.categoryTree[i]['children'].push({_id: null, name: this.subcategories[j]['name']});
+            // for (let i = 0; i < Object.keys(this.categoryTree).length; i++) {
+            //   for (let j = 0; j < Object.keys(this.subcategories).length; j++) {
+            //     if (this.categoryTree[i]['_id'] === this.subcategories[j]['parent']['_id']){
+            //       // if (auxiliarCategoryTree[i]['children']){
+            //         const children = [];
+            //         children.push(this.categoryTree[i]['children']['name']);
+            //         children.push(this.subcategories[j]['name']);
+            //       // } else {
+            //       console.log(typeof(this.categoryTree[i]['_id']));
+            //       console.log(this.subcategories[j]['parent']);
+            //       console.log(this.subcategories[j]['name']);
+            //       // this.categoryTree[i]['children'] = Object.assign({name: this.subcategories[j]['name']});
+            //       // this.categoryTree = Object.assign(this.categoryTree, auxiliarCategoryTree);
+            //       // }
+            //       this.categoryTree[i]['children'] = Object.assign(children);
+            //     }
+            //   }
+            // }
+            // // this.dataSource.data = this.categoryTree;
+            // // this.dataSource.data.push(this.categoryTree);
+            // console.log('Arbol de categorias');
+            // console.log(this.categoryTree);
 
-                }
-              }
-            }
-            console.log('Arbol de categorias');
-            console.log(this.categoryTree);
+            // console.log(auxiliarCategoryTree);
           }
         }
       }
