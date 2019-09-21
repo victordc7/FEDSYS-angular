@@ -88,7 +88,7 @@ export class RegTourneyComponent implements OnInit {
     console.log(form);
     console.log(this.tourneyRegistrationForm);
     let subcategories = "["
-    form.categories.forEach(subcategory => {
+    form.categories.map(subcategory => {
       subcategories = subcategories + '"' + subcategory + '",';
     });
     subcategories = subcategories + "]";
