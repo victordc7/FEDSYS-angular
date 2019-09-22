@@ -61,6 +61,7 @@ export class RegCategoriesComponent implements OnInit {
    */
   private getRequestBody(): any {
     const result: Category = Object.assign({}, this.categoryRegistrationForm.value);
+    result.parent = this.action ? this.categoryRegistrationForm.value.name.parent.name : result.parent;
     const requestBody: Object = {
       name: result.name,
       level: result.level,

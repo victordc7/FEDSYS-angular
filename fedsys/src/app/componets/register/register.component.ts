@@ -127,8 +127,7 @@ export class RegisterComponent implements OnInit {
     * Form creation and class variables initialization
     */
    this.tourneyRegistrationForm = new FormGroup({
-    'name': new FormControl(null, [Validators.required]),
-    'type': new FormControl(null, [Validators.required]),
+    'name': new FormControl(null, [Validators.required])
     });
     this.tourneyRegistrationForm.valueChanges.subscribe(
       (value) => console.log(value)
@@ -294,29 +293,30 @@ export class RegisterComponent implements OnInit {
     });
   }
 
-  // creatTourney() {
+  createTourney() {
 
-  //   this.body = {
-  //     query: `mutation {
-  //       createTourney(input: {
-  //         name: "Tipo -${this.tournamentType.name} Prueba"
-  //         number: ${this.tournamentType.number}
-  //         type: ${this.tournamentType._id}
-  //       }) {
-  //         _id
-  //         name
-  //         number
-  //       }
-  //     }`
-  //   };
+    this.body = {
+      query: `mutation {
+        createTourney(input: {
+          name: "${this.tourneyRegistrationForm.value.name}"
+          number: 3
+          type: "${this.tournamentType._id}"
+        }) {
+          _id
+          name
+          number
+        }
+      }`
+    };
 
-  //   // Llamada a servicio
-  //   this.serverService.graphql(this.body)
-  //   .subscribe(res => {
-  //     console.log(res);
+    // Llamada a servicio
+    this.serverService.graphql(this.body)
+    .subscribe(res => {
+      console.log(res);
+      console.log(res['data']['createTourney']['_id']);
 
-  //   });
-  // }
+    });
+  }
 
 
   // splitCompetitorByCategory(form) {
