@@ -1,13 +1,15 @@
 import { Component, OnInit, Input } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from "@angular/material";
 import {FlatTreeControl} from '@angular/cdk/tree';
 import {MatTreeFlatDataSource, MatTreeFlattener} from '@angular/material/tree';
+import {BehaviorSubject} from 'rxjs';
 
 import { ServiceService } from 'src/app/service.service';
 import { RegCategoriesComponent } from './reg-categories/reg-categories.component';
 import { RegCompetidoresComponent } from './reg-competidores/reg-competidores.component';
 import { RegJudgesComponent } from './reg-judges/reg-judges.component';
-import { ConnectedPositionStrategy } from '@angular/cdk/overlay';
+// import { ConnectedPositionStrategy } from '@angular/cdk/overlay';
 
 /**
  * Category data with nested structure.
@@ -20,7 +22,7 @@ interface CategoryNode {
 }
 
 /** Flat node with expandable and level information */
-interface ExampleFlatNode {
+interface CategoryFlatNode {
   expandable: boolean;
   name: string;
   level: number;
@@ -35,6 +37,7 @@ interface ExampleFlatNode {
 
 export class RegisterComponent implements OnInit {
   @Input() tournamentType;
+  public tourneyRegistrationForm: FormGroup;
   private body;
 
   // Global database categories and subcategories
@@ -47,10 +50,18 @@ export class RegisterComponent implements OnInit {
   public competitors = [];
   public judges = [];
   public categoryTree: Array<CategoryNode> = [
-    {_id: '', name: 'Fisicoculturismo', children: [{_id: '', name: '20Kg'}, {_id: '', name: '40Kg'}]},
-    {_id: '', name: 'Musculatura', children: [{_id: '', name: 'Hipertrofia'}]},
-    {_id: '', name: 'Fitness', children: [{_id: '', name: 'top'}]},
-    {_id: '', name: 'Peso', children: [{_id: '', name: '20Kg'}]}];
+    // {_id: '', name: 'Fisicoculturismo', children: [{_id: '', name: '20Kg'}, {_id: '', name: '40Kg'}]},
+    // {_id: '', name: 'Musculatura', children: [{_id: '', name: 'Hipertrofia'}]},
+    // {_id: '', name: 'Fitness', children: [{_id: '', name: 'top'}]},
+    // {_id: '', name: 'Peso', children: [{_id: '', name: '20Kg'}]}
+  ];
+
+  /**
+   * Category Tree, buildinng initialization
+  */
+  dataChange = new BehaviorSubject<CategoryNode[]>([]);
+
+  get data(): CategoryNode[] { return this.dataChange.value; }
 
   private _transformer = (node: CategoryNode, level: number) => {
     return {
@@ -60,7 +71,7 @@ export class RegisterComponent implements OnInit {
     };
   }
 
-  treeControl = new FlatTreeControl<ExampleFlatNode>(
+  treeControl = new FlatTreeControl<CategoryFlatNode>(
       node => node.level, node => node.expandable);
 
   treeFlattener = new MatTreeFlattener(
@@ -74,18 +85,66 @@ export class RegisterComponent implements OnInit {
     public dialog: MatDialog,
 
   ) {
-    this.dataSource.data = this.categoryTree
+    this.dataChange.subscribe(data => {
+      this.dataSource.data = data;
+    });
   }
 
-  hasChild = (_: number, node: ExampleFlatNode) => node.expandable;
+  initialize() {
+    // Build the tree nodes from Json object. The result is a list of `TodoItemNode` with nested
+    //     file node as children.
+    const data = this.buildFileTree(this.categoryTree, 0);
+
+    // Notify the change.
+    this.dataChange.next(data);
+  }
+
+  buildFileTree(obj: {[key: string]: any}, level: number): CategoryNode[] {
+    return Object.keys(obj).reduce<CategoryNode[]>((accumulator, key) => {
+      const value = obj[key];
+      const node: CategoryNode = {_id: '', name: '', children: []};
+      node.name = value.name;
+
+      if (value != null) {
+        if (typeof value === 'object') {
+        // if (value['children'] !== undefined) {
+          node.children = value.children;
+          // node.name = value.name;
+          // node.children = this.buildFileTree(value, level + 1);
+        } else {
+          node.name = value;
+        }
+      }
+
+      return accumulator.concat(node);
+    }, []);
+  }
+
+  hasChild = (_: number, node: CategoryFlatNode) => node.expandable;
 
   ngOnInit() {
-    // this.dataSource.data = [];
-    console.log(this.tournamentType)
-    if (this.tournamentType['subcategories'].length > 1){
-      this.subcategories.push(this.tournamentType['subcategories'])
+    /**
+    * Form creation and class variables initialization
+    */
+   this.tourneyRegistrationForm = new FormGroup({
+    'name': new FormControl(null, [Validators.required]),
+    'type': new FormControl(null, [Validators.required]),
+    });
+    this.tourneyRegistrationForm.valueChanges.subscribe(
+      (value) => console.log(value)
+    );
+
+    /**
+    * Selected tournamen type initialization
+    */
+    if (this.tournamentType.subcategories.length > 1) {
+      this.subcategories.push(this.tournamentType['subcategories']);
     }
-    this.body = {
+
+    /**
+    * Initial request body
+    */
+   this.body = {
       query: ` query {
         categories
         { _id
@@ -106,32 +165,30 @@ export class RegisterComponent implements OnInit {
     this.serverService.graphql(this.body)
     .subscribe(res => {
       console.log(res);
+      res['data']['categories'].forEach(element => {
+        element.children = [];
+      });
       this.categoriesArray.push(res['data']['categories']);
       this.subcategoriesArray.push(res['data']['subcategories']);
-      console.log(this.categoriesArray);
-      // this.categoryTree = Object.assign({}, this.categoriesArray[0]);
-      // this.categoryTree.splice(this.categoryTree.length - 1, 1);
-      console.log('Arbol de categorias');
-      console.log(this.categoryTree);
-      // for (let i = 0; i < this.categoryTree.length; i++) {
-      //   for (let j = 0; j < this.subcategories.length; j++) {
-      //     if (this.categoryTree[i]['_id'] === this.subcategories[j]['parent']['_id']){
-      //       this.categoryTree[0]['children'] = this.subcategories[j]['parent'];
-      //     }
-      //   }
-      // }
-
-      // this.categoryTree[0]['children'] = [{_id:"ID1", name:'Hipertrofia'},{_id:"ID2", name:'Hipertrofia2'}];
-      // console.log(this.categoryTree);
+      this.categoryTree = Object.assign({}, this.categoriesArray[0]);
+      this.initialize();
+      for (let i = 0; i < Object.keys(this.categoryTree).length; i++) {
+        for (let j = 0; j < Object.keys(this.subcategories[0]).length; j++) {
+          console.log(this.subcategories[0][j]['parent']);
+          if (this.categoryTree[i]['_id'] === this.subcategories[0][j]['parent']['_id']) {
+            this.categoryTree[i]['children'].push({_id: null, name: this.subcategories[0][j]['name']});
+            console.log(this.categoryTree);
+          }
+        }
+      }
+      this.dataChange.next(this.data);
     });
   }
 
   addCategory(action: string) {
-    // let auxiliarCategoryTree: CategoryNode[] = Object.assign({}, this.categoriesArray[0]);
-
     const dialogRef = this.dialog.open(RegCategoriesComponent, {
       width: '50%',
-      data: [this.categoriesArray[0], action]
+      data: [this.categoriesArray[0], this.subcategoriesArray[0], action]
     });
     dialogRef.afterClosed().subscribe(res => {
       console.log("Dialog output:", res);
@@ -145,33 +202,20 @@ export class RegisterComponent implements OnInit {
             this.createCategory(res);
         }} else {
           if (res.level === 'Sub-category') {
-            this.subcategories.push(res);
+            this.subcategories[0].push(res.name);
             console.log('Arbol de categorias');
+            console.log(this.subcategories[0]);
             console.log(this.categoryTree);
-            // for (let i = 0; i < Object.keys(this.categoryTree).length; i++) {
-            //   for (let j = 0; j < Object.keys(this.subcategories).length; j++) {
-            //     if (this.categoryTree[i]['_id'] === this.subcategories[j]['parent']['_id']){
-            //       // if (auxiliarCategoryTree[i]['children']){
-            //         const children = [];
-            //         children.push(this.categoryTree[i]['children']['name']);
-            //         children.push(this.subcategories[j]['name']);
-            //       // } else {
-            //       console.log(typeof(this.categoryTree[i]['_id']));
-            //       console.log(this.subcategories[j]['parent']);
-            //       console.log(this.subcategories[j]['name']);
-            //       // this.categoryTree[i]['children'] = Object.assign({name: this.subcategories[j]['name']});
-            //       // this.categoryTree = Object.assign(this.categoryTree, auxiliarCategoryTree);
-            //       // }
-            //       this.categoryTree[i]['children'] = Object.assign(children);
-            //     }
-            //   }
-            // }
-            // // this.dataSource.data = this.categoryTree;
-            // // this.dataSource.data.push(this.categoryTree);
-            // console.log('Arbol de categorias');
-            // console.log(this.categoryTree);
-
-            // console.log(auxiliarCategoryTree);
+            for (let i = 0; i < Object.keys(this.categoryTree).length; i++) {
+              for (let j = 0; j < Object.keys(this.subcategories[0]).length; j++) {
+                const lastIndex = Object.keys(this.subcategories[0]).length - 1;
+                if (this.categoryTree[i]['_id'] === this.subcategories[0][lastIndex]['parent']['_id']){
+                  this.categoryTree[i]['children'].push({_id: null, name: this.subcategories[0][lastIndex]['name']});
+                  break;
+                }
+              }
+            }
+            this.dataChange.next(this.data);
           }
         }
       }
@@ -213,7 +257,7 @@ export class RegisterComponent implements OnInit {
       query: `mutation {
         createSubcategory(input: {
           name: "${form.name}"
-          parent: "${form.parent}"
+          parent: "${form.parent._id}"
         }) {
           _id
           name
@@ -234,6 +278,7 @@ export class RegisterComponent implements OnInit {
       query: `mutation {
         createCategory(input: {
           name: "${form.name}"
+          parent: "${form.parent._id}"
         }) {
           _id
           name
@@ -248,10 +293,6 @@ export class RegisterComponent implements OnInit {
       this.categoriesArray[0].push(res['data']['createCategory']);
     });
   }
-
-  createJudge(form) {
-  }
-
 
   // creatTourney() {
 
@@ -413,5 +454,4 @@ export class RegisterComponent implements OnInit {
         this.subcategories.splice(index, 1);
       }
   }
-
 }
