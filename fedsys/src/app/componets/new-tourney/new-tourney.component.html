@@ -6,6 +6,23 @@
       class="w-50 center mat-typography"
       style="width: 100%">
 
+      <mat-form-field
+        color="access"
+        class="black"
+        style="padding: 10px">
+          <input
+            matInput
+            type="text" color="primary"
+            formControlName="name"
+            placeholder="Nombre del torneo"
+            />
+          <mat-error>
+
+          </mat-error>
+      </mat-form-field>
+
+    <br>
+
     <mat-form-field
       class="row"
       style="padding-right: 5px">
@@ -23,14 +40,8 @@
       </mat-select>
     </mat-form-field>
 
-    <div class="col-xs-12"
-        *ngFor="let category of selectedTourney['subcategories']; let i = index"
-        index="i">
-        <h4 class="list-group-item-heading" *ngIf="category"> {{ category.name }}</h4>
-    </div>
   </form>
 
-  <!-- <router-outlet></router-outlet> -->
   <div *ngIf="started">
     <app-register
       [tournamentType]="selectedTourney"

@@ -1,9 +1,31 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from "@angular/material";
-import { ServiceService } from 'src/app/service.service';
+import {SelectionModel} from '@angular/cdk/collections';
+import {FlatTreeControl} from '@angular/cdk/tree';
+import {MatTreeFlatDataSource, MatTreeFlattener} from '@angular/material/tree';
+import {BehaviorSubject} from 'rxjs';
 
+import { ServiceService } from 'src/app/service.service';
 import { RegCategoriesComponent } from '../register/reg-categories/reg-categories.component';
 import { RegTourneyComponent } from '../register/reg-tourney/reg-tourney.component';
+
+/**
+ * Category data with nested structure.
+ * Each node has a name and an optiona list of children.
+ */
+interface CategoryNode {
+  name: string;
+  _id: string;
+  children?: Array<CategoryNode>;
+}
+
+/** Flat node with expandable and level information */
+interface CategoryFlatNode {
+  expandable: boolean;
+  name: string;
+  level: number;
+}
+
 @Component({
   selector: 'app-pre-registration',
   templateUrl: './pre-registration.component.html',
@@ -15,10 +37,69 @@ export class PreRegistrationComponent implements OnInit {
   public subcategoriesArray = [];
   private body;
 
+  public categoryTree: Array<CategoryNode> = [{_id: '', name: '', children: []}];
+
+  /**
+   * Category Tree, buildinng initialization
+  */
+  dataChange = new BehaviorSubject<CategoryNode[]>([]);
+
+  get data(): CategoryNode[] { return this.dataChange.value; }
+
+  private _transformer = (node: CategoryNode, level: number) => {
+    return {
+      expandable: !!node.children && node.children.length > 0,
+      name: node.name,
+      level: level,
+    };
+  }
+
+  treeControl = new FlatTreeControl<CategoryFlatNode>(
+      node => node.level, node => node.expandable);
+
+  treeFlattener = new MatTreeFlattener(
+      this._transformer, node => node.level, node => node.expandable, node => node.children);
+
+  dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
+
   constructor(
     private serverService: ServiceService,
     public dialog: MatDialog
-  ) { }
+  ) {
+    this.dataChange.subscribe(data => {
+      this.dataSource.data = data;
+    });
+  }
+
+  initialize() {
+    // Build the tree nodes from Json object. The result is a list of `TodoItemNode` with nested
+    //     file node as children.
+    const data = this.buildFileTree(this.categoryTree, 0);
+
+    // Notify the change.
+    this.dataChange.next(data);
+  }
+
+  buildFileTree(obj: {[key: string]: any}, level: number): CategoryNode[] {
+    return Object.keys(obj).reduce<CategoryNode[]>((accumulator, key) => {
+      const value = obj[key];
+      const node: CategoryNode = {_id: '', name: '', children: []};
+      node.name = value.name;
+
+      if (value != null) {
+        if (typeof value === 'object') {
+        // if (value['children'] !== undefined) {
+          node.children = value.children;
+        } else {
+          node.name = value;
+        }
+      }
+
+      return accumulator.concat(node);
+    }, []);
+  }
+
+  hasChild = (_: number, node: CategoryFlatNode) => node.expandable;
 
   ngOnInit() {
     this.body = {
@@ -30,41 +111,61 @@ export class PreRegistrationComponent implements OnInit {
         subcategories
         { _id
           name
+          parent{
+            _id
+            name
+          }
         },
         tourneyTypes{
           number
           name
           _id
-          subcategories{name}
+          subcategories{
+            name
+            _id
+            parent{
+              _id
+              name
+            }
+          }
         }
-
       }`
     };
-
     this.serverService.graphql(this.body)
     .subscribe(res => {
-      console.log(res);
+      res['data']['categories'].forEach(element => {
+        element.children = [];
+      });
       this.categoriesArray.push(res['data']['categories']);
       this.subcategoriesArray.push(res['data']['subcategories']);
       this.tourneyType.push(res['data']['tourneyTypes']);
-      console.log(this.categoriesArray[0])
+      this.categoryTree = Object.assign({}, this.categoriesArray[0]);
+      this.initialize();
+      for (let i = 0; i < Object.keys(this.categoryTree).length; i++) {
+        for (let j = 0; j < Object.keys(this.subcategoriesArray[0]).length; j++) {
+          if (this.categoryTree[i]['_id'] === this.subcategoriesArray[0][j]['parent']['_id']){
+            this.categoryTree[i]['children'].push({_id: null, name: this.subcategoriesArray[0][j]['name']});
+          }
+        }
+      }
+      this.dataChange.next(this.data);
     });
   }
 
 
-  addCategory() {
+  addCategory(action: string) {
 
     const dialogRef = this.dialog.open(RegCategoriesComponent, {
       width: '50%',
-      data: this.categoriesArray[0]
+      data: [this.categoriesArray[0], action]
     });
     // console.log('hello' + dialogRef.data);
-    dialogRef.afterClosed().subscribe(result => {
-        console.log("Dialog output:", result);
-        if (result.level === 'Sub-category'){
-          this.createSubcategory(result);
+    dialogRef.afterClosed().subscribe(res => {
+        console.log("Dialog output:", res);
+        if (res.level === 'Sub-category'){
+          this.createSubcategory(res);
         } else {
-          this.createCategory(result);
+          this.createCategory(res);
         }
       });
   }
@@ -79,7 +180,6 @@ export class PreRegistrationComponent implements OnInit {
     dialogRef.afterClosed().subscribe(res => {
         console.log("Dialog output:", res);
         this.updateTourney();
-        // this.tourneyType[0].push(res['data']['tourneyType']);
       });
   };
 
@@ -88,10 +188,13 @@ export class PreRegistrationComponent implements OnInit {
       query: `mutation {
         createSubcategory(input: {
           name: "${form.name}"
-          parent: "${form.parent}"
+          parent: "${form.parent._id}"
         }) {
           _id
           name
+          parent{
+            _id
+          }
         }
       }`
     };
@@ -102,6 +205,16 @@ export class PreRegistrationComponent implements OnInit {
       console.log("dentro del request")
       console.log(res);
       this.subcategoriesArray[0].push(res['data']['createSubcategory']);
+      for (let i = 0; i < Object.keys(this.categoryTree).length; i++) {
+        for (let j = 0; j < Object.keys(this.subcategoriesArray[0]).length; j++) {
+          const lastIndex = Object.keys(this.subcategoriesArray[0]).length - 1;
+          if (this.categoryTree[i]['_id'] === this.subcategoriesArray[0][lastIndex]['parent']['_id']){
+            this.categoryTree[i]['children'].push({_id: null, name: this.subcategoriesArray[0][lastIndex]['name']});
+            break;
+          }
+        }
+      }
+      this.dataChange.next(this.data);
     });
   }
 
@@ -122,7 +235,10 @@ export class PreRegistrationComponent implements OnInit {
     .subscribe(res => {
       console.log(res);
       this.categoriesArray[0].push(res['data']['createCategory']);
-
+      this.categoryTree = Object.assign({}, this.categoriesArray[0]);
+      console.log('Creo la categoria');
+      console.log(this.categoryTree);
+      this.dataChange.next(this.data);
     });
   }
 
@@ -142,6 +258,32 @@ export class PreRegistrationComponent implements OnInit {
 
     } else if(item==='category'){
       const categoryID = this.categoriesArray[0][index]["_id"];
+      this.body  = {
+        query: `query {
+          subcategoryByParentId( _id:"${categoryID}" ){
+            [subcategory]
+          }
+        }`
+      };
+      // Llamada a servicio
+      this.serverService.graphql(this.body)
+        .subscribe(res => {
+        console.log(res);
+        for (let i = 0; i < res[0].length; i++) {
+          this.body = {
+            query: ` mutation {
+              deleteSubcategory(_id:"${res[0][i]._id}"){
+                _id
+                name
+              }
+            }`
+          };
+          this.serverService.graphql(this.body)
+            .subscribe(res => {
+            console.log('Sub eliminada ' + res);
+          });
+        }
+      });
 
       this.body = {
         query: ` mutation {
@@ -157,14 +299,16 @@ export class PreRegistrationComponent implements OnInit {
     this.serverService.graphql(this.body)
     .subscribe(res => {
       console.log(res);
-      if(res['errors']){
+      if(res['errors']) {
         return;
       }
-      if(item === 'tourney'){
+      if (item === 'tourney') {
         this.tourneyType[0].splice(index, 1);
       } else
-      if(item === 'category'){
+      if (item === 'category') {
         this.categoriesArray[0].splice(index, 1);
+        this.categoryTree = Object.assign({}, this.categoriesArray[0]);
+        this.dataChange.next(this.data);
       }
     });
   }
