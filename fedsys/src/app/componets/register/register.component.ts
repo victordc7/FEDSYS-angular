@@ -9,6 +9,7 @@ import { ServiceService } from 'src/app/service.service';
 import { RegCategoriesComponent } from './reg-categories/reg-categories.component';
 import { RegCompetidoresComponent } from './reg-competidores/reg-competidores.component';
 import { RegJudgesComponent } from './reg-judges/reg-judges.component';
+import { StartingOrderComponent } from './starting-order/starting-order.component';
 // import { ConnectedPositionStrategy } from '@angular/cdk/overlay';
 
 /**
@@ -250,6 +251,23 @@ export class RegisterComponent implements OnInit {
           this.judges.push(res);
         }
       });
+  }
+
+  selectStaringOrder() {
+    const dialogRef = this.dialog.open(StartingOrderComponent, {
+      width: '50%',
+      data: {
+        subcategories: this.subcategories,
+        categories: this.categoriesArray
+      }
+    });
+    dialogRef.afterClosed().subscribe(res => {
+      if (res === undefined) {
+        return;
+      } else {
+        console.log(res);
+      }
+    });
   }
 
   createSubcategory(form) {
