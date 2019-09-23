@@ -1,21 +1,13 @@
 <div class="col-xs-12 container">
-  <br>
-  <div class="col-xs-12 container"
-  *ngFor="let subcategory of subcategories; let i = index"
-  index="i">
-    <h4
-      class="list-group-item-heading">
-      {{ subcategory.name }}
-      <span
+
+      <!-- <span
         (click)="deleteItem(i,'subcategory')"
         style="cursor: pointer">
         <mat-icon>
           cancel
         </mat-icon>
-      </span>
-    </h4>
-    <!-- <p class="list-group-item-text">{{ subcategory.personalID }}</p> -->
-  </div>
+      </span> -->
+
   <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
     <!-- This is the tree node template for leaf nodes -->
     <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding>
@@ -41,6 +33,11 @@
     </button>
     <button mat-raised-button (click)="addCategory('create')">
       Crear Categoria
+    </button>
+  </div>
+  <div class="row mt-5">
+    <button mat-raised-button color="primary" (click)="selectStaringOrder()">
+      Configurar orden de salida
     </button>
   </div>
   <br/>

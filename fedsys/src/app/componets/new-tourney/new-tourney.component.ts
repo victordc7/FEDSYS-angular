@@ -37,6 +37,10 @@ export class NewTourneyComponent implements OnInit {
           subcategories{
             _id
             name
+            parent {
+              _id
+              name
+            }
           }
         }
       }`

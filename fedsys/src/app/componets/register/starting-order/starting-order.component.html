@@ -1,0 +1,37 @@
+<mat-dialog-content>
+    <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
+        <!-- This is the tree node template for leaf nodes -->
+        <mat-tree-node *matTreeNodeDef="let node;" matTreeNodePadding  [style.display]="(node.level === 1) ? 'block' : 'none'">
+            {{node.name}} {{node.index}}<br>
+            <mat-checkbox [(ngModel)]="orderArray[node.index]['childrens'][0].active">Eliminatoria</mat-checkbox>
+            <input placeholder="Orden de salida" type="number" [(ngModel)]="orderArray[node.index]['childrens'][0].number" *ngIf="orderArray[node.index]['childrens'][0].active"><br>
+            <mat-checkbox [(ngModel)]="orderArray[node.index]['childrens'][1].active">Semifinal</mat-checkbox>
+            <input placeholder="Orden de salida" type="number" [(ngModel)]="orderArray[node.index]['childrens'][1].number" *ngIf="orderArray[node.index]['childrens'][1].active"><br>
+            <mat-checkbox [(ngModel)]="orderArray[node.index]['childrens'][2].active">Final</mat-checkbox>
+            <input placeholder="Orden de salida" type="number" [(ngModel)]="orderArray[node.index]['childrens'][2].number" *ngIf="orderArray[node.index]['childrens'][2].active"><br>
+            <mat-checkbox [(ngModel)]="orderArray[node.index]['childrens'][3].active">Premiación</mat-checkbox>
+            <input placeholder="Orden de salida" type="number" [(ngModel)]="orderArray[node.index]['childrens'][3].number" *ngIf="orderArray[node.index]['childrens'][3].active">
+        </mat-tree-node>
+        <!-- This is the tree node template for expandable nodes -->
+        <mat-tree-node *matTreeNodeDef="let node; when: hasChilds" matTreeNodePadding>
+            <button mat-icon-button matTreeNodeToggle
+            [attr.aria-label]="'toggle ' + node.name">
+                <mat-icon class="mat-icon-rtl-mirror">
+                    {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
+                </mat-icon>
+            </button>
+            {{node.name}}
+            <mat-checkbox [(ngModel)]="orderOverallArray[node.index].active">Overall</mat-checkbox>
+            <input placeholder="Orden de salida" type="number" [(ngModel)]="orderOverallArray[node.index].number" *ngIf="orderOverallArray[node.index].active">
+        </mat-tree-node>
+        <mat-tree-node *matTreeNodeDef="let node; when: hasChild" matTreeNodePadding>
+            <button mat-icon-button matTreeNodeToggle
+            [attr.aria-label]="'toggle ' + node.name">
+                <mat-icon class="mat-icon-rtl-mirror">
+                    {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
+                </mat-icon>
+            </button>
+            {{node.name}}
+        </mat-tree-node>
+    </mat-tree>
+</mat-dialog-content>
