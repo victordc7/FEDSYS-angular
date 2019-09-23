@@ -25,7 +25,8 @@
     <button
       mat-raised-button
       color="primary"
-      (click)="createTourney()">
+      (click)="createTourney()"
+      [disabled]="!editTourney">
       Guardar
     </button>
   </div>
@@ -39,7 +40,7 @@
           cancel
         </mat-icon>
       </span> -->
-
+<div *ngIf="editTourney">
   <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
     <!-- This is the tree node template for leaf nodes -->
     <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding>
@@ -146,5 +147,6 @@
   </button>
   <br>
   <br>
+  </div>
 </div>
 
