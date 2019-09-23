@@ -91,16 +91,25 @@
         </mat-icon>
       </span>
       </h4>
-      <p
+      <!-- <p
         class="list-group-item-text"
-        *ngFor="let subcategory of competitor.categories">
-          {{subcategory['parent']['name']}} / {{subcategory['name']}}
-      </p>
+        *ngFor="let subcategory of competitor['category']">
+          {{subcategory['parent']['name']}} / {{subcategory['name']}} <br>
+      </p> -->
+      <p
+      class="list-group-item-text">
+        {{competitor['category']['parent']['name']}} / {{competitor['category']['name']}}
+    </p>
   </div>
 
-  <button mat-raised-button (click)="addCompetitor()">
-    Agregar Competidor
-  </button>
+  <div class="row">
+    <button mat-raised-button (click)="addCompetitor()">
+      Agregar Competidor
+    </button>
+    <button mat-raised-button (click)="saveCompetitors()">
+      Guardar Competidores
+    </button>
+  </div>
 
   <br/>
   <hr/>

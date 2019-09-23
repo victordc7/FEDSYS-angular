@@ -38,6 +38,7 @@ interface CategoryFlatNode {
 export class RegisterComponent implements OnInit {
   @Input() tournamentType;
   public tourneyRegistrationForm: FormGroup;
+  private tournamentId: string ;
   private body;
 
   // Global database categories and subcategories
@@ -231,8 +232,8 @@ export class RegisterComponent implements OnInit {
         return;
       } else {
         console.log("Dialog competitor output:", res);
-        // this.splitCompetitorByCategory(res);
-        this.competitors.push(res);
+        this.splitCompetitorByCategory(res);
+        // this.competitors.push(res);
       }
     });
   }
@@ -299,7 +300,7 @@ export class RegisterComponent implements OnInit {
       query: `mutation {
         createTourney(input: {
           name: "${this.tourneyRegistrationForm.value.name}"
-          number: 3
+          number: 5
           type: "${this.tournamentType._id}"
         }) {
           _id
@@ -314,71 +315,106 @@ export class RegisterComponent implements OnInit {
     .subscribe(res => {
       console.log(res);
       console.log(res['data']['createTourney']['_id']);
-
+      this.tournamentId = res['data']['createTourney']['_id'];
     });
   }
 
 
-  // splitCompetitorByCategory(form) {
+  splitCompetitorByCategory(form) {
 
-  //   for (let i = 0; i < form.categories.length; i++) {
-  //     const competitor = {
-  //       firstName: form.firstName,
-  //       lastName: form.lastName,
-  //       personalId: form.personalId,
-  //       age: form.age,
-  //       gender: form.gender,
-  //       city: form.city,
-  //       category: form.categories[i],
-  //       email: form.email,
-  //       phone: form.phone,
-  //     }
-  //     this.competitors.push(competitor);
-  //   }
-  //   this.modifyTourney(this.competitors);
-  // }
+    for (let i = 0; i < form.categories.length; i++) {
+      const competitor = {
+        firstName: form.firstName,
+        lastName: form.lastName,
+        personalID: +form.personalID,
+        age: +form.age,
+        gender: form.gender,
+        city: form.city,
+        category: form.categories[i],
+        email: form.email,
+        phone: form.phone,
+      }
+      this.competitors.push(competitor);
+      console.log(this.competitors);
+      console.log(typeof(this.competitors[0].personalID))
+    }
+  }
 
-  // modifyTourney(modification) {
-  //   if(modification === this.competitors){
-  //     this.body = {
-  //       query: `mutation {
-  //         updateTourney(input: {
-  //           competitors: "${modification}"
-  //         }) {
-  //           _id
-  //           competitors
-  //         }
-  //       }`
-  //     };
-  //   } else if(modification === this.categoriesArray) {
-  //     this.body = {
-  //       query: `mutation {
-  //         updateTourney(input: {
-  //           categories: "${modification}"
-  //         }) {
-  //           _id
-  //           categories
-  //         }
-  //       }`
-  //     };
-  //   } else if(modification === this.subcategoriesArray){
-  //     this.body = {
-  //       query: `mutation {
-  //         updateTourney(input: {
-  //           subcategories: "${modification}"
-  //         }) {
-  //           _id
-  //           categories
-  //         }
-  //       }`
-  //     };
-  //   }
-  //   // Llamada a servicio
-  //   this.serverService.graphql(this.body)
-  //   .subscribe(res => {
-  //     console.log(res);
-  //   });
-  // }
+  saveCompetitors() {
+    // for (let i = 0; i < Object.keys(this.competitors).length; i++) {
+    this.modifyTourney(this.competitors, 'competitor');
+    // }
+  }
+//   [
+//     firstName: "${modification.firstName}"
+//     lastName: "${modification.lastName}"
+//     personalID: ${modification.personalID}
+//     age: ${modification.age}
+//     gender: "${modification.gender}"
+//     city: "${modification.city}"
+//     subcategory: {
+//       name:"${modification.category.name}"
+//       parent: "${modification.category.parent._id}"
+//     }
+//     phone: "${modification.phone}"
+//     email: "${modification.email}"
+// ]
+  modifyTourney(modification, modificationType) {
+    if(modificationType === 'competitor'){
+      console.log(modification.personalID);
+      this.body = {
+        query: `mutation {
+          updateTourney(
+            _id: "${this.tournamentId}"
+            input: {
+            name: "${this.tourneyRegistrationForm.value.name}"
+            number: 5
+            type: "${this.tournamentType._id}"
+            competitors: ${modification}
+          }) {
+            _id
+            competitors {
+              firstName
+              subcategory {
+                name
+              }
+            }
+          }
+        }`
+      };
+    } else if(modificationType === 'category') {
+      this.body = {
+        query: `mutation {
+          updateTourney(
+            _id: "${this.tournamentId}"
+            input: {
+            categories: "${modification}"
+          }) {
+            _id
+            categories
+          }
+        }`
+      };
+    } else if(modificationType === 'subcategory'){
+      this.body = {
+        query: `mutation {
+          updateTourney(
+            _id: "${this.tournamentId}"
+            input: {
+            subcategories: "${modification}"
+          }) {
+            _id
+            categories
+          }
+        }`
+      };
+    }
+    // Llamada a servicio
+    this.serverService.graphql(this.body)
+    .subscribe(res => {
+      console.log(res);
+    });
+  }
 
   editItem(index, itemType, itemObject){
     if(itemType === 'judge'){
