@@ -157,7 +157,7 @@ export class PreRegistrationComponent implements OnInit {
 
     const dialogRef = this.dialog.open(RegCategoriesComponent, {
       width: '50%',
-      data: [this.categoriesArray[0], action]
+      data: [this.categoriesArray[0], this.subcategoriesArray[0], action]
     });
     // console.log('hello' + dialogRef.data);
     dialogRef.afterClosed().subscribe(res => {

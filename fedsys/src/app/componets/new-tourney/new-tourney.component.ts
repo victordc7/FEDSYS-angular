@@ -53,7 +53,7 @@ export class NewTourneyComponent implements OnInit {
         console.log(this.tournamentsArray);
     });
 
-        /**
+    /**
     * Form creation and class variables initialization
     */
     this.tourneyRegistrationForm = new FormGroup({

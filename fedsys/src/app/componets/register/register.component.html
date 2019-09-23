@@ -1,4 +1,36 @@
 <div class="col-xs-12 container">
+  <div class="row">
+    <form
+      [formGroup]="tourneyRegistrationForm"
+      (ngSubmit)="createTourney()"
+      class="w-50 center mat-typography"
+      style="width: 100%">
+
+      <mat-form-field
+        color="access"
+        class="black"
+        style="padding: 10px">
+          <input
+            matInput
+            type="text" color="primary"
+            formControlName="name"
+            placeholder="Nombre del torneo"
+            />
+          <mat-error>
+
+          </mat-error>
+      </mat-form-field>
+    </form>
+
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="createTourney()">
+      Guardar
+    </button>
+  </div>
+
+    <br>
 
       <!-- <span
         (click)="deleteItem(i,'subcategory')"

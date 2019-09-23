@@ -1,27 +1,10 @@
 <div class="container">
   <h4>Elige el tipo de torneo</h4>
   <form
-      [formGroup]="tourneyRegistrationForm"
-      (ngSubmit)="onNewTourney()"
-      class="w-50 center mat-typography"
-      style="width: 100%">
-
-      <mat-form-field
-        color="access"
-        class="black"
-        style="padding: 10px">
-          <input
-            matInput
-            type="text" color="primary"
-            formControlName="name"
-            placeholder="Nombre del torneo"
-            />
-          <mat-error>
-
-          </mat-error>
-      </mat-form-field>
-
-    <br>
+    [formGroup]="tourneyRegistrationForm"
+    (ngSubmit)="onNewTourney()"
+    class="w-50 center mat-typography"
+    style="width: 100%">
 
     <mat-form-field
       class="row"

@@ -5,9 +5,10 @@
           class="mat-typography"
           >
             <div
-              *ngIf="categoryRegistrationForm.value['level'] === 'Sub-category'">
+              *ngIf="action">
               <h4>Subcategoria</h4>
               <mat-form-field
+
                 class="row"
                 style="padding-right: 5px"
                 >
@@ -58,7 +59,7 @@
             </mat-radio-group>
 
           <div
-           *ngIf="categoryRegistrationForm.value['level'] === 'Sub-category'">
+           *ngIf="(categoryRegistrationForm.value['level'] === 'Sub-category') && !action">
             <h4>Categoria Padre</h4>
             <mat-form-field
               class="row"
