@@ -160,4 +160,31 @@ export class StartingOrderComponent implements OnInit {
     this.dataChange.next(this.data);
   }
 
+  saveChanges() {
+    const fases = [];
+    this.orderArray.forEach(category => {
+      category.childrens.forEach(subcategory => {
+        if (subcategory.active) {
+          fases.push(subcategory)
+        }
+      });
+    });
+    this.orderOverallArray.forEach(category => {
+      if (category.active) {
+        fases.push(category)
+      }
+    });
+    fases.sort(function (a, b) {
+      if (a.number > b.number) {
+        return 1;
+      }
+      if (a.number < b.number) {
+        return -1;
+      }
+      return 0;
+    });
+    this.dialogRef.close(fases);
+    console.log(fases);
+  }
+
 }
