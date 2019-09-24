@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 // Angular Material Modules
-import { MatDialogModule } from "@angular/material";
+import {MatDialogModule} from '@angular/material';
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material";
 
 import { HttpClientModule } from '@angular/common/http';

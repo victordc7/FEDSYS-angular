@@ -1,3 +1,6 @@
+<h1 mat-dialog-title style="background-color: primary">
+    Seleccionar Orden de Salida
+</h1>
 <mat-dialog-content>
     <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
         <!-- This is the tree node template for leaf nodes -->
@@ -35,3 +38,6 @@
         </mat-tree-node>
     </mat-tree>
 </mat-dialog-content>
+<mat-dialog-actions>
+    <button mat-raised-button color="primary" (click)="saveChanges()">Guardar Cambios</button>
+</mat-dialog-actions>
