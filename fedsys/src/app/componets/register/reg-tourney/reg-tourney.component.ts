@@ -92,6 +92,8 @@ export class RegTourneyComponent implements OnInit {
       subcategories = subcategories + '"' + subcategory + '",';
     });
     subcategories = subcategories + "]";
+    console.log('SUBCATEGORIES');
+    console.log(subcategories);
 
     if (this.tourneyRegistrationForm.status === 'VALID'){
       if (this.dataInput === "Add tourney") {

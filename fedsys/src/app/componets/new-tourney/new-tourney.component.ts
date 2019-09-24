@@ -78,7 +78,7 @@ export class NewTourneyComponent implements OnInit {
   }
   onStart() {
     // this.creatTourney();
-    this.router.navigate(['tabla']);
+    // this.router.navigate(['tabla']);
   }
 
 }

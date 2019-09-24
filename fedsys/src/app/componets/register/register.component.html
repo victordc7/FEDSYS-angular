@@ -25,7 +25,8 @@
     <button
       mat-raised-button
       color="primary"
-      (click)="createTourney()">
+      (click)="createTourney()"
+      [disabled]="!editTourney">
       Guardar
     </button>
   </div>
@@ -39,7 +40,7 @@
           cancel
         </mat-icon>
       </span> -->
-
+<div *ngIf="editTourney">
   <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
     <!-- This is the tree node template for leaf nodes -->
     <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding>
@@ -96,16 +97,25 @@
         </mat-icon>
       </span>
       </h4>
-      <p
+      <!-- <p
         class="list-group-item-text"
-        *ngFor="let subcategory of competitor.categories">
-          {{subcategory['parent']['name']}} / {{subcategory['name']}}
-      </p>
+        *ngFor="let subcategory of competitor['category']">
+          {{subcategory['parent']['name']}} / {{subcategory['name']}} <br>
+      </p> -->
+      <p
+      class="list-group-item-text">
+        {{competitor['category']['parent']['name']}} / {{competitor['category']['name']}}
+    </p>
   </div>
 
-  <button mat-raised-button (click)="addCompetitor()">
-    Agregar Competidor
-  </button>
+  <div class="row">
+    <button mat-raised-button (click)="addCompetitor()">
+      Agregar Competidor
+    </button>
+    <button mat-raised-button (click)="saveCompetitors()">
+      Guardar Competidores
+    </button>
+  </div>
 
   <br/>
   <hr/>
@@ -137,5 +147,6 @@
   </button>
   <br>
   <br>
+  </div>
 </div>
 

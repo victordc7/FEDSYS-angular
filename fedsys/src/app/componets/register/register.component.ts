@@ -39,6 +39,8 @@ interface CategoryFlatNode {
 export class RegisterComponent implements OnInit {
   @Input() tournamentType;
   public tourneyRegistrationForm: FormGroup;
+  private tournamentId: string;
+  public editTourney: boolean;
   private body;
 
   // Global database categories and subcategories
@@ -128,10 +130,16 @@ export class RegisterComponent implements OnInit {
     * Form creation and class variables initialization
     */
    this.tourneyRegistrationForm = new FormGroup({
-    'name': new FormControl(null, [Validators.required])
+    'name': new FormControl(null, [Validators.required]),
     });
     this.tourneyRegistrationForm.valueChanges.subscribe(
-      (value) => console.log(value)
+      (value) => {
+        if((this.tournamentType._id) && (value.name)){
+          this.editTourney = true;
+        } else {
+          this.editTourney = false;
+        }
+      }
     );
 
     /**
@@ -232,8 +240,8 @@ export class RegisterComponent implements OnInit {
         return;
       } else {
         console.log("Dialog competitor output:", res);
-        // this.splitCompetitorByCategory(res);
-        this.competitors.push(res);
+        this.splitCompetitorByCategory(res);
+        // this.competitors.push(res);
       }
     });
   }
@@ -268,6 +276,7 @@ export class RegisterComponent implements OnInit {
       }
     });
   }
+
 
   createSubcategory(form) {
     this.body = {
@@ -312,12 +321,11 @@ export class RegisterComponent implements OnInit {
   }
 
   createTourney() {
-
     this.body = {
       query: `mutation {
         createTourney(input: {
           name: "${this.tourneyRegistrationForm.value.name}"
-          number: 3
+          number: 5
           type: "${this.tournamentType._id}"
         }) {
           _id
@@ -332,71 +340,150 @@ export class RegisterComponent implements OnInit {
     .subscribe(res => {
       console.log(res);
       console.log(res['data']['createTourney']['_id']);
-
+      this.tournamentId = res['data']['createTourney']['_id'];
     });
   }
 
 
-  // splitCompetitorByCategory(form) {
+  splitCompetitorByCategory(form) {
 
-  //   for (let i = 0; i < form.categories.length; i++) {
-  //     const competitor = {
-  //       firstName: form.firstName,
-  //       lastName: form.lastName,
-  //       personalId: form.personalId,
-  //       age: form.age,
-  //       gender: form.gender,
-  //       city: form.city,
-  //       category: form.categories[i],
-  //       email: form.email,
-  //       phone: form.phone,
-  //     }
-  //     this.competitors.push(competitor);
-  //   }
-  //   this.modifyTourney(this.competitors);
-  // }
+    for (let i = 0; i < form.categories.length; i++) {
+      const competitor = {
+        firstName: form.firstName,
+        lastName: form.lastName,
+        personalID: +form.personalID,
+        age: +form.age,
+        gender: form.gender,
+        city: form.city,
+        category: form.categories[i],
+        email: form.email,
+        phone: form.phone,
+      }
+      this.competitors.push(competitor);
+      console.log(this.competitors);
+      console.log(typeof(this.competitors[0].personalID))
+    }
+  }
 
-  // modifyTourney(modification) {
-  //   if(modification === this.competitors){
-  //     this.body = {
-  //       query: `mutation {
-  //         updateTourney(input: {
-  //           competitors: "${modification}"
-  //         }) {
-  //           _id
-  //           competitors
-  //         }
-  //       }`
-  //     };
-  //   } else if(modification === this.categoriesArray) {
-  //     this.body = {
-  //       query: `mutation {
-  //         updateTourney(input: {
-  //           categories: "${modification}"
-  //         }) {
-  //           _id
-  //           categories
-  //         }
-  //       }`
-  //     };
-  //   } else if(modification === this.subcategoriesArray){
-  //     this.body = {
-  //       query: `mutation {
-  //         updateTourney(input: {
-  //           subcategories: "${modification}"
-  //         }) {
-  //           _id
-  //           categories
-  //         }
-  //       }`
-  //     };
-  //   }
-  //   // Llamada a servicio
-  //   this.serverService.graphql(this.body)
-  //   .subscribe(res => {
-  //     console.log(res);
-  //   });
-  // }
+  saveCompetitors() {
+    // for (let i = 0; i < Object.keys(this.competitors).length; i++) {
+    this.modifyTourney(this.competitors, 'competitor');
+    // }
+  }
+//   [
+//     firstName: "${modification.firstName}"
+//     lastName: "${modification.lastName}"
+//     personalID: ${modification.personalID}
+//     age: ${modification.age}
+//     gender: "${modification.gender}"
+//     city: "${modification.city}"
+//     subcategory: {
+//       name:"${modification.category.name}"
+//       parent: "${modification.category.parent._id}"
+//     }
+//     phone: "${modification.phone}"
+//     email: "${modification.email}"
+// ]
+  modifyTourney(modification, modificationType) {
+    let competitors = "[{"
+    if(modificationType === 'competitor'){
+      console.log(modification[0].category.name);
+      modification.map(attribute => {
+        console.log(attribute);
+        let entry = Object.entries(attribute)
+        for (let i = 0; i < entry.length; i++) {
+          if((entry[i][0] === 'personalID') || (entry[i][0] === 'age') ||(entry[i][0] === 'number')) {
+            competitors = competitors + ' ' + entry[i][0] + ': ' + entry[i][1];
+          } else if (entry[i][0] === 'category') {
+            let entrySubcategory = Object.entries(attribute['category']);
+            competitors = competitors + ' subcategory: ' + '{';
+            for (let j = 0; j < entrySubcategory.length; j++) {
+              if ( entrySubcategory[j][0] === 'parent'){
+                let entryParent = Object.entries(attribute['category']['parent']);
+                competitors = competitors + ' ' + entrySubcategory[j][0] + ': ';
+                for (let k = 0; k < entryParent.length; k++) {
+                  if ( entryParent[k][0] === '_id'){
+                    console.log('ENTRYPARENT')
+                    console.log(entryParent[k]);
+                    competitors = competitors + ' "' + entryParent[k][1] + '"';
+                  }
+                }
+              } else if (entrySubcategory[j][0] === '_id') {
+                competitors = competitors;
+              } else {
+              competitors = competitors + ' ' + entrySubcategory[j][0] + ': ' + ' "' + entrySubcategory[j][1] + '"';
+              }
+            }
+            competitors = competitors + "}";
+          } else {
+          competitors = competitors + ' ' + entry[i][0] + ': ' + '"' + entry[i][1] + '"';
+          console.log(competitors);
+          console.log(entry);
+          }
+        }
+        if (attribute === modification[modification.length - 1]){
+          // competitors = competitors + "}";
+          competitors = competitors + "}]";
+        } else {
+          competitors = competitors + "}, {";
+        }
+      });
+
+      console.log(competitors);
+      this.body = {
+        query: `mutation {
+          updateTourney(
+            _id: "${this.tournamentId}"
+            input: {
+            name: "${this.tourneyRegistrationForm.value.name}"
+            number: 5
+            type: "${this.tournamentType._id}"
+            competitors:  ${competitors}
+            }) {
+            _id
+            competitors {
+              firstName
+              subcategory {
+                name
+              }
+            }
+          }
+        }`
+      };
+      console.log(this.body);
+    } else if(modificationType === 'category') {
+      this.body = {
+        query: `mutation {
+          updateTourney(
+            _id: "${this.tournamentId}"
+            input: {
+            categories: "${modification}"
+          }) {
+            _id
+            categories
+          }
+        }`
+      };
+    } else if(modificationType === 'subcategory'){
+      this.body = {
+        query: `mutation {
+          updateTourney(
+            _id: "${this.tournamentId}"
+            input: {
+            subcategories: "${modification}"
+          }) {
+            _id
+            categories
+          }
+        }`
+      };
+    }
+    // Llamada a servicio
+    this.serverService.graphql(this.body)
+    .subscribe(res => {
+      console.log(res);
+    });
+  }
 
   editItem(index, itemType, itemObject){
     if(itemType === 'judge'){
