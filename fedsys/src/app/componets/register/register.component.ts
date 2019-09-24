@@ -41,6 +41,9 @@ export class RegisterComponent implements OnInit {
   public tourneyRegistrationForm: FormGroup;
   private tournamentId: string;
   public editTourney: boolean;
+  private judgesToSave: string = '';
+  private competitorsToSave: string = '';
+  private subcategoriesToSave: string = '';
   private body;
 
   // Global database categories and subcategories
@@ -255,7 +258,8 @@ export class RegisterComponent implements OnInit {
         if (res === undefined) {
           return;
         } else {
-          this.judges.push(res);
+          this.judges.push(res['data']['createJudge']);
+          console.log(this.judges)
         }
       });
   }
@@ -365,71 +369,99 @@ export class RegisterComponent implements OnInit {
     }
   }
 
-  saveCompetitors() {
-    // for (let i = 0; i < Object.keys(this.competitors).length; i++) {
-    this.modifyTourney(this.competitors, 'competitor');
-    // }
-  }
-//   [
-//     firstName: "${modification.firstName}"
-//     lastName: "${modification.lastName}"
-//     personalID: ${modification.personalID}
-//     age: ${modification.age}
-//     gender: "${modification.gender}"
-//     city: "${modification.city}"
-//     subcategory: {
-//       name:"${modification.category.name}"
-//       parent: "${modification.category.parent._id}"
-//     }
-//     phone: "${modification.phone}"
-//     email: "${modification.email}"
-// ]
-  modifyTourney(modification, modificationType) {
-    let competitors = "[{"
-    if(modificationType === 'competitor'){
-      console.log(modification[0].category.name);
-      modification.map(attribute => {
-        console.log(attribute);
+  saveTourney(modification: string, modificationType: string) {
+    console.log(modificationType)
+    console.log(Object.keys(this.judges).length);
+    if((modificationType === 'competitors') && (Object.keys(this.competitors).length>0)) {
+      this.competitorsToSave = "[{"
+      this.competitors.map(attribute => {
         let entry = Object.entries(attribute)
         for (let i = 0; i < entry.length; i++) {
-          if((entry[i][0] === 'personalID') || (entry[i][0] === 'age') ||(entry[i][0] === 'number')) {
-            competitors = competitors + ' ' + entry[i][0] + ': ' + entry[i][1];
+          if((entry[i][0] === 'personalID') || (entry[i][0] === 'age') || (entry[i][0] === 'number')) {
+            this.competitorsToSave = this.competitorsToSave + ' ' + entry[i][0] + ': ' + entry[i][1];
           } else if (entry[i][0] === 'category') {
             let entrySubcategory = Object.entries(attribute['category']);
-            competitors = competitors + ' subcategory: ' + '{';
+            this.competitorsToSave = this.competitorsToSave + ' subcategory: ' + '{';
             for (let j = 0; j < entrySubcategory.length; j++) {
               if ( entrySubcategory[j][0] === 'parent'){
                 let entryParent = Object.entries(attribute['category']['parent']);
-                competitors = competitors + ' ' + entrySubcategory[j][0] + ': ';
+                this.competitorsToSave = this.competitorsToSave + ' ' + entrySubcategory[j][0] + ': ';
                 for (let k = 0; k < entryParent.length; k++) {
                   if ( entryParent[k][0] === '_id'){
-                    console.log('ENTRYPARENT')
-                    console.log(entryParent[k]);
-                    competitors = competitors + ' "' + entryParent[k][1] + '"';
+                    this.competitorsToSave = this.competitorsToSave + ' "' + entryParent[k][1] + '"';
                   }
                 }
               } else if (entrySubcategory[j][0] === '_id') {
-                competitors = competitors;
+                this.competitorsToSave = this.competitorsToSave;
               } else {
-              competitors = competitors + ' ' + entrySubcategory[j][0] + ': ' + ' "' + entrySubcategory[j][1] + '"';
+              this.competitorsToSave = this.competitorsToSave + ' ' + entrySubcategory[j][0] + ': ' + ' "' + entrySubcategory[j][1] + '"';
               }
             }
-            competitors = competitors + "}";
+            this.competitorsToSave = this.competitorsToSave + "}";
           } else {
-          competitors = competitors + ' ' + entry[i][0] + ': ' + '"' + entry[i][1] + '"';
-          console.log(competitors);
-          console.log(entry);
+          this.competitorsToSave = this.competitorsToSave + ' ' + entry[i][0] + ': ' + '"' + entry[i][1] + '"';
           }
         }
-        if (attribute === modification[modification.length - 1]){
-          // competitors = competitors + "}";
-          competitors = competitors + "}]";
+        if (attribute === this.competitors[this.competitors.length - 1]){
+          this.competitorsToSave = this.competitorsToSave + "}]";
         } else {
-          competitors = competitors + "}, {";
+          this.competitorsToSave = this.competitorsToSave + "}, {";
         }
       });
 
-      console.log(competitors);
+    // } else if((modification === 'subcategories') && (Object.keys(this.subcategories[0]).length>0)) {
+
+
+
+    } else if((modificationType === 'judges') && (Object.keys(this.judges).length>0)) {
+
+    this.judgesToSave = "[";
+    this.judges.map(attribute => {
+      let entry = Object.entries(attribute);
+        for (let j = 0; j < entry.length; j++) {
+          if ( entry[j][0] === '_id'){
+            this.judgesToSave = this.judgesToSave + ' "' + entry[j][1] + '"';
+          } else {
+            this.judgesToSave = this.judgesToSave;
+          }
+        }
+        if (attribute === this.judges[this.judges.length - 1]){
+          this.judgesToSave = this.judgesToSave + "]";
+        } else {
+          this.judgesToSave = this.judgesToSave + ", ";
+        }
+      });
+      console.log('judgesToSave')
+      console.log(this.judgesToSave)
+    }
+    this.subcategoriesToSave = "[{"
+    this.subcategories[0].map(attribute => {
+      let entrySubcategory = Object.entries(attribute);
+        for (let j = 0; j < entrySubcategory.length; j++) {
+          if ( entrySubcategory[j][0] === 'parent'){
+            let entryParent = Object.entries(attribute['parent']);
+            this.subcategoriesToSave = this.subcategoriesToSave + ' ' + entrySubcategory[j][0] + ': ';
+            for (let k = 0; k < entryParent.length; k++) {
+              if ( entryParent[k][0] === '_id'){
+                this.subcategoriesToSave = this.subcategoriesToSave + ' "' + entryParent[k][1] + '"';
+              }
+            }
+          } else if (entrySubcategory[j][0] === '_id') {
+            this.subcategoriesToSave = this.subcategoriesToSave;
+          } else {
+            this.subcategoriesToSave = this.subcategoriesToSave + ' ' + entrySubcategory[j][0] + ': ' + ' "' + entrySubcategory[j][1] + '"';
+          }
+        }
+        if (attribute === this.subcategories[0][this.subcategories[0].length - 1]){
+          this.subcategoriesToSave = this.subcategoriesToSave + "}]";
+        } else {
+          this.subcategoriesToSave = this.subcategoriesToSave + "}, {";
+        }
+      });
+      console.log('subcategoriesToSave')
+      console.log(this.subcategoriesToSave);
+    if ((this.judgesToSave === '') && (this.competitorsToSave === '')) {
+      console.log('Subcategorias')
       this.body = {
         query: `mutation {
           updateTourney(
@@ -438,7 +470,7 @@ export class RegisterComponent implements OnInit {
             name: "${this.tourneyRegistrationForm.value.name}"
             number: 5
             type: "${this.tournamentType._id}"
-            competitors:  ${competitors}
+            subcategories: ${this.subcategoriesToSave}
             }) {
             _id
             competitors {
@@ -447,37 +479,158 @@ export class RegisterComponent implements OnInit {
                 name
               }
             }
+            subcategories {
+              name
+            }
+            judges {
+              firstName
+              _id
+            }
           }
         }`
       };
-      console.log(this.body);
-    } else if(modificationType === 'category') {
+    } else if (this.judgesToSave === ''){
+      console.log('Competidores y subcategorias')
       this.body = {
         query: `mutation {
           updateTourney(
             _id: "${this.tournamentId}"
             input: {
-            categories: "${modification}"
-          }) {
+            name: "${this.tourneyRegistrationForm.value.name}"
+            number: 5
+            type: "${this.tournamentType._id}"
+            competitors:  ${this.competitorsToSave}
+            subcategories: ${this.subcategoriesToSave}
+            }) {
             _id
-            categories
+            competitors {
+              firstName
+              subcategory {
+                name
+              }
+            }
+            subcategories {
+              name
+            }
+            judges {
+              firstName
+              _id
+            }
           }
         }`
       };
-    } else if(modificationType === 'subcategory'){
+    } else if (this.competitorsToSave === ''){
+      console.log('Jueces y subcategorias')
       this.body = {
         query: `mutation {
           updateTourney(
             _id: "${this.tournamentId}"
             input: {
-            subcategories: "${modification}"
-          }) {
+            name: "${this.tourneyRegistrationForm.value.name}"
+            number: 5
+            type: "${this.tournamentType._id}"
+            judges: ${this.judgesToSave}
+            subcategories: ${this.subcategoriesToSave}
+            }) {
             _id
-            categories
+            competitors {
+              firstName
+              subcategory {
+                name
+              }
+            }
+            subcategories {
+              name
+            }
+            judges {
+              firstName
+              _id
+            }
+          }
+        }`
+      };
+    }  else if (this.subcategoriesToSave === ''){
+      console.log('Jueces y subcategorias')
+      this.body = {
+        query: `mutation {
+          updateTourney(
+            _id: "${this.tournamentId}"
+            input: {
+            name: "${this.tourneyRegistrationForm.value.name}"
+            number: 5
+            type: "${this.tournamentType._id}"
+            competitors:  ${this.competitorsToSave}
+            judges: ${this.judgesToSave}
+            }) {
+            _id
+            competitors {
+              firstName
+              subcategory {
+                name
+              }
+            }
+            subcategories {
+              name
+            }
+            judges {
+              firstName
+              _id
+            }
+          }
+        }`
+      };
+    } else {
+      console.log('Jueces y subcategorias')
+      this.body = {
+        query: `mutation {
+          updateTourney(
+            _id: "${this.tournamentId}"
+            input: {
+            name: "${this.tourneyRegistrationForm.value.name}"
+            number: 5
+            type: "${this.tournamentType._id}"
+            competitors:  ${this.competitorsToSave}
+            judges: ${this.judgesToSave}
+            subcategories: ${this.subcategoriesToSave}
+            }) {
+            _id
+            competitors {
+              firstName
+              subcategory {
+                name
+              }
+            }
+            subcategories {
+              name
+            }
           }
         }`
       };
     }
+    // this.body = {
+    //   query: `mutation {
+    //     updateTourney(
+    //       _id: "${this.tournamentId}"
+    //       input: {
+    //       name: "${this.tourneyRegistrationForm.value.name}"
+    //       number: 5
+    //       type: "${this.tournamentType._id}"
+    //       competitors:  ${this.competitorsToSave}
+    //       judges: ${this.judgesToSave}
+    //       subcategories: ${this.subcategoriesToSave}
+    //       }) {
+    //       _id
+    //       competitors {
+    //         firstName
+    //         subcategory {
+    //           name
+    //         }
+    //       }
+    //     }
+    //   }`
+    // };
+    console.log(this.body);
+
     // Llamada a servicio
     this.serverService.graphql(this.body)
     .subscribe(res => {

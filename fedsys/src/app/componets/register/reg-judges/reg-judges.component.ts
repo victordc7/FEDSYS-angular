@@ -151,19 +151,24 @@ export class RegJudgesComponent implements OnInit {
             city: "${form.city}"
             email: "${form.email}"
           }) {
-            _id
             firstName
             lastName
+            personalID
+            email
+            age
+            city
+            _id
           }
         }`
       }
       this.serverService.graphql(body)
         .subscribe(res => {
           console.log(res);
-          this.dialogRef.close(form);
+          this.dialogRef.close(res);
           this.judgesRegistrationForm.reset();
         });
       } else if(this.dataInput['firstName'] !== undefined) {
+        // crear body de modificacion y enviar el res en vez del form
         this.dialogRef.close(form);
         this.judgesRegistrationForm.reset();
       }
