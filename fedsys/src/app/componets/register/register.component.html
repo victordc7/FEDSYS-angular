@@ -40,121 +40,123 @@
           cancel
         </mat-icon>
       </span> -->
-<div *ngIf="editTourney">
-  <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
-    <!-- This is the tree node template for leaf nodes -->
-    <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding>
-      <!-- use a disabled button to provide padding for tree leaf -->
-      <button mat-icon-button disabled></button>
-      {{node.name}}
-    </mat-tree-node>
-    <!-- This is the tree node template for expandable nodes -->
-    <mat-tree-node *matTreeNodeDef="let node;when: hasChild" matTreeNodePadding>
-      <button mat-icon-button matTreeNodeToggle
-              [attr.aria-label]="'toggle ' + node.name">
-        <mat-icon class="mat-icon-rtl-mirror">
-          {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
-        </mat-icon>
+  <div *ngIf="editTourney">
+    <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
+      <!-- This is the tree node template for leaf nodes -->
+      <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding>
+        <!-- use a disabled button to provide padding for tree leaf -->
+        <button mat-icon-button disabled></button>
+        {{node.name}}
+      </mat-tree-node>
+      <!-- This is the tree node template for expandable nodes -->
+      <mat-tree-node *matTreeNodeDef="let node;when: hasChild" matTreeNodePadding>
+        <button mat-icon-button matTreeNodeToggle
+                [attr.aria-label]="'toggle ' + node.name">
+          <mat-icon class="mat-icon-rtl-mirror">
+            {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
+          </mat-icon>
+        </button>
+        {{node.name}}
+      </mat-tree-node>
+    </mat-tree>
+    <br>
+    <div class="row">
+      <button mat-raised-button color="primary" (click)="addCategory('add')">
+        Agregar Categoria
       </button>
-      {{node.name}}
-    </mat-tree-node>
-  </mat-tree>
-  <br>
-  <div class="row">
-    <button mat-raised-button color="primary" (click)="addCategory('add')">
-      Agregar Categoria
-    </button>
-    <button mat-raised-button (click)="addCategory('create')">
-      Crear Categoria
-    </button>
-    <button mat-raised-button (click)="saveTourney('subcategories','subcategories')">
-      Guardar Categorias
-    </button>
-  </div>
-  <div class="row mt-5">
-    <button mat-raised-button color="primary" (click)="selectStaringOrder()">
-      Configurar orden de salida
-    </button>
-  </div>
-  <br/>
-  <hr/>
-  <br/>
-  <div class="col-xs-12"
-      *ngFor="let competitor of competitors; let i = index"
-      index="i">
-      <h4
-        class="list-group-item-heading">
-        {{ competitor.firstName }} {{ competitor.lastName }} {{competitor.personalID}} {{competitor.age}} {{competitor.city}}
-        <span
-          (click)="deleteItem(i,'competitor')"
+      <button mat-raised-button (click)="addCategory('create')">
+        Crear Categoria
+      </button>
+      <button mat-raised-button (click)="saveTourney('subcategories','subcategories')">
+        Guardar Categorias
+      </button>
+    </div>
+    <br/>
+    <hr/>
+    <br/>
+    <div class="col-xs-12"
+        *ngFor="let competitor of competitors; let i = index"
+        index="i">
+        <h4
+          class="list-group-item-heading">
+          {{ competitor.firstName }} {{ competitor.lastName }} {{competitor.personalID}} {{competitor.age}} {{competitor.city}}
+          <span
+            (click)="deleteItem(i,'competitor')"
+            style="cursor: pointer">
+            <mat-icon>
+              cancel
+            </mat-icon>
+          </span>
+          <span
+          (click)="editItem(i, 'competitor', competitor)"
           style="cursor: pointer">
           <mat-icon>
-            cancel
+            mode_edit
           </mat-icon>
         </span>
-        <span
-        (click)="editItem(i, 'competitor', competitor)"
-        style="cursor: pointer">
-        <mat-icon>
-          mode_edit
-        </mat-icon>
-      </span>
-      </h4>
-      <!-- <p
-        class="list-group-item-text"
-        *ngFor="let subcategory of competitor['category']">
-          {{subcategory['parent']['name']}} / {{subcategory['name']}} <br>
-      </p> -->
-      <p
-      class="list-group-item-text">
-        {{competitor['category']['parent']['name']}} / {{competitor['category']['name']}}
-    </p>
-  </div>
+        </h4>
+        <!-- <p
+          class="list-group-item-text"
+          *ngFor="let subcategory of competitor['category']">
+            {{subcategory['parent']['name']}} / {{subcategory['name']}} <br>
+        </p> -->
+        <p
+        class="list-group-item-text">
+          {{competitor['category']['parent']['name']}} / {{competitor['category']['name']}}
+      </p>
+    </div>
 
-  <div class="row">
-    <button mat-raised-button (click)="addCompetitor()">
-      Agregar Competidor
-    </button>
-    <button mat-raised-button (click)="saveTourney('subcategories','competitors')">
-      Guardar Competidores
-    </button>
-  </div>
+    <div class="row">
+      <button mat-raised-button (click)="addCompetitor()">
+        Agregar Competidor
+      </button>
+      <button mat-raised-button (click)="saveTourney('subcategories','competitors')">
+        Guardar Competidores
+      </button>
+    </div>
 
-  <br/>
-  <hr/>
-  <br/>
-  <div class="col-xs-12"
-      *ngFor="let judge of judges; let i = index"
-      index="i">
-      <h4
-        class="list-group-item-heading">
-        {{ judge.firstName }} {{ judge.lastName }}
-        <span
-          (click)="deleteItem(i,'judge')"
+    <br/>
+    <hr/>
+    <br/>
+    <div class="col-xs-12"
+        *ngFor="let judge of judges; let i = index"
+        index="i">
+        <h4
+          class="list-group-item-heading">
+          {{ judge.firstName }} {{ judge.lastName }}
+          <span
+            (click)="deleteItem(i,'judge')"
+            style="cursor: pointer">
+            <mat-icon>
+              cancel
+            </mat-icon>
+          </span>
+          <span
+          (click)="editItem(i, 'judge', judge)"
           style="cursor: pointer">
           <mat-icon>
-            cancel
+            mode_edit
           </mat-icon>
         </span>
-        <span
-        (click)="editItem(i, 'judge', judge)"
-        style="cursor: pointer">
-        <mat-icon>
-          mode_edit
-        </mat-icon>
-      </span>
-      </h4>
-  </div>
-  <div class="row">
-    <button mat-raised-button (click)="addJudge()">
-      Agregar Juez
-    </button>
-    <button mat-raised-button (click)="saveTourney('subcategories','judges')">
-      Guardar Jueces
-    </button>
-  </div>
-  <br>
-  <br>
+        </h4>
+    </div>
+    <div class="row">
+      <button mat-raised-button (click)="addJudge()">
+        Agregar Juez
+      </button>
+      <button mat-raised-button (click)="saveTourney('subcategories','judges')">
+        Guardar Jueces
+      </button>
+    </div>
+    <br>
+    <hr>
+    <br>
+    <div class="row mt-5">
+      <button mat-raised-button color="primary" (click)="selectStaringOrder()">
+        Configurar orden de salida
+      </button>
+    </div>
+
   </div>
 </div>
 

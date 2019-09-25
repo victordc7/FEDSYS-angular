@@ -5,7 +5,7 @@
     <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
         <!-- This is the tree node template for leaf nodes -->
         <mat-tree-node *matTreeNodeDef="let node;" matTreeNodePadding  [style.display]="(node.level === 1) ? 'block' : 'none'">
-            {{node.name}} {{node.index}}<br>
+            {{node.name}} <span style="color: red; font-weight:bold">N° Competidores: {{node.count}}</span><br>
             <mat-checkbox [(ngModel)]="orderArray[node.index]['childrens'][0].active">Eliminatoria</mat-checkbox>
             <input placeholder="Orden de salida" type="number" [(ngModel)]="orderArray[node.index]['childrens'][0].number" *ngIf="orderArray[node.index]['childrens'][0].active"><br>
             <mat-checkbox [(ngModel)]="orderArray[node.index]['childrens'][1].active">Semifinal</mat-checkbox>
