@@ -33,7 +33,7 @@ export class RegCategoriesComponent implements OnInit {
     */
     this.categoryRegistrationForm = new FormGroup({
       'name': new FormControl(null, [Validators.required]),
-      'code': new FormControl(null, [Validators.required]),
+      'code': new FormControl(null),
       'level': new FormControl('Category'),
       'parent': new FormControl(null)
     });
@@ -63,10 +63,11 @@ export class RegCategoriesComponent implements OnInit {
    */
   private getRequestBody(): any {
     const result: Category = Object.assign({}, this.categoryRegistrationForm.value);
+    console.log(result)
     result.parent = this.action ? this.categoryRegistrationForm.value.name.parent.name : result.parent;
     const requestBody: Object = {
       name: result.name,
-      code: result.code,
+      code: this.categoryRegistrationForm.value.name.code,
       level: result.level,
       parent: result.parent || null
     };

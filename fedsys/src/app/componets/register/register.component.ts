@@ -40,7 +40,7 @@ interface CategoryFlatNode {
 export class RegisterComponent implements OnInit {
   @Input() tournamentType;
   public tourneyRegistrationForm: FormGroup;
-  private tournamentId: string;
+  public tournamentId: string;
   public editTourney: boolean = false;
   private judgesToSave: string = '';
   private competitorsToSave: string = '';
@@ -158,10 +158,10 @@ export class RegisterComponent implements OnInit {
         /**
     * Selected tournament type initialization
     */
-   if (this.tournamentType !== null) {
-    this.subcategories.push(this.tournamentType['subcategories']);
-    console.log(this.subcategories)
-  }
+    if (this.tournamentType !== null) {
+      this.subcategories.push(this.tournamentType['subcategories']);
+      console.log(this.subcategories)
+    }
     /**
     * Form creation and class variables initialization
     */
@@ -173,10 +173,9 @@ export class RegisterComponent implements OnInit {
     });
     this.tourneyRegistrationForm.valueChanges.subscribe(
       (value) => {
-        if((value.name.length > 4)){
+        if((this.tournamentType !== null) && (value.name !== null)){
           this.tourneyFlag1 = true;  // habilita el boton de creacion
-          console.log('entroooo')
-        } else if(value.existent !== null && (this.tournamentType === null)){
+        } else if((value.existent !== null)){
           this.tourneyFlag2 = true;  // habilita el boton de carga
         }
       }
@@ -242,7 +241,7 @@ export class RegisterComponent implements OnInit {
   createTourney(action: string) {
     let body;
     if(action === 'create'){
-      // if(this.subcategories[0].length>0) {
+      // if(this.subcategories[0].length > 0) {
         body = {
           query: `mutation {
             createTourney(input: {
@@ -262,6 +261,7 @@ export class RegisterComponent implements OnInit {
             this.tournamentId = res['data']['createTourney']['_id'];
         });
       this.tourneyFlag1 = false;
+      // } else {}
     } else if(action === 'load') {
       body = {
         query: `
@@ -305,6 +305,8 @@ export class RegisterComponent implements OnInit {
         }
         this.tourneyFlag2 = false;
       });
+      /// llenar los arreglos con data traida del torneo guardado
+
     }
     this.editTourney = true;
   }
@@ -340,6 +342,8 @@ export class RegisterComponent implements OnInit {
               }
             }
             this.dataChange.next(this.data);
+            this.saveTourney('subcategories','subcategories');
+            this.saveTourney('subcategories','subcategories');
           }
         }
       }
@@ -349,7 +353,7 @@ export class RegisterComponent implements OnInit {
   addCompetitor() {
     const dialogRef = this.dialog.open(RegCompetidoresComponent, {
       width: '50%',
-      data: 'Add competitor',
+      data: ['Add competitor', this.subcategories[0]],
     });
     dialogRef.afterClosed().subscribe(res => {
       if (res === undefined) {
@@ -373,6 +377,8 @@ export class RegisterComponent implements OnInit {
         } else {
           this.judges.push(res['data']['createJudge']);
           console.log(this.judges)
+          this.saveTourney('subcategories', 'judges');
+          this.saveTourney('subcategories', 'judges');
         }
       });
   }
@@ -514,8 +520,8 @@ export class RegisterComponent implements OnInit {
         phone: form.phone,
       }
       this.competitors.push(competitor);
-      console.log(this.competitors);
-      console.log(typeof(this.competitors[0].personalID))
+      this.saveTourney('subcategories','competitors');
+      this.saveTourney('subcategories','competitors');
     }
   }
 
@@ -530,20 +536,22 @@ export class RegisterComponent implements OnInit {
         for (let i = 0; i < entry.length; i++) {
           if((entry[i][0] === 'personalID') || (entry[i][0] === 'age') || (entry[i][0] === 'number')) {
             this.competitorsToSave = this.competitorsToSave + ' ' + entry[i][0] + ': ' + entry[i][1];
-          } else if (entry[i][0] === 'category') {
-            let entrySubcategory = Object.entries(attribute['category']);
+          } else if (entry[i][0] === 'subcategory') {
+            let entrySubcategory = Object.entries(attribute['subcategory']);
             this.competitorsToSave = this.competitorsToSave + ' subcategory: ' + '{';
             for (let j = 0; j < entrySubcategory.length; j++) {
               if ( entrySubcategory[j][0] === 'parent'){
-                let entryParent = Object.entries(attribute['category']['parent']);
+                let entryParent = Object.entries(attribute['subcategory']['parent']);
                 this.competitorsToSave = this.competitorsToSave + ' ' + entrySubcategory[j][0] + ': ';
                 for (let k = 0; k < entryParent.length; k++) {
-                  if ( entryParent[k][0] === '_id'){
+                  if (entryParent[k][0] === '_id'){
                     this.competitorsToSave = this.competitorsToSave + ' "' + entryParent[k][1] + '"';
                   }
                 }
               } else if (entrySubcategory[j][0] === '_id') {
                 this.competitorsToSave = this.competitorsToSave;
+              } else if (entrySubcategory[j][0] === 'code') {
+                this.subcategoriesToSave = this.subcategoriesToSave + ' ' + entrySubcategory[j][0] + ': ' + entrySubcategory[j][1];
               } else {
               this.competitorsToSave = this.competitorsToSave + ' ' + entrySubcategory[j][0] + ': ' + ' "' + entrySubcategory[j][1] + '"';
               }
@@ -559,7 +567,7 @@ export class RegisterComponent implements OnInit {
           this.competitorsToSave = this.competitorsToSave + "}, {";
         }
       });
-
+      console.log(this.competitorsToSave);
     // } else if((modification === 'subcategories') && (Object.keys(this.subcategories[0]).length>0)) {
 
 
@@ -585,6 +593,7 @@ export class RegisterComponent implements OnInit {
       console.log('judgesToSave')
       console.log(this.judgesToSave)
     }
+
     this.subcategoriesToSave = "[{"
     this.subcategories[0].map(attribute => {
       let entrySubcategory = Object.entries(attribute);
@@ -593,12 +602,14 @@ export class RegisterComponent implements OnInit {
             let entryParent = Object.entries(attribute['parent']);
             this.subcategoriesToSave = this.subcategoriesToSave + ' ' + entrySubcategory[j][0] + ': ';
             for (let k = 0; k < entryParent.length; k++) {
-              if ( entryParent[k][0] === '_id'){
+              if (entryParent[k][0] === '_id') {
                 this.subcategoriesToSave = this.subcategoriesToSave + ' "' + entryParent[k][1] + '"';
               }
             }
-          } else if (entrySubcategory[j][0] === '_id') {
+          } else if ((entrySubcategory[j][0] === '_id')) {
             this.subcategoriesToSave = this.subcategoriesToSave;
+          } else if (entrySubcategory[j][0] === 'code') {
+            this.subcategoriesToSave = this.subcategoriesToSave + ' ' + entrySubcategory[j][0] + ': ' + entrySubcategory[j][1];
           } else {
             this.subcategoriesToSave = this.subcategoriesToSave + ' ' + entrySubcategory[j][0] + ': ' + ' "' + entrySubcategory[j][1] + '"';
           }
@@ -619,7 +630,6 @@ export class RegisterComponent implements OnInit {
             _id: "${this.tournamentId}"
             input: {
             name: "${this.tourneyRegistrationForm.value.name}"
-            number: 5
             type: "${this.tournamentType._id}"
             subcategories: ${this.subcategoriesToSave}
             }) {
@@ -648,7 +658,6 @@ export class RegisterComponent implements OnInit {
             _id: "${this.tournamentId}"
             input: {
             name: "${this.tourneyRegistrationForm.value.name}"
-            number: 5
             type: "${this.tournamentType._id}"
             competitors:  ${this.competitorsToSave}
             subcategories: ${this.subcategoriesToSave}
@@ -678,7 +687,6 @@ export class RegisterComponent implements OnInit {
             _id: "${this.tournamentId}"
             input: {
             name: "${this.tourneyRegistrationForm.value.name}"
-            number: 5
             type: "${this.tournamentType._id}"
             judges: ${this.judgesToSave}
             subcategories: ${this.subcategoriesToSave}
@@ -688,10 +696,12 @@ export class RegisterComponent implements OnInit {
               firstName
               subcategory {
                 name
+                code
               }
             }
             subcategories {
               name
+              code
             }
             judges {
               firstName
@@ -708,7 +718,6 @@ export class RegisterComponent implements OnInit {
             _id: "${this.tournamentId}"
             input: {
             name: "${this.tourneyRegistrationForm.value.name}"
-            number: 5
             type: "${this.tournamentType._id}"
             competitors:  ${this.competitorsToSave}
             judges: ${this.judgesToSave}
@@ -718,10 +727,12 @@ export class RegisterComponent implements OnInit {
               firstName
               subcategory {
                 name
+                code
               }
             }
             subcategories {
               name
+              code
             }
             judges {
               firstName
@@ -738,7 +749,6 @@ export class RegisterComponent implements OnInit {
             _id: "${this.tournamentId}"
             input: {
             name: "${this.tourneyRegistrationForm.value.name}"
-            number: 5
             type: "${this.tournamentType._id}"
             competitors:  ${this.competitorsToSave}
             judges: ${this.judgesToSave}
@@ -749,10 +759,12 @@ export class RegisterComponent implements OnInit {
               firstName
               subcategory {
                 name
+                code
               }
             }
             subcategories {
               name
+              code
             }
           }
         }`
@@ -807,7 +819,7 @@ export class RegisterComponent implements OnInit {
       if(itemType === 'competitor'){
       const dialogRef = this.dialog.open(RegCompetidoresComponent, {
         width: '50%',
-        data: itemObject
+        data: [itemObject, this.subcategories]
       });
       dialogRef.afterClosed().subscribe(res => {
           console.log("Dialog output:", res);
