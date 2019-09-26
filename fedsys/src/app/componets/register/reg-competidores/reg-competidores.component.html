@@ -129,7 +129,7 @@
                 [formControlName]="i"
                 required>
                 <mat-option
-                  *ngFor="let item of categoriesArray[0]; let i = index"
+                  *ngFor="let item of dataInput[1]; let i = index"
                   [value]="item"
                   required>
                   {{item['parent']['name']}}/{{item['name']}}

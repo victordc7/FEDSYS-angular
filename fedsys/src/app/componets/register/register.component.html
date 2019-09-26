@@ -39,7 +39,7 @@
     </form>
 
     <button
-      *ngIf="!editTourney"
+
       mat-raised-button
       color="primary"
       (click)="createTourney('load')"
@@ -129,7 +129,7 @@
         </p> -->
         <p
         class="list-group-item-text">
-          {{competitor['category']['parent']['name']}} / {{competitor['category']['name']}}
+          {{competitor['subcategory']['parent']['name']}} / {{competitor['subcategory']['name']}}
       </p>
     </div>
 

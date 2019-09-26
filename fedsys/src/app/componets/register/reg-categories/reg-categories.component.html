@@ -21,7 +21,7 @@
                     *ngFor="let item of subcategoriesArray; let i = index"
                     [value]="item"
                     required>
-                    {{i+1}} {{item.parent.name}} - {{item.name}}
+                    {{item.code}} {{item.parent.name}} - {{item.name}}
                   </mat-option>
                 </mat-select>
               </mat-form-field>
@@ -46,6 +46,7 @@
             <br/>
 
             <mat-form-field
+              *ngIf="!action"
               color="access"
               class="black"
               style="padding: 10px">

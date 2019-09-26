@@ -46,20 +46,12 @@ export class RegCompetidoresComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    console.log(this.dataInput)
+    console.log(this.dataInput[0])
     const body = {
       query:` query {
         competitors
         { _id
           firstName
-        },
-        subcategories
-        { _id
-          name
-          parent {
-            _id
-            name
-          }
         }
       }`
     };
@@ -68,7 +60,7 @@ export class RegCompetidoresComponent implements OnInit {
     this.serverService.graphql(body)
     .subscribe(res => {
       this.competitorsArray.push(res['data']['competitors']);
-      this.categoriesArray.push(res['data']['subcategories']);
+      // this.categoriesArray.push(res['data']['subcategories']);
       console.log(this.categoriesArray)
     });
     /**
@@ -108,11 +100,11 @@ export class RegCompetidoresComponent implements OnInit {
 
     this.setFormControlsValidators();
 
-    if(this.dataInput === 'Add competitor') {
+    if(this.dataInput[0] === 'Add competitor') {
       console.log('Subcategory!!!');
-      } else if (this.dataInput['firstName'] !== undefined) {
+      } else if (this.dataInput[0]['firstName'] !== undefined) {
        console.log('Competitor modification!!!');
-       this.competitorToModify = this.dataInput;
+       this.competitorToModify = this.dataInput[0];
        this.fillForm(this.competitorToModify);
     }
   }
@@ -158,7 +150,7 @@ export class RegCompetidoresComponent implements OnInit {
       email: result.email,
       phone: result.phone
     };
-    console.log("Here the competitor object" + requestBody)
+    console.log("Here the competitor object" + requestBody);
     return requestBody;
   }
 

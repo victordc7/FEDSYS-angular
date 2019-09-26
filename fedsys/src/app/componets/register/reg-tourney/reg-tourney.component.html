@@ -54,7 +54,7 @@
           *ngFor="let item of subcategoriesArray[0]"
           [value]="item._id"
           required>
-          {{item['parent']['name']}}/{{item['name']}}
+          {{item['parent']['code']}}{{item['parent']['name']}}/{{item['code']}}{{item['name']}}
         </mat-option>
       </mat-select>
       <button
