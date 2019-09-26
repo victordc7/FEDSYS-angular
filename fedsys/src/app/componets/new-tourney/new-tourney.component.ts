@@ -41,6 +41,7 @@ export class NewTourneyComponent implements OnInit {
             parent {
               _id
               name
+              code
             }
           }
         }
@@ -68,12 +69,12 @@ export class NewTourneyComponent implements OnInit {
   onNewTourney() {
     this.started = true;
     // console.log(this.tourneyRegistrationForm.value.type._id);
-    if (this.tourneyRegistrationForm.value !== null) {
+    if (this.tourneyRegistrationForm.value === null) {
+      this.selectedTourney = null;
+    } else {
       this.selectedTourney._id = this.tourneyRegistrationForm.value.type._id;
       this.selectedTourney.name = this.tourneyRegistrationForm.value.type.name;
       this.selectedTourney.subcategories = this.tourneyRegistrationForm.value.type.subcategories;
-    } else {
-      this.selectedTourney = null;
     }
     console.log(this.selectedTourney);
   }

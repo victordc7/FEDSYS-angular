@@ -27,9 +27,11 @@ export class RegTourneyComponent implements OnInit {
         subcategories
         { _id
           name
+          code
           parent
           { _id
             name
+            code
           }
         }
       }`
