@@ -173,10 +173,10 @@ export class RegisterComponent implements OnInit {
     });
     this.tourneyRegistrationForm.valueChanges.subscribe(
       (value) => {
-        if((this.tournamentType !== null) && (value.name !== '')){
+        if((value.name.length > 4)){
           this.tourneyFlag1 = true;  // habilita el boton de creacion
           console.log('entroooo')
-        } else if(value.existent !== null){
+        } else if(value.existent !== null && (this.tournamentType === null)){
           this.tourneyFlag2 = true;  // habilita el boton de carga
         }
       }
