@@ -11,7 +11,7 @@
             <mat-checkbox [(ngModel)]="orderArray[node.index]['childrens'][1].active">Semifinal</mat-checkbox>
             <input placeholder="Orden de salida" type="number" [(ngModel)]="orderArray[node.index]['childrens'][1].number" *ngIf="orderArray[node.index]['childrens'][1].active"><br>
             <mat-checkbox [(ngModel)]="orderArray[node.index]['childrens'][2].active">{{" "}}</mat-checkbox>
-            <mat-checkbox [(ngModel)]="orderArray[node.index]['childrens'][3].active">Final</mat-checkbox>
+            <mat-checkbox [disabled]="!orderArray[node.index]['childrens'][2].active" [(ngModel)]="orderArray[node.index]['childrens'][3].active">Final</mat-checkbox>
             <input placeholder="Orden de salida" type="number" [(ngModel)]="orderArray[node.index]['childrens'][2].number" *ngIf="orderArray[node.index]['childrens'][2].active">
             <input placeholder="Orden de salida" type="number" [(ngModel)]="orderArray[node.index]['childrens'][3].number" *ngIf="orderArray[node.index]['childrens'][3].active"><br>
             <mat-checkbox [(ngModel)]="orderArray[node.index]['childrens'][4].active">Premiación</mat-checkbox>
