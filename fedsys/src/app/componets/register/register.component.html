@@ -32,7 +32,7 @@
             type="text" color="primary"
             formControlName="name"
             placeholder="Nombre del torneo"
-            readonly="editTourney"/>
+            />
           <mat-error>
           </mat-error>
       </mat-form-field>
@@ -43,7 +43,7 @@
       mat-raised-button
       color="primary"
       (click)="createTourney('load')"
-      [disabled]="editTourney"
+      [disabled]="!tourneyFlag2"
       >
       Cargar
     </button>
@@ -53,7 +53,7 @@
       *ngIf="!editTourney"
       color="primary"
       (click)="createTourney('create')"
-      [disabled]="!tourneyFlag">
+      [disabled]="!tourneyFlag1">
       Crear
     </button>
   </div>
