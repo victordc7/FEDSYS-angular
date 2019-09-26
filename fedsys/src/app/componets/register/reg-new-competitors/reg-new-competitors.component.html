@@ -47,16 +47,18 @@
           placeholder="Numero de identidad"/>
         </mat-form-field>
 
-      <mat-form-field
-        class="w-50 white"
-        style="padding-right: 5px">
-        <input
-          matInput
-          type="text"
-          formControlName="age"
-          placeholder="Edad"/>
+        <div class="input-container">
+          <mat-form-field>
+            <input matInput type="date" placeholder="Fecha de nacimiento" value="birthdate" [(ngModel)]="birthdate" formControlName="date"/>
+            <!-- <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle> -->
+            <!-- <mat-datepicker #dp></mat-datepicker> -->
+          </mat-form-field>
 
-      </mat-form-field>
+          <mat-form-field>
+            <input matInput placeholder="Edad" value="{{ageCalculation}}" [(ngModel)]="ageCalculation" formControlName="age" readonly/>
+          </mat-form-field>
+          <!-- <button mat-button type="button" (click)="CalculateAge()">Calculate Age</button> -->
+      </div>
 
       <br/>
 
