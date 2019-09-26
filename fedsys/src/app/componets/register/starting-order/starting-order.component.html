@@ -10,10 +10,12 @@
             <input placeholder="Orden de salida" type="number" [(ngModel)]="orderArray[node.index]['childrens'][0].number" *ngIf="orderArray[node.index]['childrens'][0].active"><br>
             <mat-checkbox [(ngModel)]="orderArray[node.index]['childrens'][1].active">Semifinal</mat-checkbox>
             <input placeholder="Orden de salida" type="number" [(ngModel)]="orderArray[node.index]['childrens'][1].number" *ngIf="orderArray[node.index]['childrens'][1].active"><br>
-            <mat-checkbox [(ngModel)]="orderArray[node.index]['childrens'][2].active">Final</mat-checkbox>
-            <input placeholder="Orden de salida" type="number" [(ngModel)]="orderArray[node.index]['childrens'][2].number" *ngIf="orderArray[node.index]['childrens'][2].active"><br>
-            <mat-checkbox [(ngModel)]="orderArray[node.index]['childrens'][3].active">Premiación</mat-checkbox>
-            <input placeholder="Orden de salida" type="number" [(ngModel)]="orderArray[node.index]['childrens'][3].number" *ngIf="orderArray[node.index]['childrens'][3].active">
+            <mat-checkbox [(ngModel)]="orderArray[node.index]['childrens'][2].active">{{" "}}</mat-checkbox>
+            <mat-checkbox [(ngModel)]="orderArray[node.index]['childrens'][3].active">Final</mat-checkbox>
+            <input placeholder="Orden de salida" type="number" [(ngModel)]="orderArray[node.index]['childrens'][2].number" *ngIf="orderArray[node.index]['childrens'][2].active">
+            <input placeholder="Orden de salida" type="number" [(ngModel)]="orderArray[node.index]['childrens'][3].number" *ngIf="orderArray[node.index]['childrens'][3].active"><br>
+            <mat-checkbox [(ngModel)]="orderArray[node.index]['childrens'][4].active">Premiación</mat-checkbox>
+            <input placeholder="Orden de salida" type="number" [(ngModel)]="orderArray[node.index]['childrens'][4].number" *ngIf="orderArray[node.index]['childrens'][4].active">
         </mat-tree-node>
         <!-- This is the tree node template for expandable nodes -->
         <mat-tree-node *matTreeNodeDef="let node; when: hasChilds" matTreeNodePadding>
@@ -40,4 +42,5 @@
 </mat-dialog-content>
 <mat-dialog-actions>
     <button mat-raised-button color="primary" (click)="saveChanges()">Guardar Cambios</button>
+    <button mat-raised-button  (click)="close()">Cancelar</button>
 </mat-dialog-actions>
