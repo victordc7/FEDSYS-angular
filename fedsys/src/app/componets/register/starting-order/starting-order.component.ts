@@ -14,7 +14,7 @@ import { ServiceService } from 'src/app/service.service';
  */
 interface CategoryNode {
   name: string;
-  code: string;
+  code: number;
   children?: Array<CategoryNode>;
   level: number;
   index: number;
@@ -30,9 +30,9 @@ interface CategoryFlatNode {
   hasChilds: boolean;
 }
 
-interface StaringOrder {
+interface StartingOrder {
   number: number;
-  subcategory: string;
+  subcategoryCode: number;
   fase: string;
   active: boolean;
 }
@@ -53,8 +53,8 @@ export class StartingOrderComponent implements OnInit {
   public categoryTree: Array<CategoryNode> = [];
 
   // Variables for StartingOrder
-  public orderArray: [{index:number, childrens: Array<StaringOrder>}] = [{index: 0, childrens:[]}]; 
-  public orderOverallArray: Array<StaringOrder> = [];
+  public orderArray: [{index:number, childrens: Array<StartingOrder>}] = [{index: 0, childrens:[]}]; 
+  public orderOverallArray: Array<StartingOrder> = [];
 
   /**
    * Category Tree, buildinng initialization
@@ -106,7 +106,7 @@ export class StartingOrderComponent implements OnInit {
   buildFileTree(obj: {[key: string]: any}, level: number): CategoryNode[] {
     return Object.keys(obj).reduce<CategoryNode[]>((accumulator, key) => {
       const value = obj[key];
-      const node: CategoryNode = {code: '', name: '', children: [], level: 0, index: 0, count: 0};
+      const node: CategoryNode = {code: null, name: '', children: [], level: 0, index: 0, count: 0};
       node.name = value.name;
       node.code = value.code;
       node.level = level
@@ -144,16 +144,17 @@ export class StartingOrderComponent implements OnInit {
     this.orderArray.splice(0,1);
     for (let i = 0; i < Object.keys(this.categoryTree).length; i++) {
       console.log(this.categoryTree[i]);
-      this.orderOverallArray.push({number: undefined, subcategory: this.categoryTree[i].code, fase: 'overall', active: false})
+      this.orderOverallArray.push({number: undefined, subcategoryCode: this.categoryTree[i].code, fase: 'overall', active: false})
       for (let j = 0; j < Object.keys(this.subcategories[0]).length; j++) {
         console.log(this.subcategories[0][j]['parent']);
         if (this.categoryTree[i]['code'] === this.subcategories[0][j]['parent']['code']) {
           this.orderArray.push({index: j, childrens: []});
-          this.orderArray[j]['childrens'].push({number: undefined, subcategory: this.subcategories[0][j].code, fase: 'eliminatoria', active: false})
-          this.orderArray[j]['childrens'].push({number: undefined, subcategory: this.subcategories[0][j].code, fase: 'semifinal', active: false})
-          this.orderArray[j]['childrens'].push({number: undefined, subcategory: this.subcategories[0][j].code, fase: 'final1', active: false})
-          this.orderArray[j]['childrens'].push({number: undefined, subcategory: this.subcategories[0][j].code, fase: 'final2', active: false})
-          this.orderArray[j]['childrens'].push({number: undefined, subcategory: this.subcategories[0][j].code, fase: 'premiacion', active: false})
+          console.log(this.orderArray);
+          this.orderArray[j]['childrens'].push({number: undefined, subcategoryCode: this.subcategories[0][j].code, fase: 'eliminatoria', active: false})
+          this.orderArray[j]['childrens'].push({number: undefined, subcategoryCode: this.subcategories[0][j].code, fase: 'semifinal', active: false})
+          this.orderArray[j]['childrens'].push({number: undefined, subcategoryCode: this.subcategories[0][j].code, fase: 'final1', active: false})
+          this.orderArray[j]['childrens'].push({number: undefined, subcategoryCode: this.subcategories[0][j].code, fase: 'final2', active: false})
+          this.orderArray[j]['childrens'].push({number: undefined, subcategoryCode: this.subcategories[0][j].code, fase: 'premiacion', active: false})
           this.categoryTree[i]['children'].push({code: this.subcategories[0][j]['code'], name: this.subcategories[0][j]['name'], level: 1, index: j, count:0});
           console.log(this.categoryTree);
         }

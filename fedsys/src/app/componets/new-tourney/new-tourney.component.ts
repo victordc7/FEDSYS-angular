@@ -41,6 +41,7 @@ export class NewTourneyComponent implements OnInit {
             parent {
               _id
               name
+              code
             }
           }
         }

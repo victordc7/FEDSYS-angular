@@ -419,7 +419,6 @@ export class RegisterComponent implements OnInit {
               _id: "${this.tournamentId}"
               input: {
                 name: "${this.tourneyRegistrationForm.value.name}"
-                number: 5
                 type: "${this.tournamentType._id}"
                 startingOrder: ${startingOrder}
               }
@@ -442,10 +441,7 @@ export class RegisterComponent implements OnInit {
                 _id
                 number
                 active
-                subcategory {
-                  _id
-                  name
-                }
+                subcategoryCode
                 fase
               }
             }
