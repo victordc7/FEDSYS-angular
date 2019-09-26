@@ -107,13 +107,16 @@ export class PreRegistrationComponent implements OnInit {
         categories
         { _id
           name
+          code
         },
         subcategories
         { _id
           name
+          code
           parent{
             _id
             name
+            code
           }
         },
         tourneyTypes{
@@ -121,11 +124,13 @@ export class PreRegistrationComponent implements OnInit {
           name
           _id
           subcategories{
+            code
             name
             _id
             parent{
               _id
               name
+              code
             }
           }
         }
@@ -188,10 +193,12 @@ export class PreRegistrationComponent implements OnInit {
       query: `mutation {
         createSubcategory(input: {
           name: "${form.name}"
+          code: ${form.code}
           parent: "${form.parent._id}"
         }) {
           _id
           name
+          code
           parent{
             _id
           }
@@ -223,9 +230,11 @@ export class PreRegistrationComponent implements OnInit {
       query: `mutation {
         createCategory(input: {
           name: "${form.name}"
+          code: ${form.code}
         }) {
           _id
           name
+          code
         }
       }`
     };
@@ -320,7 +329,10 @@ export class PreRegistrationComponent implements OnInit {
           number
           name
           _id
-          subcategories{name}
+          subcategories{
+            name
+            code
+          }
         }
       }`
     };
