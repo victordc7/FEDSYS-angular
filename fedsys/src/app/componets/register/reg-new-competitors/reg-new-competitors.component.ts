@@ -13,7 +13,17 @@ import { ServiceService } from 'src/app/service.service';
 export class RegNewCompetitorsComponent implements OnInit {
   competitorRegistrationForm: FormGroup;
   genders = ['male', 'female'];
-  public submit =false;
+  public submit = false;
+  public birthdate: Date;
+  public ageCalculation: number;
+
+  public CalculateAge(): void {
+    if (this.birthdate) {
+      var timeDiff = Math.abs(Date.now() - new Date(this.birthdate).getTime());
+      this.ageCalculation = Math.floor(timeDiff / (1000 * 3600 * 24) / 365.25);
+    }
+  }
+
   constructor(
     private serverService: ServiceService,
     private dialogRef: MatDialogRef<RegNewCompetitorsComponent>,
@@ -28,6 +38,7 @@ export class RegNewCompetitorsComponent implements OnInit {
       'firstName': new FormControl(null),
       'lastName': new FormControl(null),
       'personalID': new FormControl(null),
+      'date': new FormControl(null),
       'age': new FormControl(null),
       'gender': new FormControl('male'),
       'city': new FormControl(null),
@@ -39,6 +50,7 @@ export class RegNewCompetitorsComponent implements OnInit {
       'firstName': '',
       'lastName': '',
       'personalID': '',
+      'date': '',
       'age': '',
       'gender': '',
       'city': '',
@@ -49,6 +61,13 @@ export class RegNewCompetitorsComponent implements OnInit {
     this.competitorRegistrationForm.statusChanges.subscribe(
       (value) => {this.submit = (value === 'VALID') ? true : false; }
     );
+
+    this.competitorRegistrationForm.valueChanges.subscribe(
+      (value) => {console.log(value)
+      this.CalculateAge()
+      }
+    );
+
     this.setFormControlsValidators();
 
   }

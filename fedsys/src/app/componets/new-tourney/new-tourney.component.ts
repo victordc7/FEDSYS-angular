@@ -8,7 +8,7 @@ import { ServiceService } from 'src/app/service.service';
   selector: 'app-new-tourney',
   templateUrl: './new-tourney.component.html',
   styleUrls: ['./new-tourney.component.css']
-})
+})  
 export class NewTourneyComponent implements OnInit {
   public tourneyRegistrationForm: FormGroup;
   public selectedTourney: {_id: string, name: string, subcategories: Array<string>};
@@ -66,10 +66,15 @@ export class NewTourneyComponent implements OnInit {
 
   onNewTourney() {
     this.started = true;
-    console.log(this.tourneyRegistrationForm.value.type._id);
-    this.selectedTourney._id = this.tourneyRegistrationForm.value.type._id;
-    this.selectedTourney.name = this.tourneyRegistrationForm.value.type.name;
-    this.selectedTourney.subcategories = this.tourneyRegistrationForm.value.type.subcategories;
+    // console.log(this.tourneyRegistrationForm.value.type._id);
+    if (this.tourneyRegistrationForm.value.length > 0) {
+      this.selectedTourney._id = this.tourneyRegistrationForm.value.type._id;
+      this.selectedTourney.name = this.tourneyRegistrationForm.value.type.name;
+      this.selectedTourney.subcategories = this.tourneyRegistrationForm.value.type.subcategories;
+    } else {
+      this.selectedTourney = null;
+    }
+    console.log(this.selectedTourney)
   }
 
   onBack() {

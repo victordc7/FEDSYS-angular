@@ -2,9 +2,26 @@
   <div class="row">
     <form
       [formGroup]="tourneyRegistrationForm"
-      (ngSubmit)="createTourney()"
       class="w-50 center mat-typography"
       style="width: 100%">
+
+      <mat-form-field
+        class="row"
+        style="padding-right: 5px">
+        <mat-label> -- Elija un tipo de torneo -- </mat-label>
+        <mat-select
+          formControlName="existent"
+          id="type"
+          >
+          <mat-option [value]="null">None</mat-option>
+          <mat-option
+            *ngFor="let item of tourneys[0]; let i = index"
+            [value]="item"
+            required>
+            Torneo - {{item.name}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
 
       <mat-form-field
         color="access"
@@ -15,19 +32,29 @@
             type="text" color="primary"
             formControlName="name"
             placeholder="Nombre del torneo"
-            />
+            readonly="editTourney"/>
           <mat-error>
-
           </mat-error>
       </mat-form-field>
     </form>
 
     <button
+      *ngIf="!editTourney"
       mat-raised-button
       color="primary"
-      (click)="createTourney()"
-      [disabled]="!editTourney">
-      Guardar
+      (click)="createTourney('load')"
+      [disabled]="editTourney"
+      >
+      Cargar
+    </button>
+
+    <button
+      mat-raised-button
+      *ngIf="!editTourney"
+      color="primary"
+      (click)="createTourney('create')"
+      [disabled]="!tourneyFlag">
+      Crear
     </button>
   </div>
 
@@ -43,7 +70,7 @@
 <div *ngIf="editTourney">
   <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
     <!-- This is the tree node template for leaf nodes -->
-    <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding>
+    <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding [style.display]="(node.level===1) ? 'block': 'none'">
       <!-- use a disabled button to provide padding for tree leaf -->
       <button mat-icon-button disabled></button>
       {{node.name}}
