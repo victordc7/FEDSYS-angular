@@ -359,7 +359,8 @@ export class RegisterComponent implements OnInit {
       width: '50%',
       data: {
         subcategories: this.subcategories,
-        categories: this.categoriesArray
+        categories: this.categoriesArray,
+        competitors: this.competitors
       }
     });
     dialogRef.afterClosed().subscribe(res => {

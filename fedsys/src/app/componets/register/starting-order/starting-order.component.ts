@@ -18,6 +18,7 @@ interface CategoryNode {
   children?: Array<CategoryNode>;
   level: number;
   index: number;
+  count?: number;
 }
 
 /** Flat node with expandable and level information */
@@ -68,6 +69,7 @@ export class StartingOrderComponent implements OnInit {
       name: node.name,
       level: level,
       index: node.index,
+      count: node.count,
       hasChild: !!node.children && (node.children.length > 0 && node.children.length < 2),
       hasChilds: !!node.children && node.children.length > 1
     };
@@ -104,7 +106,7 @@ export class StartingOrderComponent implements OnInit {
   buildFileTree(obj: {[key: string]: any}, level: number): CategoryNode[] {
     return Object.keys(obj).reduce<CategoryNode[]>((accumulator, key) => {
       const value = obj[key];
-      const node: CategoryNode = {_id: '', name: '', children: [], level: 0, index: 0};
+      const node: CategoryNode = {_id: '', name: '', children: [], level: 0, index: 0, count: 0};
       node.name = value.name;
       node._id = value._id;
       node.level = level
@@ -151,13 +153,20 @@ export class StartingOrderComponent implements OnInit {
           this.orderArray[j]['childrens'].push({number: undefined, subcategory: this.subcategories[0][j]._id, fase: 'semifinal', active: false})
           this.orderArray[j]['childrens'].push({number: undefined, subcategory: this.subcategories[0][j]._id, fase: 'final', active: false})
           this.orderArray[j]['childrens'].push({number: undefined, subcategory: this.subcategories[0][j]._id, fase: 'premiacion', active: false})
-          this.categoryTree[i]['children'].push({_id: this.subcategories[0][j]['_id'], name: this.subcategories[0][j]['name'], level: 1, index: j});
+          this.categoryTree[i]['children'].push({_id: this.subcategories[0][j]['_id'], name: this.subcategories[0][j]['name'], level: 1, index: j, count:0});
           console.log(this.categoryTree);
         }
       }
       console.log(this.orderArray);
+      this.dataInput.competitors.forEach(competitor => {
+        this.categoryTree[i]['children'].forEach(subcategory => {
+          if (subcategory._id === competitor.category._id) {
+            subcategory.count += 1;
+          }
+        });
+      });
+      this.dataChange.next(this.data);
     }
-    this.dataChange.next(this.data);
   }
 
   saveChanges() {
