@@ -469,10 +469,15 @@ export class RegisterComponent implements OnInit {
       query: `mutation {
         createSubcategory(input: {
           name: "${form.name}"
+          code: ${form.code}
           parent: "${form.parent._id}"
         }) {
           _id
           name
+          code
+          parent{
+            _id
+          }
         }
       }`
     };
@@ -490,10 +495,11 @@ export class RegisterComponent implements OnInit {
       query: `mutation {
         createCategory(input: {
           name: "${form.name}"
-          parent: "${form.parent._id}"
+          code: ${form.code}
         }) {
           _id
           name
+          code
         }
       }`
     };

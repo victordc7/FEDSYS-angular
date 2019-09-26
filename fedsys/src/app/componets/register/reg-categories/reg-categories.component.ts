@@ -77,6 +77,7 @@ export class RegCategoriesComponent implements OnInit {
 
   onSubmit() {
     const form = this.getRequestBody();
+    console.log('FOOOOORMMMMMMM')
     console.log(form);
     console.log(this.categoryRegistrationForm);
 
