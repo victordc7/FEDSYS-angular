@@ -57,17 +57,30 @@
             placeholder="Numero de identidad"/>
           </mat-form-field>
 
-        <mat-form-field
+        <div class="input-container">
+          <mat-form-field>
+            <input matInput  type="date" placeholder="Date of Birth" value="birthdate" [(ngModel)]="birthdate" formControlName="date"/>
+            <!-- <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle> -->
+            <!-- <mat-datepicker #dp></mat-datepicker> -->
+          </mat-form-field>
+
+          <mat-form-field>
+            <input matInput placeholder="Age" value="{{ageCalculation}}" [(ngModel)]="ageCalculation" formControlName="age" readonly/>
+          </mat-form-field>
+          <!-- <button mat-button type="button" (click)="CalculateAge()">Calculate Age</button> -->
+      </div>
+
+        <!-- <mat-form-field
           class="w-50 white"
           style="padding-right: 5px">
           <input
             matInput
             type="text"
             formControlName="age"
-            placeholder="Edad"/>
+            placeholder="Edad"/> -->
             <!-- readonly -->
 
-        </mat-form-field>
+        <!-- </mat-form-field> -->
 
         <br/>
 
@@ -76,7 +89,7 @@
           aria-label="Select an option"
           style="padding-right: 5px">
           <!-- disabled -->
-          <!-- > -->
+
 
             <mat-label>Género</mat-label>
             <br/>
@@ -163,7 +176,7 @@
             type="text"
             formControlName="phone"
             placeholder="Teléfono"/>
-            <!-- readonly -->
+            <!-- readonlya -->
         </mat-form-field>
 
         <br/>

@@ -20,6 +20,7 @@ interface CategoryNode {
   name: string;
   _id: string;
   children?: Array<CategoryNode>;
+  level: number;
 }
 
 /** Flat node with expandable and level information */
@@ -40,17 +41,42 @@ export class RegisterComponent implements OnInit {
   @Input() tournamentType;
   public tourneyRegistrationForm: FormGroup;
   private tournamentId: string;
-  public editTourney: boolean;
+  public editTourney: boolean = false;
   private judgesToSave: string = '';
   private competitorsToSave: string = '';
   private subcategoriesToSave: string = '';
-  private body;
 
   // Global database categories and subcategories
   public categoriesArray = [];
   public subcategoriesArray = [];
 
   // Local variables for the tourney
+  public tourneys = [];
+  public tourneyFlag: boolean = false;
+  public tourneySelected: {
+    _id: string,
+    number?:number,
+    name:string,
+    type?: string,
+    subcategories?:
+      {name:string,
+      parent:string},
+    competitors?: {
+      firstName: string,
+      lastName: string,
+      personalID: number,
+      age: number,
+      gender: string,
+      city: string,
+      subcategory: {
+        name: string,
+        parent:string
+      },
+      email?: string,
+      phone?: string
+    },
+    judges: Array<string>;
+  };
   public categories = [];
   public subcategories = [];
   public competitors = [];
@@ -108,15 +134,13 @@ export class RegisterComponent implements OnInit {
   buildFileTree(obj: {[key: string]: any}, level: number): CategoryNode[] {
     return Object.keys(obj).reduce<CategoryNode[]>((accumulator, key) => {
       const value = obj[key];
-      const node: CategoryNode = {_id: '', name: '', children: []};
+      const node: CategoryNode = {_id: '', name: '', children: [], level: 0};
       node.name = value.name;
-
+      node._id = value._id
+      node.level = level
       if (value != null) {
         if (typeof value === 'object') {
-        // if (value['children'] !== undefined) {
           node.children = value.children;
-          // node.name = value.name;
-          // node.children = this.buildFileTree(value, level + 1);
         } else {
           node.name = value;
         }
@@ -132,30 +156,34 @@ export class RegisterComponent implements OnInit {
     /**
     * Form creation and class variables initialization
     */
-   this.tourneyRegistrationForm = new FormGroup({
-    'name': new FormControl(null, [Validators.required]),
+    // this.tourneyFlag = false;
+    // this.editTourney = false;
+    this.tourneyRegistrationForm = new FormGroup({
+      'existent': new FormControl(null),
+      'name': new FormControl(null),
     });
     this.tourneyRegistrationForm.valueChanges.subscribe(
       (value) => {
-        if((this.tournamentType._id) && (value.name)){
-          this.editTourney = true;
-        } else {
-          this.editTourney = false;
+        if((this.tournamentType !== null) && (value.name.length > 4) && (value.existent === null)){
+          this.tourneyFlag = true;  // habilita el boton de creacion
+        } else if(value.existent !== null){
+          this.tourneyFlag = false;  // habilita el boton de carga
         }
       }
     );
 
     /**
-    * Selected tournamen type initialization
+    * Selected tournament type initialization
     */
-    if (this.tournamentType.subcategories.length > 1) {
+    if (this.tournamentType !== null) {
       this.subcategories.push(this.tournamentType['subcategories']);
+      console.log(this.subcategories)
     }
 
     /**
     * Initial request body
     */
-   this.body = {
+   const body = {
       query: ` query {
         categories
         { _id
@@ -168,12 +196,16 @@ export class RegisterComponent implements OnInit {
             _id
             name
           }
+        },
+        tourneys{
+          _id
+          name
         }
       }`
     };
 
     // Initialize categories and subcategories
-    this.serverService.graphql(this.body)
+    this.serverService.graphql(body)
     .subscribe(res => {
       console.log(res);
       res['data']['categories'].forEach(element => {
@@ -181,19 +213,77 @@ export class RegisterComponent implements OnInit {
       });
       this.categoriesArray.push(res['data']['categories']);
       this.subcategoriesArray.push(res['data']['subcategories']);
+      this.tourneys.push(res['data']['tourneys']);
+      console.log(this.tourneys)
       this.categoryTree = Object.assign({}, this.categoriesArray[0]);
-      this.initialize();
-      for (let i = 0; i < Object.keys(this.categoryTree).length; i++) {
-        for (let j = 0; j < Object.keys(this.subcategories[0]).length; j++) {
-          console.log(this.subcategories[0][j]['parent']);
-          if (this.categoryTree[i]['_id'] === this.subcategories[0][j]['parent']['_id']) {
-            this.categoryTree[i]['children'].push({_id: null, name: this.subcategories[0][j]['name']});
-            console.log(this.categoryTree);
+      this.initialize(); 
+      console.log(this.subcategories)
+      if (this.subcategories.length > 0) {
+        for (let i = 0; i < Object.keys(this.categoryTree).length; i++) {
+          for (let j = 0; j < Object.keys(this.subcategories[0]).length; j++) {
+            console.log(this.subcategories[0][j]['parent']);
+            if (this.categoryTree[i]['_id'] === this.subcategories[0][j]['parent']['_id']) {
+              this.categoryTree[i]['children'].push({_id: null, name: this.subcategories[0][j]['name'], level: 1});
+              console.log(this.categoryTree);
+            }
           }
         }
+        this.dataChange.next(this.data);
       }
-      this.dataChange.next(this.data);
     });
+    console.log(this.tourneyFlag)
+    console.log(this.editTourney)
+  }
+
+  createTourney(action: string) {
+    let body;
+    if(action === 'create'){
+      body = {
+        query: `mutation {
+          createTourney(input: {
+            name: "${this.tourneyRegistrationForm.value.name}"
+            type: "${this.tournamentType._id}"
+          }) {
+            _id
+            name
+          }
+        }`
+      };
+    // Llamada a servicio
+    this.serverService.graphql(body)
+    .subscribe(res => {
+      console.log(res);
+      console.log(res['data']['createTourney']['_id']);
+      this.tournamentId = res['data']['createTourney']['_id'];
+    });
+    } else if(action === 'load') {
+      body = {
+        query: `
+        query{
+            tourneyById (_id: "${this.tourneyRegistrationForm.value.existent._id}"){
+              type {
+              _id
+              name
+              subcategories{
+                _id
+                name
+                parent{
+                  _id
+                  name
+                }
+              }
+            }
+          }
+        }`
+      }
+      // Llamada a servicio
+      this.serverService.graphql(body)
+      .subscribe(res => {
+        console.log(res);
+        console.log(res['data']['tourneyById']);
+        // this.tournamentId = res['data']['createTourney']['_id'];
+      });
+    }
   }
 
   addCategory(action: string) {
@@ -221,7 +311,7 @@ export class RegisterComponent implements OnInit {
               for (let j = 0; j < Object.keys(this.subcategories[0]).length; j++) {
                 const lastIndex = Object.keys(this.subcategories[0]).length - 1;
                 if (this.categoryTree[i]['_id'] === this.subcategories[0][lastIndex]['parent']['_id']){
-                  this.categoryTree[i]['children'].push({_id: null, name: this.subcategories[0][lastIndex]['name']});
+                  this.categoryTree[i]['children'].push({_id: null, name: this.subcategories[0][lastIndex]['name'], level: 1});
                   break;
                 }
               }
@@ -350,7 +440,7 @@ export class RegisterComponent implements OnInit {
 
 
   createSubcategory(form) {
-    this.body = {
+     const body = {
       query: `mutation {
         createSubcategory(input: {
           name: "${form.name}"
@@ -363,7 +453,7 @@ export class RegisterComponent implements OnInit {
     };
     console.log('fuera  del request')
     // Llamada a servicio
-    this.serverService.graphql(this.body)
+    this.serverService.graphql(body)
     .subscribe(res => {
       this.subcategoriesArray[0].push(res['data']['createSubcategory']);
     });
@@ -371,7 +461,7 @@ export class RegisterComponent implements OnInit {
 
   createCategory(form) {
 
-    this.body = {
+    const body = {
       query: `mutation {
         createCategory(input: {
           name: "${form.name}"
@@ -384,40 +474,14 @@ export class RegisterComponent implements OnInit {
     };
 
     // Llamada a servicio
-    this.serverService.graphql(this.body)
+    this.serverService.graphql(body)
     .subscribe(res => {
       console.log(res);
       this.categoriesArray[0].push(res['data']['createCategory']);
     });
   }
 
-  createTourney() {
-    this.body = {
-      query: `mutation {
-        createTourney(input: {
-          name: "${this.tourneyRegistrationForm.value.name}"
-          number: 5
-          type: "${this.tournamentType._id}"
-        }) {
-          _id
-          name
-          number
-        }
-      }`
-    };
-
-    // Llamada a servicio
-    this.serverService.graphql(this.body)
-    .subscribe(res => {
-      console.log(res);
-      console.log(res['data']['createTourney']['_id']);
-      this.tournamentId = res['data']['createTourney']['_id'];
-    });
-  }
-
-
   splitCompetitorByCategory(form) {
-
     for (let i = 0; i < form.categories.length; i++) {
       const competitor = {
         firstName: form.firstName,
@@ -426,7 +490,7 @@ export class RegisterComponent implements OnInit {
         age: +form.age,
         gender: form.gender,
         city: form.city,
-        category: form.categories[i],
+        subcategory: form.categories[i],
         email: form.email,
         phone: form.phone,
       }
@@ -437,6 +501,7 @@ export class RegisterComponent implements OnInit {
   }
 
   saveTourney(modification: string, modificationType: string) {
+    let body;
     console.log(modificationType)
     console.log(Object.keys(this.judges).length);
     if((modificationType === 'competitors') && (Object.keys(this.competitors).length>0)) {
@@ -529,7 +594,7 @@ export class RegisterComponent implements OnInit {
       console.log(this.subcategoriesToSave);
     if ((this.judgesToSave === '') && (this.competitorsToSave === '')) {
       console.log('Subcategorias')
-      this.body = {
+      body = {
         query: `mutation {
           updateTourney(
             _id: "${this.tournamentId}"
@@ -558,7 +623,7 @@ export class RegisterComponent implements OnInit {
       };
     } else if (this.judgesToSave === ''){
       console.log('Competidores y subcategorias')
-      this.body = {
+      body = {
         query: `mutation {
           updateTourney(
             _id: "${this.tournamentId}"
@@ -588,7 +653,7 @@ export class RegisterComponent implements OnInit {
       };
     } else if (this.competitorsToSave === ''){
       console.log('Jueces y subcategorias')
-      this.body = {
+      body = {
         query: `mutation {
           updateTourney(
             _id: "${this.tournamentId}"
@@ -618,7 +683,7 @@ export class RegisterComponent implements OnInit {
       };
     }  else if (this.subcategoriesToSave === ''){
       console.log('Jueces y subcategorias')
-      this.body = {
+      body = {
         query: `mutation {
           updateTourney(
             _id: "${this.tournamentId}"
@@ -648,7 +713,7 @@ export class RegisterComponent implements OnInit {
       };
     } else {
       console.log('Jueces y subcategorias')
-      this.body = {
+      body = {
         query: `mutation {
           updateTourney(
             _id: "${this.tournamentId}"
@@ -674,7 +739,7 @@ export class RegisterComponent implements OnInit {
         }`
       };
     }
-    // this.body = {
+    // body = {
     //   query: `mutation {
     //     updateTourney(
     //       _id: "${this.tournamentId}"
@@ -696,10 +761,10 @@ export class RegisterComponent implements OnInit {
     //     }
     //   }`
     // };
-    console.log(this.body);
+    console.log(body);
 
     // Llamada a servicio
-    this.serverService.graphql(this.body)
+    this.serverService.graphql(body)
     .subscribe(res => {
       console.log(res);
     });
