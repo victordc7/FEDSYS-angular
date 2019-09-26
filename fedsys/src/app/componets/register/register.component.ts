@@ -52,7 +52,8 @@ export class RegisterComponent implements OnInit {
 
   // Local variables for the tourney
   public tourneys = [];
-  public tourneyFlag: boolean = false;
+  public tourneyFlag1: boolean = false;
+  public tourneyFlag2: boolean = false;
   public tourneySelected: {
     _id: string,
     number?:number,
@@ -153,6 +154,14 @@ export class RegisterComponent implements OnInit {
   hasChild = (_: number, node: CategoryFlatNode) => node.expandable;
 
   ngOnInit() {
+
+        /**
+    * Selected tournament type initialization
+    */
+   if (this.tournamentType !== null) {
+    this.subcategories.push(this.tournamentType['subcategories']);
+    console.log(this.subcategories)
+  }
     /**
     * Form creation and class variables initialization
     */
@@ -164,37 +173,32 @@ export class RegisterComponent implements OnInit {
     });
     this.tourneyRegistrationForm.valueChanges.subscribe(
       (value) => {
-        if((this.tournamentType !== null) && (value.name.length > 4) && (value.existent === null)){
-          this.tourneyFlag = true;  // habilita el boton de creacion
+        if((this.tournamentType !== null) && (value.name !== '')){
+          this.tourneyFlag1 = true;  // habilita el boton de creacion
+          console.log('entroooo')
         } else if(value.existent !== null){
-          this.tourneyFlag = false;  // habilita el boton de carga
+          this.tourneyFlag2 = true;  // habilita el boton de carga
         }
       }
     );
-
-    /**
-    * Selected tournament type initialization
-    */
-    if (this.tournamentType !== null) {
-      this.subcategories.push(this.tournamentType['subcategories']);
-      console.log(this.subcategories)
-    }
-
     /**
     * Initial request body
     */
-   const body = {
+    const body = {
       query: ` query {
         categories
         { _id
           name
+          code
         },
         subcategories
         { _id
           name
+          code
           parent{
             _id
             name
+            code
           }
         },
         tourneys{
@@ -216,7 +220,7 @@ export class RegisterComponent implements OnInit {
       this.tourneys.push(res['data']['tourneys']);
       console.log(this.tourneys)
       this.categoryTree = Object.assign({}, this.categoriesArray[0]);
-      this.initialize(); 
+      this.initialize();
       console.log(this.subcategories)
       if (this.subcategories.length > 0) {
         for (let i = 0; i < Object.keys(this.categoryTree).length; i++) {
@@ -231,31 +235,33 @@ export class RegisterComponent implements OnInit {
         this.dataChange.next(this.data);
       }
     });
-    console.log(this.tourneyFlag)
-    console.log(this.editTourney)
+    console.log(this.tourneyFlag1);
+    console.log(this.editTourney);
   }
 
   createTourney(action: string) {
     let body;
     if(action === 'create'){
-      body = {
-        query: `mutation {
-          createTourney(input: {
-            name: "${this.tourneyRegistrationForm.value.name}"
-            type: "${this.tournamentType._id}"
-          }) {
-            _id
-            name
-          }
-        }`
-      };
-    // Llamada a servicio
-    this.serverService.graphql(body)
-    .subscribe(res => {
-      console.log(res);
-      console.log(res['data']['createTourney']['_id']);
-      this.tournamentId = res['data']['createTourney']['_id'];
-    });
+      // if(this.subcategories[0].length>0) {
+        body = {
+          query: `mutation {
+            createTourney(input: {
+              name: "${this.tourneyRegistrationForm.value.name}"
+              type: "${this.tournamentType._id}"
+            }) {
+              _id
+              name
+            }
+          }`
+        };
+        // Llamada a servicio
+        this.serverService.graphql(body)
+          .subscribe(res => {
+            console.log(res);
+            console.log(res['data']['createTourney']['_id']);
+            this.tournamentId = res['data']['createTourney']['_id'];
+        });
+      this.tourneyFlag1 = false;
     } else if(action === 'load') {
       body = {
         query: `
@@ -267,6 +273,7 @@ export class RegisterComponent implements OnInit {
               subcategories{
                 _id
                 name
+                code
                 parent{
                   _id
                   name
@@ -281,9 +288,25 @@ export class RegisterComponent implements OnInit {
       .subscribe(res => {
         console.log(res);
         console.log(res['data']['tourneyById']);
+        this.subcategories.push(res['data']['tourneyById']['type']['subcategories']);
+        console.log(this.subcategories);
         // this.tournamentId = res['data']['createTourney']['_id'];
+        if (this.subcategories.length > 0) {
+          for (let i = 0; i < Object.keys(this.categoryTree).length; i++) {
+            for (let j = 0; j < Object.keys(this.subcategories[0]).length; j++) {
+              console.log(this.subcategories[0][j]['parent']);
+              if (this.categoryTree[i]['_id'] === this.subcategories[0][j]['parent']['_id']) {
+                this.categoryTree[i]['children'].push({_id: null, name: this.subcategories[0][j]['name'], level: 1});
+                console.log(this.categoryTree);
+              }
+            }
+          }
+          this.dataChange.next(this.data);
+        }
+        this.tourneyFlag2 = false;
       });
     }
+    this.editTourney = true;
   }
 
   addCategory(action: string) {
