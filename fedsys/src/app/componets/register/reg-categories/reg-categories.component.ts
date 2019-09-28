@@ -67,7 +67,7 @@ export class RegCategoriesComponent implements OnInit {
     result.parent = this.action ? this.categoryRegistrationForm.value.name.parent.name : result.parent;
     const requestBody: Object = {
       name: result.name,
-      code: this.categoryRegistrationForm.value.name.code,
+      code: result.code,
       level: result.level,
       parent: result.parent || null
     };
@@ -77,6 +77,7 @@ export class RegCategoriesComponent implements OnInit {
 
   onSubmit() {
     const form = this.getRequestBody();
+    console.log('FOOOOORMMMMMMM')
     console.log(form);
     console.log(this.categoryRegistrationForm);
 
