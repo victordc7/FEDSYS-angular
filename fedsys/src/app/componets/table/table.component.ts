@@ -8,6 +8,7 @@ import { Alert } from 'selenium-webdriver';
   styleUrls: ['./table.component.css']
 })
 export class TableComponent implements OnInit {
+  public textarea;
   tabla = 'escogerRondas';
   jueces = [
     {numero: 1, nombre: 'Juan'},
@@ -18,7 +19,7 @@ export class TableComponent implements OnInit {
     {numero: 6, nombre: 'Matias'},
     {numero: 7, nombre: 'Laura'},
   ]
-  
+
   competidores = [
     {athlete: 1, firstName: 'Juan', lastName: 'Lopez', city: 'Barinas', age: 23, personalID: 1321, gender: 'male', subcategory: {_id: "3124124321",number: 1, name: 'categoria 1', parent:"124123412"}, resultados: [], subtotal1: 0, subtotal2: 0, total: 0, lugar: 0, empate: 0},
     {athlete: 2, firstName: 'Pedro', lastName: 'Lopez', city: 'Barinas', age: 23, personalID: 1322, gender: 'male', subcategory: {_id: "3124124321",number: 1, name: 'categoria 1', parent:"124123412"}, resultados: [], subtotal1: 0, subtotal2: 0, total: 0, lugar: 0, empate: 0},
@@ -314,4 +315,25 @@ export class TableComponent implements OnInit {
     this.descalificar();
   }
 
+  splitTable(){
+    console.log(this.textarea);
+    const line = this.textarea.split(/(\n)/);
+    console.log(line);
+    const word = [];
+    console.log(word);
+    for (let i = 1; i < line.length; i++) {
+      line.splice(i, 1);
+      console.log(line);
+    }
+    if (line[line.length - 1] === "") {
+      line.splice(-1, 1);
+    }
+    for (let i = 0; i < line.length; i++) {
+      const array = line[i].slice()
+      word.push(array.split('	'));
+      console.log(line[i]);
+      console.log(word);
+    }
+    console.log(word);
+  }
 }
