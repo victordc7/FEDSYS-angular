@@ -162,7 +162,7 @@ export class StartingOrderComponent implements OnInit {
       console.log(this.orderArray);
       this.dataInput.competitors.forEach(competitor => {
         this.categoryTree[i]['children'].forEach(subcategory => {
-          if (subcategory.code === competitor.category.code) {
+          if (subcategory.code === competitor.subcategory.code) {
             subcategory.count += 1;
           }
         });
