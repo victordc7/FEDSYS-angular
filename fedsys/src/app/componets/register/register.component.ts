@@ -344,6 +344,16 @@ export class RegisterComponent implements OnInit {
             this.dataChange.next(this.data);
             this.saveTourney('subcategories','subcategories');
             this.saveTourney('subcategories','subcategories');
+          } else if(res.level === 'Category') {
+            this.categoryTree = Object.assign({}, this.categoriesArray[0]);
+            for (let i = 0; i < Object.keys(this.categoryTree).length; i++) {
+              for (let j = 0; j < Object.keys(this.subcategoriesArray[0]).length; j++) {
+                if (this.categoryTree[i]['_id'] === this.subcategoriesArray[0][j]['parent']['_id']){
+                  this.categoryTree[i]['children'].push({_id: null, name: this.subcategoriesArray[0][j]['name'], level: 1});
+                }
+              }
+            }
+      this.dataChange.next(this.data);
           }
         }
       }
