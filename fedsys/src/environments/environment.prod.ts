@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiRoot: ''
+  apiRoot: 'http://localhost:3000/graphql'
 };

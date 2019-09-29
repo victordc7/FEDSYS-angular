@@ -1,0 +1,19 @@
+<mat-form-field>
+    <mat-label>Escaja un torneo</mat-label>
+    <select
+    [(ngModel)]="tourneySelected"
+    matNativeControl 
+    id="type"
+    >
+        <option
+        *ngFor="let item of tourneys; let i = index"
+        [value]="item._id"
+        required>
+        Torneo - {{item.name}}
+        </option>
+    </select>
+</mat-form-field>
+<br>
+<button mat-raised-button color="primary" (click)="beginTourney()">
+    Empezar Torneo
+</button>

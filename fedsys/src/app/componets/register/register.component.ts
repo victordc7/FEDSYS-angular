@@ -400,13 +400,75 @@ export class RegisterComponent implements OnInit {
         subcategories: this.subcategories,
         categories: this.categoriesArray,
         competitors: this.competitors
-      }
+      },
+      disableClose: true
     });
     dialogRef.afterClosed().subscribe(res => {
       if (res === undefined) {
         return;
       } else {
         console.log(res);
+
+        // String de array de objetos para staringOrder
+        let startingOrder = "[{"
+        res.map(attribute => {
+          let entry = Object.entries(attribute);
+          for (let j = 0; j < entry.length; j++) {
+            if((entry[j][0] === 'subcategory') || (entry[j][0] === 'fase')) {
+              startingOrder = startingOrder + ' ' + entry[j][0] + ': "' + entry[j][1] + '",';
+            } else {
+              startingOrder = startingOrder + ' ' + entry[j][0] + ': ' + entry[j][1] + ',';
+            }
+          }
+          if (attribute === res[res.length - 1]){
+            startingOrder = startingOrder + "}]";
+          } else {
+            startingOrder = startingOrder + "}, {";
+          }
+        });
+        console.log(startingOrder);
+
+        // Construccion Body
+        const body = {
+          query: `mutation {
+            updateTourney(
+              _id: "${this.tournamentId}"
+              input: {
+                name: "${this.tourneyRegistrationForm.value.name}"
+                type: "${this.tournamentType._id}"
+                startingOrder: ${startingOrder}
+              }
+            ) {
+              _id
+              competitors {
+                firstName
+                subcategory {
+                  name
+                }
+              }
+              subcategories {
+                name
+              }
+              judges {
+                firstName
+                _id
+              }
+              startingOrder {
+                _id
+                number
+                active
+                subcategoryCode
+                fase
+              }
+            }
+          }`
+        };
+
+        // Llamada a servicio
+        this.serverService.graphql(body)
+        .subscribe(response => {
+          console.log(response);
+        });
       }
     });
   }
