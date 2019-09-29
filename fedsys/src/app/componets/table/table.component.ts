@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {NgForm} from '@angular/forms';
 import { Alert } from 'selenium-webdriver';
+import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 
 @Component({
   selector: 'app-table',
@@ -10,38 +11,33 @@ import { Alert } from 'selenium-webdriver';
 export class TableComponent implements OnInit {
   public textarea;
   tabla = 'escogerRondas';
+  numeroJueces = 5;
   jueces = [
-    {numero: 1, nombre: 'Juan'},
-    {numero: 2, nombre: 'Pedro'},
-    {numero: 3, nombre: 'Luis'},
-    {numero: 4, nombre: 'Ramon'},
-    {numero: 5, nombre: 'Jorge'},
-    {numero: 6, nombre: 'Matias'},
-    {numero: 7, nombre: 'Laura'},
+    // {numero: 1, nombre: 'Juan'},
+    // {numero: 2, nombre: 'Pedro'},
+    // {numero: 3, nombre: 'Luis'},
+    // {numero: 4, nombre: 'Ramon'},
+    // {numero: 5, nombre: 'Jorge'},
+    // {numero: 6, nombre: 'Matias'},
+    // {numero: 7, nombre: 'Laura'},
   ]
 
   competidores = [
-    {athlete: 1, firstName: 'Juan', lastName: 'Lopez', city: 'Barinas', age: 23, personalID: 1321, gender: 'male', subcategory: {_id: "3124124321",number: 1, name: 'categoria 1', parent:"124123412"}, resultados: [], subtotal1: 0, subtotal2: 0, total: 0, lugar: 0, empate: 0},
-    {athlete: 2, firstName: 'Pedro', lastName: 'Lopez', city: 'Barinas', age: 23, personalID: 1322, gender: 'male', subcategory: {_id: "3124124321",number: 1, name: 'categoria 1', parent:"124123412"}, resultados: [], subtotal1: 0, subtotal2: 0, total: 0, lugar: 0, empate: 0},
-    {athlete: 3, firstName: 'Luis', lastName: 'Lopez', city: 'Barinas', age: 23, personalID: 1323, gender: 'male', subcategory: {_id: "31241243213",number: 2, name: 'categoria 2', parent:"124123412"}, resultados: [], subtotal1: 0, subtotal2: 0, total: 0, lugar: 0, empate: 0},
-    {athlete: 4, firstName: 'Ramon', lastName: 'Lopez', city: 'Barinas', age: 23, personalID: 1324, gender: 'male', subcategory: {_id: "31241243212",number: 4, name: 'categoria 4', parent:"124123412"}, resultados: [], subtotal1: 0, subtotal2: 0, total: 0, lugar: 0, empate: 0},
-    {athlete: 5, firstName: 'Jorge', lastName: 'Lopez', city: 'Barinas', age: 23, personalID: 1325, gender: 'male', subcategory: {_id: "3124124321",number: 1, name: 'categoria 1', parent:"124123412"}, resultados: [], subtotal1: 0, subtotal2: 0, total: 0, lugar: 0, empate: 0},
+    // {athlete: 1, firstName: 'Juan', lastName: 'Lopez', city: 'Barinas', age: 23, personalID: 1321, gender: 'male', subcategory: {_id: "3124124321",number: 1, name: 'categoria 1', parent:"124123412"}, resultados: [], subtotal1: 0, subtotal2: 0, total: 0, lugar: 0, empate: 0},
+    // {athlete: 2, firstName: 'Pedro', lastName: 'Lopez', city: 'Barinas', age: 23, personalID: 1322, gender: 'male', subcategory: {_id: "3124124321",number: 1, name: 'categoria 1', parent:"124123412"}, resultados: [], subtotal1: 0, subtotal2: 0, total: 0, lugar: 0, empate: 0},
+    // {athlete: 3, firstName: 'Luis', lastName: 'Lopez', city: 'Barinas', age: 23, personalID: 1323, gender: 'male', subcategory: {_id: "31241243213",number: 2, name: 'categoria 2', parent:"124123412"}, resultados: [], subtotal1: 0, subtotal2: 0, total: 0, lugar: 0, empate: 0},
+    // {athlete: 4, firstName: 'Ramon', lastName: 'Lopez', city: 'Barinas', age: 23, personalID: 1324, gender: 'male', subcategory: {_id: "31241243212",number: 4, name: 'categoria 4', parent:"124123412"}, resultados: [], subtotal1: 0, subtotal2: 0, total: 0, lugar: 0, empate: 0},
+    // {athlete: 5, firstName: 'Jorge', lastName: 'Lopez', city: 'Barinas', age: 23, personalID: 1325, gender: 'male', subcategory: {_id: "3124124321",number: 1, name: 'categoria 1', parent:"124123412"}, resultados: [], subtotal1: 0, subtotal2: 0, total: 0, lugar: 0, empate: 0}
   ]
   posicionesEmpate = [];
-  porcentaje1 = 50;
+  porcentaje1 = 67;
   clasificados = 2;
   nj: number;
-  rondas = {eliminatoria: false, salida1: false, final: true}
+  rondas = {eliminatoria: false, salida1: false, final: false}
   isCalc = false;
   constructor() { }
 
   ngOnInit() {
-    this.nj = this.jueces.length + 2;
-    this.competidores.forEach(competidor => {
-      this.jueces.forEach((juez, index) => {
-        competidor.resultados.push({numero: index + 1, libre: 0, comparacion: 0, juez: {libre:true, comparacion:true}})
-      });
-    });
   }
 
   calcResultadosEliminatoria() {
@@ -269,7 +265,8 @@ export class TableComponent implements OnInit {
       this.rondas.salida1 = false;
     } else if (this.rondas.final) {
       this.tabla = 'final';
-      this.porcentaje1 = 50;
+      this.porcentaje1 = 67;
+      this.rondas.final = false;
     } else {
       alert('Porfavor seleccione almenos 1 ronda')
     }
@@ -316,6 +313,8 @@ export class TableComponent implements OnInit {
   }
 
   splitTable(){
+    this.competidores = [];
+    this.jueces = [];
     console.log(this.textarea);
     const line = this.textarea.split(/(\n)/);
     console.log(line);
@@ -335,5 +334,34 @@ export class TableComponent implements OnInit {
       console.log(word);
     }
     console.log(word);
+    word.forEach(competitor => {
+      this.competidores.push({athlete: competitor[0], firstName: competitor[1], lastName: '', city: competitor[2], age: 0, personalID: 0, gender: 'male', subcategory: {_id: "3124124321",number: 1, name: 'categoria 1', parent:"124123412"}, resultados: [], subtotal1: 0, subtotal2: 0, total: 0, lugar: 0, empate: 0})
+    });
+    for (let index = 0; index < this.numeroJueces; index++) {
+      this.jueces.push({numero: (index + 1), nombre: ''})
+    }
+    this.nj = this.jueces.length + 2;
+    this.competidores.forEach(competidor => {
+      this.jueces.forEach((juez, index) => {
+        competidor.resultados.push({numero: index + 1, libre: 0, comparacion: 0, juez: {libre:true, comparacion:true}})
+      });
+    });
+  }
+
+  regresar(){
+    this.tabla = 'escogerRondas';
+    this.competidores = [];
+    this.jueces = [];
+    this.textarea = "";
+    this.isCalc = false;
+  }
+
+  inventarResultados(){
+    this.competidores.forEach(competitor => {
+      this.jueces.forEach((juez, index) => {
+        competitor.resultados[index].libre = Math.floor(Math.random() * this.competidores.length) + 1;
+        competitor.resultados[index].comparacion = Math.floor(Math.random() * this.competidores.length) + 1;
+      });
+    });
   }
 }

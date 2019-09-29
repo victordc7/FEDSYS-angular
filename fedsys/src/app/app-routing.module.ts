@@ -11,7 +11,8 @@ const routes: Routes = [
   { path: '', redirectTo: 'inicio', pathMatch: 'full' },
   {
     path: 'inicio',
-    component: DashboardComponent
+    // component: DashboardComponent
+    component: TableComponent
   },
   {
     path: 'tabla',
