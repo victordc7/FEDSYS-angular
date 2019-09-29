@@ -1,14 +1,22 @@
 <div *ngIf="tabla === 'escogerRondas'">
-    <h2>Escoger rondas</h2>
+    <h2>Escoger tipo de Tabla</h2>
     <mat-checkbox [(ngModel)]="rondas.eliminatoria">Ronda eliminatoria</mat-checkbox><br>
-    <mat-checkbox [(ngModel)]="rondas.salida1">Ronda 1 salida</mat-checkbox><br>
+    <mat-checkbox [(ngModel)]="rondas.salida1">Ronda semifinal (1 salida)</mat-checkbox><br>
     <mat-checkbox [(ngModel)]="rondas.final">Ronda final (2 salidas)</mat-checkbox><br>
-    <button mat-raised-button color="primary" (click)="confirmarRondas()">Confirmar Rondas</button>
+    <button mat-raised-button color="primary" (click)="confirmarRondas()">Empezar</button>
 </div>
-<hr>
-<div>
+<div *ngIf="tabla !== 'escogerRondas'">
+    <hr>
     <h2>Escoger Numero de jueces</h2>
     <input type="number" [(ngModel)]="numeroJueces">
+</div>
+
+<div *ngIf="tabla !== 'escogerRondas'">
+    <h3>Pegar competidores desde excel</h3>
+    <textarea type="text" name="" id="" cols="30" rows="10" [(ngModel)]="textarea"></textarea>
+    <br>
+    <button mat-raised-button color="primary" (click)="splitTable()">Cargar Competidores</button>
+    <hr>
 </div>
 <div *ngIf="tabla === 'final'">
     <h2>Escoger Porcentajes</h2>
@@ -19,14 +27,6 @@
     <h2>Numero de atletas que casifican</h2>
     <input type="number" [(ngModel)]="clasificados">
 </div>
-<hr>
-<div>
-    <h3>Pegar competidores desde excel</h3>
-    <textarea type="text" name="" id="" cols="30" rows="10" [(ngModel)]="textarea"></textarea>
-    <br>
-    <button mat-raised-button color="primary" (click)="splitTable()">Cargar Competidores</button>
-</div>
-
 <!-- <div>
     <button mat-raised-button color="primary" (click)="inventarResultados()">Inventar resultados</button>
 </div> -->
@@ -159,7 +159,7 @@
 <hr>
 
 <!-- RESULTADOS -->
-<div *ngIf="isCalc">
+<div style="margin-bottom: 50px" *ngIf="isCalc">
     <h3>Resultados</h3>
     <!-- ELIMINATORIA -->
     <div *ngIf="tabla === 'eliminatoria'">
@@ -274,7 +274,7 @@
             </tbody>
         </table>
     </div>
-
+    <br>
 
     <!-- ELIMINATORIA -->
     <div *ngIf="tabla === 'eliminatoria'">

@@ -11,7 +11,7 @@ import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 export class TableComponent implements OnInit {
   public textarea;
   tabla = 'escogerRondas';
-  numeroJueces = 5;
+  numeroJueces = 9;
   jueces = [
     // {numero: 1, nombre: 'Juan'},
     // {numero: 2, nombre: 'Pedro'},
@@ -31,7 +31,7 @@ export class TableComponent implements OnInit {
   ]
   posicionesEmpate = [];
   porcentaje1 = 67;
-  clasificados = 2;
+  clasificados = 15;
   nj: number;
   rondas = {eliminatoria: false, salida1: false, final: false}
   isCalc = false;
@@ -68,10 +68,10 @@ export class TableComponent implements OnInit {
       lugar ++
     })
     this.competidores.sort(function (a, b) {
-      if (a.athlete > b.athlete) {
+      if (Number(a.athlete) > Number(b.athlete)) {
         return 1;
       }
-      if (a.athlete < b.athlete) {
+      if (Number(a.athlete) < Number(b.athlete)) {
         return -1;
       }
       return 0;
@@ -201,10 +201,10 @@ export class TableComponent implements OnInit {
       lugar ++
     })
     array.sort(function (a, b) {
-      if (a.athlete > b.athlete) {
+      if (Number(a.athlete) > Number(b.athlete)) {
         return 1;
       }
-      if (a.athlete < b.athlete) {
+      if (Number(a.athlete) < Number(b.athlete)) {
         return -1;
       }
       return 0;
@@ -286,10 +286,10 @@ export class TableComponent implements OnInit {
       this.competidores.splice(0, this.competidores.length - this.clasificados);
     });
     this.competidores.sort(function (a, b) {
-      if (a.athlete > b.athlete) {
+      if (Number(a.athlete) > Number(b.athlete)) {
         return 1;
       }
-      if (a.athlete < b.athlete) {
+      if (Number(a.athlete) < Number(b.athlete)) {
         return -1;
       }
       return 0;
@@ -345,6 +345,15 @@ export class TableComponent implements OnInit {
       this.jueces.forEach((juez, index) => {
         competidor.resultados.push({numero: index + 1, libre: 0, comparacion: 0, juez: {libre:true, comparacion:true}})
       });
+    });
+    this.competidores.sort(function (a, b) {
+      if (Number(a.athlete) > Number(b.athlete)) {
+        return 1;
+      }
+      if (Number(a.athlete) < Number(b.athlete)) {
+        return -1;
+      }
+      return 0;
     });
   }
 
