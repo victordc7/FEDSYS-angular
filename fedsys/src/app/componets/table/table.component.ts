@@ -316,14 +316,10 @@ export class TableComponent implements OnInit {
   }
 
   splitTable(){
-    console.log(this.textarea);
     const line = this.textarea.split(/(\n)/);
-    console.log(line);
     const word = [];
-    console.log(word);
     for (let i = 1; i < line.length; i++) {
       line.splice(i, 1);
-      console.log(line);
     }
     if (line[line.length - 1] === "") {
       line.splice(-1, 1);
@@ -331,8 +327,6 @@ export class TableComponent implements OnInit {
     for (let i = 0; i < line.length; i++) {
       const array = line[i].slice()
       word.push(array.split('	'));
-      console.log(line[i]);
-      console.log(word);
     }
     console.log(word);
   }
