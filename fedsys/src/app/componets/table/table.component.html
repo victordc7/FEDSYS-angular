@@ -11,12 +11,19 @@
     <input type="number" [(ngModel)]="numeroJueces">
 </div>
 
-<div *ngIf="tabla !== 'escogerRondas'">
+<div class="row" *ngIf="tabla !== 'escogerRondas'">
     <h3>Pegar competidores desde excel</h3>
+    <h3>Pegar 1era salida desde excel</h3>
     <textarea type="text" name="" id="" cols="30" rows="10" [(ngModel)]="textarea"></textarea>
+    <textarea type="text" name="" id="" cols="30" rows="10" [(ngModel)]="textareaResult"></textarea>
     <br>
     <button mat-raised-button color="primary" (click)="splitTable()">Cargar Competidores</button>
+    <button mat-raised-button color="primary" (click)="splitResults()">Cargar 1era salida</button>
     <hr>
+</div>
+
+<div>
+
 </div>
 <div *ngIf="tabla === 'final'">
     <h2>Escoger Porcentajes</h2>
@@ -27,9 +34,9 @@
     <h2>Numero de atletas que casifican</h2>
     <input type="number" [(ngModel)]="clasificados">
 </div>
-<!-- <div>
+<div>
     <button mat-raised-button color="primary" (click)="inventarResultados()">Inventar resultados</button>
-</div> -->
+</div>
 
 <!-- ELIMINATORIA -->
 <div *ngIf="tabla === 'eliminatoria'">
@@ -193,7 +200,7 @@
             </tbody>
         </table>
     </div>
-    
+
     <!-- 1 SALIDA -->
     <div *ngIf="tabla === 'salida1'">
         <table class="mat-elevation-z8">
@@ -228,7 +235,7 @@
             </tbody>
         </table>
     </div>
-    
+
     <!-- FINAL -->
     <div *ngIf="tabla === 'final'">
         <table class="mat-elevation-z8">
@@ -303,7 +310,7 @@
             </tbody>
         </table>
     </div>
-    
+
     <!-- 1 SALIDA -->
     <div *ngIf="tabla === 'salida1'">
         <table class="mat-elevation-z8">
@@ -331,7 +338,7 @@
             </tbody>
         </table>
     </div>
-    
+
     <!-- FINAL -->
     <div *ngIf="tabla === 'final'">
         <table class="mat-elevation-z8">

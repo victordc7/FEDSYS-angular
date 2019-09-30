@@ -10,6 +10,7 @@ import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 })
 export class TableComponent implements OnInit {
   public textarea;
+  public textareaResult;
   tabla = 'escogerRondas';
   numeroJueces = 9;
   jueces = [
@@ -350,6 +351,29 @@ export class TableComponent implements OnInit {
       }
       return 0;
     });
+  }
+
+  splitResults() {
+    console.log(this.textareaResult);
+    const line = this.textareaResult.split(/(\n)/);
+    let word = [];
+    for (let i = 1; i < line.length; i++) {
+      line.splice(i, 1);
+    }
+    if (line[line.length - 1] === "") {
+      line.splice(-1, 1);
+    }
+    for (let i = 0; i < line.length; i++) {
+      const array = line[i].slice()
+      word.push(array.split('	'));
+    }
+
+    for (let i = 0; i < line.length; i++) {
+      for (let index = 0; index < this.numeroJueces; index++) {
+        this.competidores[i].resultados[index].comparacion = +word[i][index];
+      }
+    }
+    console.log(this.competidores[1].resultados);
   }
 
   regresar(){
