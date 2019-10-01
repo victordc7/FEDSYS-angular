@@ -33,7 +33,7 @@ export class TableComponent implements OnInit {
   porcentaje1 = 67;
   clasificados = 15;
   nj: number;
-  rondas = {eliminatoria: false, salida1: false, final: false}
+  rondas = {eliminatoria: false, salida1: false, final1: false, final2: false}
   isCalc = false;
   constructor() { }
 
@@ -263,10 +263,14 @@ export class TableComponent implements OnInit {
       this.tabla = 'salida1';
       this.porcentaje1 = 100;
       this.rondas.salida1 = false;
-    } else if (this.rondas.final) {
+    } else if (this.rondas.final1) {
+      this.tabla = 'salida1';
+      this.porcentaje1 = 100;
+      this.rondas.final1 = false;
+    } else if (this.rondas.final2) {
       this.tabla = 'final';
       this.porcentaje1 = 67;
-      this.rondas.final = false;
+      this.rondas.final2 = false;
     } else {
       alert('Porfavor seleccione almenos 1 ronda')
     }

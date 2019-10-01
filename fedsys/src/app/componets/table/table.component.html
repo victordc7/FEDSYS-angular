@@ -2,7 +2,8 @@
     <h2>Escoger tipo de Tabla</h2>
     <mat-checkbox [(ngModel)]="rondas.eliminatoria">Ronda eliminatoria</mat-checkbox><br>
     <mat-checkbox [(ngModel)]="rondas.salida1">Ronda semifinal (1 salida)</mat-checkbox><br>
-    <mat-checkbox [(ngModel)]="rondas.final">Ronda final (2 salidas)</mat-checkbox><br>
+    <mat-checkbox [(ngModel)]="rondas.final1">Ronda final (1 salida)</mat-checkbox><br>
+    <mat-checkbox [(ngModel)]="rondas.final2">Ronda final (2 salidas)</mat-checkbox><br>
     <button mat-raised-button color="primary" (click)="confirmarRondas()">Empezar</button>
 </div>
 <div *ngIf="tabla !== 'escogerRondas'">
@@ -27,9 +28,9 @@
     <h2>Numero de atletas que casifican</h2>
     <input type="number" [(ngModel)]="clasificados">
 </div>
-<!-- <div>
+<div>
     <button mat-raised-button color="primary" (click)="inventarResultados()">Inventar resultados</button>
-</div> -->
+</div>
 
 <!-- ELIMINATORIA -->
 <div *ngIf="tabla === 'eliminatoria'">
@@ -281,24 +282,18 @@
         <table class="mat-elevation-z8">
             <thead>
                 <tr>
-                    <th colspan="3">Atletas</th>
-                    <th colspan="2">Resultados</th>
-                </tr>
-                <tr>
+                    <th>Lugar</th>
                     <th>N°</th>
                     <th>Nombre</th>
                     <th>Estado</th>
-                    <th>Cuenta Final</th>
-                    <th>Lugar</th>
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let competidor of competidores; let i=index" [style.background-color]="(clasificados >= competidor.lugar && competidor.lugar > 0) ? 'green' : 'white'">
+                <tr *ngFor="let competidor of competidores; let i=index">
+                    <td>{{competidor.lugar}}</td>
                     <td>{{ competidor.athlete }}</td>
                     <td>{{ competidor.firstName + ' ' + competidor.lastName }}</td>
                     <td>{{ competidor.city }}</td>
-                    <td [style.background-color]="competidor.empate ? 'red' : 'white'">{{competidor.total}}</td>
-                    <td [style.background-color]="competidor.empate ? 'red' : 'white'">{{competidor.lugar}}</td>
                 </tr>
             </tbody>
         </table>
@@ -308,25 +303,20 @@
     <div *ngIf="tabla === 'salida1'">
         <table class="mat-elevation-z8">
             <thead>
+
                 <tr>
-                    <th colspan="3">Atletas</th>
-                    <th colspan="2">Resultados</th>
-                </tr>
-                <tr>
+                    <th>Lugar</th>
                     <th>N°</th>
                     <th>Nombre</th>
                     <th>Estado</th>
-                    <th>Cuenta Final</th>
-                    <th>Lugar</th>
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let competidor of competidores; let i=index" [style.background-color]="(clasificados >= competidor.lugar && competidor.lugar > 0) ? 'green' : 'white'">
+                <tr *ngFor="let competidor of competidores; let i=index">
+                    <td>{{competidor.lugar}}</td>
                     <td>{{ competidor.athlete }}</td>
                     <td>{{ competidor.firstName + ' ' + competidor.lastName }}</td>
                     <td>{{ competidor.city }}</td>
-                    <td [style.background-color]="competidor.empate ? 'red' : 'white'">{{(competidor.subtotal1 * porcentaje1 / 100) | number : '1.2-2'}}</td>
-                    <td [style.background-color]="competidor.empate ? 'red' : 'white'">{{competidor.lugar}}</td>
                 </tr>
             </tbody>
         </table>
@@ -337,24 +327,18 @@
         <table class="mat-elevation-z8">
             <thead>
                 <tr>
-                    <th colspan="3">Atletas</th>
-                    <th colspan="2">Resultados</th>
-                </tr>
-                <tr>
+                    <th>Lugar</th>
                     <th>N°</th>
                     <th>Nombre</th>
                     <th>Estado</th>
-                    <th>Cuenta Final</th>
-                    <th>Lugar</th>
                 </tr>
             </thead>
             <tbody>
                 <tr *ngFor="let competidor of competidores; let i=index">
+                    <td>{{competidor.lugar}}</td>
                     <td>{{ competidor.athlete }}</td>
                     <td>{{ competidor.firstName + ' ' + competidor.lastName }}</td>
                     <td>{{ competidor.city }}</td>
-                    <td [style.background-color]="competidor.empate ? 'red' : 'white'">{{(competidor.subtotal1 * porcentaje1 / 100) + (competidor.subtotal2 * (100 - porcentaje1) / 100) | number : '1.2-2'}}</td>
-                    <td [style.background-color]="competidor.empate ? 'red' : 'white'">{{competidor.lugar}}</td>
                 </tr>
             </tbody>
         </table>
