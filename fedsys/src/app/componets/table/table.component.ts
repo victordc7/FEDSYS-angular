@@ -30,6 +30,7 @@ export class TableComponent implements OnInit {
     // {athlete: 4, firstName: 'Ramon', lastName: 'Lopez', city: 'Barinas', age: 23, personalID: 1324, gender: 'male', subcategory: {_id: "31241243212",number: 4, name: 'categoria 4', parent:"124123412"}, resultados: [], subtotal1: 0, subtotal2: 0, total: 0, lugar: 0, empate: 0},
     // {athlete: 5, firstName: 'Jorge', lastName: 'Lopez', city: 'Barinas', age: 23, personalID: 1325, gender: 'male', subcategory: {_id: "3124124321",number: 1, name: 'categoria 1', parent:"124123412"}, resultados: [], subtotal1: 0, subtotal2: 0, total: 0, lugar: 0, empate: 0}
   ]
+  competidoresPorLugar = [];
   posicionesEmpate = [];
   porcentaje1 = 67;
   clasificados = 15;
@@ -77,6 +78,7 @@ export class TableComponent implements OnInit {
       }
       return 0;
     });
+    this.ordenarPorLugar()
   }
 
   calcResultadosSalida1() {
@@ -96,9 +98,36 @@ export class TableComponent implements OnInit {
         this.posicionesEmpate.push(competidor);
       }
     })
-    if (this.posicionesEmpate.length > 0) {
-      this.desempatar(this.posicionesEmpate);
+    this.ordenarPorLugar()
+    let toDesempatar = [];
+    let puntos: number;
+    this.posicionesEmpate.sort(function (a, b) {
+      if (a.total > b.total) {
+        return 1;
+      }
+      if (a.total < b.total) {
+        return -1;
+      }
+      return 0;
+    });
+    this.posicionesEmpate.forEach(competidor => {
+      if (competidor.total === puntos) {
+        toDesempatar.push(competidor)
+      } else {
+        if (puntos) {
+          this.desempatar(toDesempatar); 
+        }
+        toDesempatar = [];
+        puntos = competidor.total;
+        toDesempatar.push(competidor)
+      }
+    });
+    if (puntos) {
+      this.desempatar(toDesempatar); 
     }
+    // if (this.posicionesEmpate.length > 0) {
+    //   this.desempatar(this.posicionesEmpate);
+    // }
   }
 
   calcResultadosFinal() {
@@ -120,9 +149,27 @@ export class TableComponent implements OnInit {
         this.posicionesEmpate.push(competidor);
       }
     })
-    if (this.posicionesEmpate.length > 0) {
-      this.desempatar(this.posicionesEmpate);
+    this.ordenarPorLugar()
+    let toDesempatar = [];
+    let puntos: number;
+    this.posicionesEmpate.forEach(competidor => {
+      if (competidor.total === puntos) {
+        toDesempatar.push(competidor)
+      } else {
+        if (puntos) {
+          this.desempatar(toDesempatar); 
+        }
+        toDesempatar = [];
+        puntos = competidor.total;
+        toDesempatar.push(competidor)
+      }
+    });
+    if (puntos) {
+      this.desempatar(toDesempatar); 
     }
+    // if (this.posicionesEmpate.length > 0) {
+    //   this.desempatar(this.posicionesEmpate);
+    // }
   }
 
   calcularTotales(array, aTachar, tipo) {
@@ -199,6 +246,7 @@ export class TableComponent implements OnInit {
         lugar ++
       }
       competidor.lugar = lugar;
+      console.log('lugar', lugar);
       lugar ++
     })
     array.sort(function (a, b) {
@@ -213,20 +261,21 @@ export class TableComponent implements OnInit {
   }
 
   desempatar(posEmp) {
+    console.log(posEmp.slice());
     if (this.jueces.length === 5 || this.jueces.length === 6) {
-      if (posEmp[0].empate === 2 || this.tabla === 'salida1') {
+      if (posEmp[0].empate === 2 || this.tabla === 'salida1' || this.tabla === 'final1') {
         this.calcularTotales(posEmp, 2, 'libre');
       } else {
         this.calcularTotales(posEmp, 2, 'comparacion');
       }
     } else if (this.jueces.length === 7 || this.jueces.length === 8) {
-      if (posEmp[0].empate === 2 || this.tabla === 'salida1') {
+      if (posEmp[0].empate === 2 || this.tabla === 'salida1' || this.tabla === 'final1') {
         this.calcularTotales(posEmp, 3, 'libre');
       } else {
         this.calcularTotales(posEmp, 3, 'comparacion');
       }
     } else if (this.jueces.length === 9) {
-      if (posEmp[0].empate === 2 || this.tabla === 'salida1') {
+      if (posEmp[0].empate === 2 || this.tabla === 'salida1' || this.tabla === 'final1') {
         this.calcularTotales(posEmp, 4, 'libre');
       } else {
         this.calcularTotales(posEmp, 4, 'comparacion');
@@ -241,9 +290,24 @@ export class TableComponent implements OnInit {
         this.posicionesEmpate.push(competidor);
       }
     })
-    if (this.posicionesEmpate.length > 0) {
+    if (this.posicionesEmpate.length > 0 && this.tabla === 'final2') {
       this.desempatar(this.posicionesEmpate);
+    } else if (this.tabla !== 'eliminatoria') {
+      this.ordenarPorLugar()
     }
+  }
+
+  ordenarPorLugar() {
+    this.competidoresPorLugar = this.competidores.slice();
+    this.competidoresPorLugar.sort(function (a, b) {
+      if (a.lugar > b.lugar) {
+        return 1;
+      }
+      if (a.lugar < b.lugar) {
+        return -1;
+      }
+      return 0;
+    });
   }
 
   reiciarTachados(competidores) {
@@ -265,11 +329,11 @@ export class TableComponent implements OnInit {
       this.porcentaje1 = 100;
       this.rondas.salida1 = false;
     } else if (this.rondas.final1) {
-      this.tabla = 'salida1';
+      this.tabla = 'final1';
       this.porcentaje1 = 100;
       this.rondas.final1 = false;
     } else if (this.rondas.final2) {
-      this.tabla = 'final';
+      this.tabla = 'final2';
       this.porcentaje1 = 67;
       this.rondas.final2 = false;
     } else {
