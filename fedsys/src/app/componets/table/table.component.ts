@@ -14,25 +14,26 @@ export class TableComponent implements OnInit {
   tabla = 'escogerRondas';
   numeroJueces = 9;
   jueces = [
-    // {numero: 1, nombre: 'Juan'},
-    // {numero: 2, nombre: 'Pedro'},
-    // {numero: 3, nombre: 'Luis'},
-    // {numero: 4, nombre: 'Ramon'},
-    // {numero: 5, nombre: 'Jorge'},
-    // {numero: 6, nombre: 'Matias'},
-    // {numero: 7, nombre: 'Laura'},
+    {numero: 1, nombre: 'Juan'},
+    {numero: 2, nombre: 'Pedro'},
+    {numero: 3, nombre: 'Luis'},
+    {numero: 4, nombre: 'Ramon'},
+    {numero: 5, nombre: 'Jorge'},
+    {numero: 6, nombre: 'Matias'},
+    {numero: 7, nombre: 'Laura'},
   ]
 
   competidores = [
-    // {athlete: 1, firstName: 'Juan', lastName: 'Lopez', city: 'Barinas', age: 23, personalID: 1321, gender: 'male', subcategory: {_id: "3124124321",number: 1, name: 'categoria 1', parent:"124123412"}, resultados: [], subtotal1: 0, subtotal2: 0, total: 0, lugar: 0, empate: 0},
-    // {athlete: 2, firstName: 'Pedro', lastName: 'Lopez', city: 'Barinas', age: 23, personalID: 1322, gender: 'male', subcategory: {_id: "3124124321",number: 1, name: 'categoria 1', parent:"124123412"}, resultados: [], subtotal1: 0, subtotal2: 0, total: 0, lugar: 0, empate: 0},
-    // {athlete: 3, firstName: 'Luis', lastName: 'Lopez', city: 'Barinas', age: 23, personalID: 1323, gender: 'male', subcategory: {_id: "31241243213",number: 2, name: 'categoria 2', parent:"124123412"}, resultados: [], subtotal1: 0, subtotal2: 0, total: 0, lugar: 0, empate: 0},
-    // {athlete: 4, firstName: 'Ramon', lastName: 'Lopez', city: 'Barinas', age: 23, personalID: 1324, gender: 'male', subcategory: {_id: "31241243212",number: 4, name: 'categoria 4', parent:"124123412"}, resultados: [], subtotal1: 0, subtotal2: 0, total: 0, lugar: 0, empate: 0},
-    // {athlete: 5, firstName: 'Jorge', lastName: 'Lopez', city: 'Barinas', age: 23, personalID: 1325, gender: 'male', subcategory: {_id: "3124124321",number: 1, name: 'categoria 1', parent:"124123412"}, resultados: [], subtotal1: 0, subtotal2: 0, total: 0, lugar: 0, empate: 0}
+    {athlete: 1, firstName: 'Juan', lastName: 'Lopez', city: 'Barinas', age: 23, personalID: 1321, gender: 'male', subcategory: {_id: "3124124321",number: 1, name: 'categoria 1', parent:"124123412"}, resultados: [], subtotal1: 0, subtotal2: 0, total: 0, lugar: 0, empate: 0},
+    {athlete: 2, firstName: 'Pedro', lastName: 'Lopez', city: 'Barinas', age: 23, personalID: 1322, gender: 'male', subcategory: {_id: "3124124321",number: 1, name: 'categoria 1', parent:"124123412"}, resultados: [], subtotal1: 0, subtotal2: 0, total: 0, lugar: 0, empate: 0},
+    {athlete: 3, firstName: 'Luis', lastName: 'Lopez', city: 'Barinas', age: 23, personalID: 1323, gender: 'male', subcategory: {_id: "31241243213",number: 2, name: 'categoria 2', parent:"124123412"}, resultados: [], subtotal1: 0, subtotal2: 0, total: 0, lugar: 0, empate: 0},
+    {athlete: 4, firstName: 'Ramon', lastName: 'Lopez', city: 'Barinas', age: 23, personalID: 1324, gender: 'male', subcategory: {_id: "31241243212",number: 4, name: 'categoria 4', parent:"124123412"}, resultados: [], subtotal1: 0, subtotal2: 0, total: 0, lugar: 0, empate: 0},
+    {athlete: 5, firstName: 'Jorge', lastName: 'Lopez', city: 'Barinas', age: 23, personalID: 1325, gender: 'male', subcategory: {_id: "3124124321",number: 1, name: 'categoria 1', parent:"124123412"}, resultados: [], subtotal1: 0, subtotal2: 0, total: 0, lugar: 0, empate: 0}
   ]
+
   competidoresPorLugar = [];
   posicionesEmpate = [];
-  porcentaje1 = 67;
+  porcentaje1 = 33;
   clasificados = 15;
   nj: number;
   rondas = {eliminatoria: false, salida1: false, final1: false, final2: false}
@@ -40,6 +41,12 @@ export class TableComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
+    this.nj = this.jueces.length + 2;
+    this.competidores.forEach(competidor => {
+      this.jueces.forEach((juez, index) => {
+        competidor.resultados.push({numero: index + 1, libre: 0, comparacion: 0, juez: {libre:true, comparacion:true}})
+      });
+    });
   }
 
   calcResultadosEliminatoria() {
@@ -60,15 +67,22 @@ export class TableComponent implements OnInit {
       if (a.total < b.total) {
         return 1;
       }
-        a.empate += 1;
-        b.empate += 1;
       return 0;
     });
     var lugar = 1;
+    let puntosLimite: number;
     this.competidores.forEach(competidor => {
       competidor.lugar = lugar;
+      if (competidor.lugar === this.clasificados) {
+        puntosLimite = competidor.total;
+      }
       lugar ++
     })
+    this.competidores.forEach(competidor => {
+      if (competidor.total === puntosLimite) {
+        competidor.empate = 1;
+      }
+    });
     this.competidores.sort(function (a, b) {
       if (Number(a.athlete) > Number(b.athlete)) {
         return 1;
@@ -334,7 +348,7 @@ export class TableComponent implements OnInit {
       this.rondas.final1 = false;
     } else if (this.rondas.final2) {
       this.tabla = 'final2';
-      this.porcentaje1 = 67;
+      this.porcentaje1 = 33;
       this.rondas.final2 = false;
     } else {
       alert('Porfavor seleccione almenos 1 ronda')
@@ -407,7 +421,7 @@ export class TableComponent implements OnInit {
     this.nj = this.jueces.length + 2;
     this.competidores.forEach(competidor => {
       this.jueces.forEach((juez, index) => {
-        competidor.resultados.push({numero: index + 1, libre: 0, comparacion: 0, juez: {libre:true, comparacion:true}})
+        competidor.resultados.push({numero: index + 1, libre: null, comparacion: null, juez: {libre:true, comparacion:true}})
       });
     });
     this.competidores.sort(function (a, b) {
@@ -446,9 +460,10 @@ export class TableComponent implements OnInit {
 
   regresar(){
     this.tabla = 'escogerRondas';
-    this.competidores = [];
-    this.jueces = [];
+    // this.competidores = [];
+    // this.jueces = [];
     this.textarea = "";
+    this.textareaResult = "";
     this.isCalc = false;
   }
 

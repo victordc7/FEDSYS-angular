@@ -12,7 +12,7 @@
     <input type="number" [(ngModel)]="numeroJueces">
 </div>
 
-<div class="row" *ngIf="tabla !== 'escogerRondas'">
+<!-- <div class="row" *ngIf="tabla !== 'escogerRondas'">
     <h3>
         Pegar competidores desde excel
         <span *ngIf="tabla === 'final2'"> --- Pegar 1era salida desde excel</span>
@@ -23,15 +23,15 @@
     <button mat-raised-button color="primary" (click)="splitTable()">Cargar Competidores</button>
     <button *ngIf="tabla === 'final2'" mat-raised-button color="primary" (click)="splitResults()">Cargar 1era salida</button>
     <hr>
-</div>
+</div> -->
 
 <div>
 
 </div>
 <div *ngIf="tabla === 'final2'">
     <h2>Escoger Porcentajes</h2>
-    <input type="number" [(ngModel)]="porcentaje1">
     <input type="number" disabled [(ngModel)]="100 - porcentaje1">
+    <input type="number" [(ngModel)]="porcentaje1">
 </div>
 <div *ngIf="tabla === 'salida1' || tabla === 'eliminatoria'">
     <h2>Numero de atletas que casifican</h2>
@@ -61,11 +61,11 @@
             </tr>
         </thead>
         <tbody>
-            <tr *ngFor="let competidor of competidores; let i=index" [style.background-color]="(clasificados >= competidor.lugar && competidor.lugar > 0) ? 'green' : 'transparent'">
+            <tr *ngFor="let competidor of competidores; let i=index" [style.background-color]="(clasificados >= competidor.lugar && competidor.lugar > 0) ? 'lightgreen' : 'transparent'">
                 <td>{{ competidor.athlete }}</td>
                 <td>{{ competidor.firstName + ' ' + competidor.lastName }}</td>
                 <td>{{ competidor.city }}</td>
-                <td *ngFor="let juez of jueces;  let a=index" [style.background-color]="competidor.resultados[a].juez.libre ? 'transparent' : 'blue'">
+                <td *ngFor="let juez of jueces;  let a=index" [style.background-color]="competidor.resultados[a].juez.libre ? 'transparent' : 'lightblue'">
                     <input type="checkbox" style="max-width: 100px;;width: 80%; margin: 0 10%" [(ngModel)]="competidor.resultados[a].libre">
                 </td>
                 <td [style.background-color]="competidor.empate ? 'red' : 'transparent'">{{competidor.total}}</td>
@@ -99,11 +99,11 @@
             </tr>
         </thead>
         <tbody>
-            <tr *ngFor="let competidor of competidores; let i=index" [style.background-color]="(clasificados >= competidor.lugar && competidor.lugar > 0) ? 'green' : 'transparent'">
+            <tr *ngFor="let competidor of competidores; let i=index" [style.background-color]="(clasificados >= competidor.lugar && competidor.lugar > 0) ? 'lightgreen' : 'transparent'">
                 <td>{{ competidor.athlete }}</td>
                 <td>{{ competidor.firstName + ' ' + competidor.lastName }}</td>
                 <td>{{ competidor.city }}</td>
-                <td *ngFor="let juez of jueces;  let a=index" [style.background-color]="competidor.resultados[a].juez.libre ? 'transparent' : 'blue'">
+                <td *ngFor="let juez of jueces;  let a=index" [style.background-color]="competidor.resultados[a].juez.libre ? 'transparent' : 'lightblue'">
                     <input type="number" style="max-width: 100px;;width: 80%; margin: 0 10%" [(ngModel)]="competidor.resultados[a].libre">
                 </td>
                 <td>{{competidor.subtotal1}}</td>
@@ -142,7 +142,7 @@
                 <td>{{ competidor.athlete }}</td>
                 <td>{{ competidor.firstName + ' ' + competidor.lastName }}</td>
                 <td>{{ competidor.city }}</td>
-                <td *ngFor="let juez of jueces;  let a=index" [style.background-color]="competidor.resultados[a].juez.libre ? 'transparent' : 'blue'">
+                <td *ngFor="let juez of jueces;  let a=index" [style.background-color]="competidor.resultados[a].juez.libre ? 'transparent' : 'lightblue'">
                     <input type="number" style="max-width: 100px;;width: 80%; margin: 0 10%" [(ngModel)]="competidor.resultados[a].libre">
                 </td>
                 <td>{{competidor.subtotal1}}</td>
@@ -163,8 +163,8 @@
         <thead>
             <tr>
                 <th colspan="3">Atletas</th>
-                <th [attr.colspan]="nj">Poses Libres</th>
                 <th [attr.colspan]="nj">Comparaciones</th>
+                <th [attr.colspan]="nj">Poses Libres</th>
                 <th colspan="2">Resultados</th>
             </tr>
             <tr>
@@ -173,10 +173,10 @@
                 <th>Estado</th>
                 <th *ngFor="let juez of jueces">Juez {{juez.numero}}</th>
                 <th>Subcuenta</th>
-                <th>Subcuenta {{porcentaje1}}%</th>
+                <th>Subcuenta {{100 - porcentaje1}}%</th>
                 <th *ngFor="let juez of jueces">Juez {{juez.numero}}</th>
                 <th>Subcuenta</th>
-                <th>Subcuenta {{100 - porcentaje1}}%</th>
+                <th>Subcuenta {{porcentaje1}}%</th>
                 <th>Cuenta Final</th>
                 <th>Lugar</th>
             </tr>
@@ -186,16 +186,16 @@
                 <td>{{ competidor.athlete }}</td>
                 <td>{{ competidor.firstName + ' ' + competidor.lastName }}</td>
                 <td>{{ competidor.city }}</td>
-                <td *ngFor="let juez of jueces;  let a=index" [style.background-color]="competidor.resultados[a].juez.libre ? 'transparent' : 'blue'">
-                    <input type="number" style="width: 80%; margin: 0 10%" [(ngModel)]="competidor.resultados[a].libre">
-                </td>
-                <td>{{competidor.subtotal1}}</td>
-                <td>{{competidor.subtotal1 * porcentaje1 / 100 | number : '1.2-2'}}</td>
-                <td *ngFor="let juez of jueces;  let a=index" [style.background-color]="competidor.resultados[a].juez.comparacion ? 'transparent' : 'blue'">
+                <td *ngFor="let juez of jueces;  let a=index" [style.background-color]="competidor.resultados[a].juez.comparacion ? 'transparent' : 'lightblue'">
                     <input type="number" style="width: 80%; margin: 0 10%" [(ngModel)]="competidor.resultados[a].comparacion">
                 </td>
                 <td>{{competidor.subtotal2}}</td>
                 <td>{{competidor.subtotal2 * (100 - porcentaje1) / 100 | number : '1.2-2'}}</td>
+                <td *ngFor="let juez of jueces;  let a=index" [style.background-color]="competidor.resultados[a].juez.libre ? 'transparent' : 'lightblue'">
+                    <input type="number" style="width: 80%; margin: 0 10%" [(ngModel)]="competidor.resultados[a].libre">
+                </td>
+                <td>{{competidor.subtotal1}}</td>
+                <td>{{competidor.subtotal1 * porcentaje1 / 100 | number : '1.2-2'}}</td>
                 <td [style.background-color]="competidor.empate ? 'red' : 'transparent'">{{(competidor.subtotal1 * porcentaje1 / 100) + (competidor.subtotal2 * (100 - porcentaje1) / 100) | number : '1.2-2'}}</td>
                 <td [style.background-color]="competidor.empate ? 'red' : 'transparent'">{{competidor.lugar}}</td>
             </tr>
@@ -229,12 +229,12 @@
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let competidor of competidores; let i=index" [style.background-color]="(clasificados >= competidor.lugar && competidor.lugar > 0) ? 'green' : 'transparent'">
+                <tr *ngFor="let competidor of competidores; let i=index" [style.background-color]="(clasificados >= competidor.lugar && competidor.lugar > 0) ? 'lightgreen' : 'transparent'">
                     <td>{{ competidor.athlete }}</td>
                     <td>{{ competidor.firstName + ' ' + competidor.lastName }}</td>
                     <td>{{ competidor.city }}</td>
-                    <td *ngFor="let juez of jueces;  let a=index" [style.background-color]="competidor.resultados[a].juez.libre ? 'transparent' : 'blue'">
-                        {{ competidor.resultados[a].libre }}
+                    <td *ngFor="let juez of jueces;  let a=index" [style.background-color]="competidor.resultados[a].juez.libre ? 'transparent' : 'lightblue'">
+                        <span *ngIf="competidor.resultados[a].libre"> X </span>
                     </td>
                     <td [style.background-color]="competidor.empate ? 'red' : 'transparent'">{{competidor.total}}</td>
                     <td [style.background-color]="competidor.empate ? 'red' : 'transparent'">{{competidor.lugar}}</td>
@@ -263,11 +263,11 @@
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let competidor of competidores; let i=index" [style.background-color]="(clasificados >= competidor.lugar && competidor.lugar > 0) ? 'green' : 'transparent'">
+                <tr *ngFor="let competidor of competidores; let i=index" [style.background-color]="(clasificados >= competidor.lugar && competidor.lugar > 0) ? 'lightgreen' : 'transparent'">
                     <td>{{ competidor.athlete }}</td>
                     <td>{{ competidor.firstName + ' ' + competidor.lastName }}</td>
                     <td>{{ competidor.city }}</td>
-                    <td *ngFor="let juez of jueces;  let a=index" [style.background-color]="competidor.resultados[a].juez.libre ? 'transparent' : 'blue'">
+                    <td *ngFor="let juez of jueces;  let a=index" [style.background-color]="competidor.resultados[a].juez.libre ? 'transparent' : 'lightblue'">
                         {{ competidor.resultados[a].libre }}
                     </td>
                     <td>{{competidor.subtotal1}}</td>
@@ -302,7 +302,7 @@
                     <td>{{ competidor.athlete }}</td>
                     <td>{{ competidor.firstName + ' ' + competidor.lastName }}</td>
                     <td>{{ competidor.city }}</td>
-                    <td *ngFor="let juez of jueces;  let a=index" [style.background-color]="competidor.resultados[a].juez.libre ? 'transparent' : 'blue'">
+                    <td *ngFor="let juez of jueces;  let a=index" [style.background-color]="competidor.resultados[a].juez.libre ? 'transparent' : 'lightblue'">
                         {{ competidor.resultados[a].libre }}
                     </td>
                     <td>{{competidor.subtotal1}}</td>
@@ -329,10 +329,10 @@
                     <th>Estado</th>
                     <th *ngFor="let juez of jueces">Juez {{juez.numero}}</th>
                     <th>Subcuenta</th>
-                    <th>Subcuenta {{porcentaje1}}%</th>
+                    <th>Subcuenta {{100 - porcentaje1}}%</th>
                     <th *ngFor="let juez of jueces">Juez {{juez.numero}}</th>
                     <th>Subcuenta</th>
-                    <th>Subcuenta {{100 - porcentaje1}}%</th>
+                    <th>Subcuenta {{porcentaje1}}%</th>
                     <th>Cuenta Final</th>
                     <th>Lugar</th>
                 </tr>
@@ -342,16 +342,16 @@
                     <td>{{ competidor.athlete }}</td>
                     <td>{{ competidor.firstName + ' ' + competidor.lastName }}</td>
                     <td>{{ competidor.city }}</td>
-                    <td *ngFor="let juez of jueces;  let a=index" [style.background-color]="competidor.resultados[a].juez.libre ? 'transparent' : 'blue'">
-                            {{ competidor.resultados[a].libre }}
-                    </td>
-                    <td>{{competidor.subtotal1}}</td>
-                    <td>{{competidor.subtotal1 * porcentaje1 / 100 | number : '1.2-2'}}</td>
-                    <td *ngFor="let juez of jueces;  let a=index" [style.background-color]="competidor.resultados[a].juez.comparacion ? 'transparent' : 'blue'">
+                    <td *ngFor="let juez of jueces;  let a=index" [style.background-color]="competidor.resultados[a].juez.comparacion ? 'transparent' : 'lightblue'">
                             {{ competidor.resultados[a].comparacion }}
                     </td>
                     <td>{{competidor.subtotal2}}</td>
                     <td>{{competidor.subtotal2 * (100 - porcentaje1) / 100 | number : '1.2-2'}}</td>
+                    <td *ngFor="let juez of jueces;  let a=index" [style.background-color]="competidor.resultados[a].juez.libre ? 'transparent' : 'lightblue'">
+                            {{ competidor.resultados[a].libre }}
+                    </td>
+                    <td>{{competidor.subtotal1}}</td>
+                    <td>{{competidor.subtotal1 * porcentaje1 / 100 | number : '1.2-2'}}</td>
                     <td [style.background-color]="competidor.empate ? 'red' : 'transparent'">{{(competidor.subtotal1 * porcentaje1 / 100) + (competidor.subtotal2 * (100 - porcentaje1) / 100) | number : '1.2-2'}}</td>
                     <td [style.background-color]="competidor.empate ? 'red' : 'transparent'">{{competidor.lugar}}</td>
                 </tr>
@@ -365,18 +365,20 @@
         <table class="mat-elevation-z8">
             <thead>
                 <tr>
-                    <th>Lugar</th>
-                    <th>N°</th>
-                    <th>Nombre</th>
-                    <th>Estado</th>
+                    <th>Place</th>
+                    <th>No</th>
+                    <th>Competitor name</th>
+                    <th>Country</th>
+                    <!-- <th *ngIf="tabla === 'eliminatoria'">Cuenta Final</th> -->
                 </tr>
             </thead>
             <tbody>
                 <tr *ngFor="let competidor of competidoresPorLugar; let i=index">
-                    <td>{{competidor.lugar}}</td>
-                    <td>{{ competidor.athlete }}</td>
-                    <td>{{ competidor.firstName + ' ' + competidor.lastName }}</td>
-                    <td>{{ competidor.city }}</td>
+                    <td *ngIf="(clasificados >= competidor.lugar && competidor.lugar > 0)">{{competidor.lugar}}</td>
+                    <td *ngIf="(clasificados >= competidor.lugar && competidor.lugar > 0)">{{ competidor.athlete }}</td>
+                    <td *ngIf="(clasificados >= competidor.lugar && competidor.lugar > 0)">{{ competidor.firstName + ' ' + competidor.lastName }}</td>
+                    <td *ngIf="(clasificados >= competidor.lugar && competidor.lugar > 0)">{{ competidor.city }}</td>
+                    <!-- <td *ngIf="tabla === 'eliminatoria' && (clasificados >= competidor.lugar && competidor.lugar > 0)" [style.background-color]="competidor.empate ? 'red' : 'transparent'">{{competidor.total}}</td> -->
                 </tr>
             </tbody>
         </table>
