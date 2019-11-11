@@ -14,13 +14,13 @@ export class TableComponent implements OnInit {
   tabla = 'escogerRondas';
   numeroJueces = 9;
   jueces = [
-    // {numero: 1, nombre: 'Juan'},
-    // {numero: 2, nombre: 'Pedro'},
-    // {numero: 3, nombre: 'Luis'},
-    // {numero: 4, nombre: 'Ramon'},
-    // {numero: 5, nombre: 'Jorge'},
-    // {numero: 6, nombre: 'Matias'},
-    // {numero: 7, nombre: 'Laura'},
+    {numero: 1, nombre: 'Juan'},
+    {numero: 2, nombre: 'Pedro'},
+    {numero: 3, nombre: 'Luis'},
+    {numero: 4, nombre: 'Ramon'},
+    {numero: 5, nombre: 'Jorge'},
+    {numero: 6, nombre: 'Matias'},
+    {numero: 7, nombre: 'Laura'},
   ]
 
   competidores = [
@@ -41,6 +41,12 @@ export class TableComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
+    this.nj = this.jueces.length + 2;
+    this.competidores.forEach(competidor => {
+      this.jueces.forEach((juez, index) => {
+        competidor.resultados.push({numero: index + 1, libre: 0, comparacion: 0, juez: {libre:true, comparacion:true}})
+      });
+    });
   }
 
   calcResultadosEliminatoria() {
@@ -454,8 +460,8 @@ export class TableComponent implements OnInit {
 
   regresar(){
     this.tabla = 'escogerRondas';
-    this.competidores = [];
-    this.jueces = [];
+    // this.competidores = [];
+    // this.jueces = [];
     this.textarea = "";
     this.textareaResult = "";
     this.isCalc = false;
