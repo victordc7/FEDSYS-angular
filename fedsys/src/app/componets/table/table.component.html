@@ -12,7 +12,7 @@
     <input type="number" [(ngModel)]="numeroJueces">
 </div>
 
-<div class="row" *ngIf="tabla !== 'escogerRondas'">
+<!-- <div class="row" *ngIf="tabla !== 'escogerRondas'">
     <h3>
         Pegar competidores desde excel
         <span *ngIf="tabla === 'final2'"> --- Pegar 1era salida desde excel</span>
@@ -23,7 +23,7 @@
     <button mat-raised-button color="primary" (click)="splitTable()">Cargar Competidores</button>
     <button *ngIf="tabla === 'final2'" mat-raised-button color="primary" (click)="splitResults()">Cargar 1era salida</button>
     <hr>
-</div>
+</div> -->
 
 <div>
 
@@ -365,10 +365,10 @@
         <table class="mat-elevation-z8">
             <thead>
                 <tr>
-                    <th>Lugar</th>
-                    <th>N°</th>
-                    <th>Nombre</th>
-                    <th>Estado</th>
+                    <th>Place</th>
+                    <th>No</th>
+                    <th>Competitor name</th>
+                    <th>Country</th>
                     <!-- <th *ngIf="tabla === 'eliminatoria'">Cuenta Final</th> -->
                 </tr>
             </thead>
