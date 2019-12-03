@@ -6,9 +6,10 @@
       style="width: 100%">
 
       <mat-form-field
+        *ngIf="state === 'edit'"
         class="row"
         style="padding-right: 5px">
-        <mat-label> -- Elija un tipo de torneo -- </mat-label>
+        <mat-label> -- Elija un Torneo -- </mat-label>
         <mat-select
           formControlName="existent"
           id="type"
@@ -24,6 +25,7 @@
       </mat-form-field>
 
       <mat-form-field
+        *ngIf="state === 'create'"
         color="access"
         class="black"
         style="padding: 10px">
@@ -39,7 +41,7 @@
     </form>
 
     <button
-
+      *ngIf="state === 'edit'"
       mat-raised-button
       color="primary"
       (click)="createTourney('load')"
@@ -50,7 +52,7 @@
 
     <button
       mat-raised-button
-      *ngIf="!editTourney"
+      *ngIf="!editTourney && state === 'create'"
       color="primary"
       (click)="createTourney('create')"
       [disabled]="!tourneyFlag1">
@@ -58,15 +60,15 @@
     </button>
   </div>
 
-    <br>
+  <br>
 
-      <!-- <span
-        (click)="deleteItem(i,'subcategory')"
-        style="cursor: pointer">
-        <mat-icon>
-          cancel
-        </mat-icon>
-      </span> -->
+    <!-- <span
+      (click)="deleteItem(i,'subcategory')"
+      style="cursor: pointer">
+      <mat-icon>
+        cancel
+      </mat-icon>
+    </span> -->
   <div *ngIf="editTourney">
     <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
       <!-- This is the tree node template for leaf nodes -->

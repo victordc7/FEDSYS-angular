@@ -16,6 +16,8 @@ export class NewTourneyComponent implements OnInit {
   public tournamentsArray = [];
   public started = false;
 
+  public state = 'initial';
+
   constructor(
     private serverService: ServiceService,
     private router: Router,
@@ -68,7 +70,7 @@ export class NewTourneyComponent implements OnInit {
 
   onNewTourney() {
     this.started = true;
-    // console.log(this.tourneyRegistrationForm.value.type._id);
+    console.log(this.tourneyRegistrationForm.value);
     if (this.tourneyRegistrationForm.value === null) {
       this.selectedTourney = null;
     } else {
@@ -77,6 +79,11 @@ export class NewTourneyComponent implements OnInit {
       this.selectedTourney.subcategories = this.tourneyRegistrationForm.value.type.subcategories;
     }
     console.log(this.selectedTourney);
+  }
+
+  onEdit() {
+    this.started = true;
+    this.state = 'edit';
   }
 
   onBack() {

@@ -28,6 +28,7 @@ interface CategoryFlatNode {
   expandable: boolean;
   name: string;
   level: number;
+  index: number;
 }
 
 @Component({
@@ -39,6 +40,7 @@ interface CategoryFlatNode {
 
 export class RegisterComponent implements OnInit {
   @Input() tournamentType;
+  @Input() state;
   public tourneyRegistrationForm: FormGroup;
   public tournamentId: string;
   public editTourney: boolean = false;
@@ -101,6 +103,7 @@ export class RegisterComponent implements OnInit {
       expandable: !!node.children && node.children.length > 0,
       name: node.name,
       level: level,
+      index: 0
     };
   }
 
@@ -154,14 +157,7 @@ export class RegisterComponent implements OnInit {
   hasChild = (_: number, node: CategoryFlatNode) => node.expandable;
 
   ngOnInit() {
-
-        /**
-    * Selected tournament type initialization
-    */
-    if (this.tournamentType !== null) {
-      this.subcategories.push(this.tournamentType['subcategories']);
-      console.log(this.subcategories)
-    }
+    this.subcategories[0] = [];
     /**
     * Form creation and class variables initialization
     */
@@ -241,6 +237,15 @@ export class RegisterComponent implements OnInit {
   createTourney(action: string) {
     let body;
     if(action === 'create'){
+      /**
+      * Selected tournament type initialization
+      */
+      if (this.tournamentType !== null) {
+        this.tournamentType['subcategories'].forEach(subcategory => {  
+          this.subcategories[0].push(subcategory);
+        });
+        console.log(this.subcategories)
+      }
       // if(this.subcategories[0].length > 0) {
         body = {
           query: `mutation {
@@ -261,13 +266,13 @@ export class RegisterComponent implements OnInit {
             this.tournamentId = res['data']['createTourney']['_id'];
         });
       this.tourneyFlag1 = false;
-      // } else {}
     } else if(action === 'load') {
+      this.tournamentId = this.tourneyRegistrationForm.value.existent._id;
       body = {
         query: `
         query{
-            tourneyById (_id: "${this.tourneyRegistrationForm.value.existent._id}"){
-              type {
+          tourneyById (_id: "${this.tourneyRegistrationForm.value.existent._id}"){
+            type {
               _id
               name
               subcategories{
@@ -280,6 +285,41 @@ export class RegisterComponent implements OnInit {
                 }
               }
             }
+            name
+            subcategories {
+              _id
+              code
+              name
+              number
+              parent {
+                _id
+                code
+                name
+              }
+            }
+            competitors{
+              _id
+              firstName
+              lastName
+              athlete
+              personalID
+              age
+              gender
+              city
+              subcategory {
+                _id
+                code
+                name
+                number
+                parent {
+                  _id
+                  code
+                  name
+                  createdAt
+                  updatedAt
+                }
+              }
+            }
           }
         }`
       }
@@ -288,9 +328,10 @@ export class RegisterComponent implements OnInit {
       .subscribe(res => {
         console.log(res);
         console.log(res['data']['tourneyById']);
-        this.subcategories.push(res['data']['tourneyById']['type']['subcategories']);
+        res['data']['tourneyById']['subcategories'].forEach(subcategory => {
+          this.subcategories[0].push(subcategory);
+        });
         console.log(this.subcategories);
-        // this.tournamentId = res['data']['createTourney']['_id'];
         if (this.subcategories.length > 0) {
           for (let i = 0; i < Object.keys(this.categoryTree).length; i++) {
             for (let j = 0; j < Object.keys(this.subcategories[0]).length; j++) {
@@ -564,12 +605,10 @@ export class RegisterComponent implements OnInit {
                     this.competitorsToSave = this.competitorsToSave + ' "' + entryParent[k][1] + '"';
                   }
                 }
-              } else if (entrySubcategory[j][0] === '_id') {
-                this.competitorsToSave = this.competitorsToSave;
               } else if (entrySubcategory[j][0] === 'code') {
-                this.subcategoriesToSave = this.subcategoriesToSave + ' ' + entrySubcategory[j][0] + ': ' + entrySubcategory[j][1];
+                this.competitorsToSave = this.competitorsToSave + ' ' + entrySubcategory[j][0] + ': ' + entrySubcategory[j][1];
               } else {
-              this.competitorsToSave = this.competitorsToSave + ' ' + entrySubcategory[j][0] + ': ' + ' "' + entrySubcategory[j][1] + '"';
+                this.competitorsToSave = this.competitorsToSave + ' ' + entrySubcategory[j][0] + ': ' + ' "' + entrySubcategory[j][1] + '"';
               }
             }
             this.competitorsToSave = this.competitorsToSave + "}";
