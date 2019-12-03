@@ -24,6 +24,7 @@ interface CategoryFlatNode {
   expandable: boolean;
   name: string;
   level: number;
+  index: number;
 }
 
 @Component({
@@ -47,10 +48,12 @@ export class PreRegistrationComponent implements OnInit {
   get data(): CategoryNode[] { return this.dataChange.value; }
 
   private _transformer = (node: CategoryNode, level: number) => {
+    const i: number = 0
     return {
       expandable: !!node.children && node.children.length > 0,
       name: node.name,
       level: level,
+      index: i
     };
   }
 
