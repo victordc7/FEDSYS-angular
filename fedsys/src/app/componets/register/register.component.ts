@@ -80,6 +80,7 @@ export class RegisterComponent implements OnInit {
     },
     judges: Array<string>;
   };
+  public tourneyName = '';
   public categories = [];
   public subcategories = [];
   public competitors = [];
@@ -158,6 +159,8 @@ export class RegisterComponent implements OnInit {
 
   ngOnInit() {
     this.subcategories[0] = [];
+    this.competitors = [];
+    this.judges = [];
     /**
     * Form creation and class variables initialization
     */
@@ -171,8 +174,14 @@ export class RegisterComponent implements OnInit {
       (value) => {
         if((this.tournamentType !== null) && (value.name !== null)){
           this.tourneyFlag1 = true;  // habilita el boton de creacion
+          console.log("existent");
+          console.log(value.existent);
+          console.log(this.tournamentType);
         } else if((value.existent !== null)){
           this.tourneyFlag2 = true;  // habilita el boton de carga
+          console.log(value.existent);
+          console.log("existent");
+          console.log(this.tournamentType);
         }
       }
     );
@@ -241,16 +250,17 @@ export class RegisterComponent implements OnInit {
       * Selected tournament type initialization
       */
       if (this.tournamentType !== null) {
-        this.tournamentType['subcategories'].forEach(subcategory => {  
+        this.tournamentType['subcategories'].forEach(subcategory => {
           this.subcategories[0].push(subcategory);
         });
         console.log(this.subcategories)
       }
       // if(this.subcategories[0].length > 0) {
+        this.tourneyName = this.tourneyRegistrationForm.value.name;
         body = {
           query: `mutation {
             createTourney(input: {
-              name: "${this.tourneyRegistrationForm.value.name}"
+              name: "${this.tourneyName}"
               type: "${this.tournamentType._id}"
             }) {
               _id
@@ -272,6 +282,8 @@ export class RegisterComponent implements OnInit {
         query: `
         query{
           tourneyById (_id: "${this.tourneyRegistrationForm.value.existent._id}"){
+            _id
+            name
             type {
               _id
               name
@@ -290,7 +302,7 @@ export class RegisterComponent implements OnInit {
               _id
               code
               name
-              number
+
               parent {
                 _id
                 code
@@ -298,27 +310,29 @@ export class RegisterComponent implements OnInit {
               }
             }
             competitors{
-              _id
               firstName
               lastName
-              athlete
               personalID
               age
               gender
               city
               subcategory {
-                _id
                 code
                 name
-                number
                 parent {
                   _id
-                  code
-                  name
-                  createdAt
-                  updatedAt
                 }
               }
+              email
+              phone
+            }
+            judges{
+              firstName
+              lastName
+              personalID
+              email
+              age
+              city
             }
           }
         }`
@@ -326,11 +340,22 @@ export class RegisterComponent implements OnInit {
       // Llamada a servicio
       this.serverService.graphql(body)
       .subscribe(res => {
+        this.tourneyName = res['data']['tourneyById']['name']
+        this.tournamentId = res['data']['tourneyById']['_id']
+        console.log("TORNEO")
+        console.log(this.tourneyName);
         console.log(res);
         console.log(res['data']['tourneyById']);
         res['data']['tourneyById']['subcategories'].forEach(subcategory => {
           this.subcategories[0].push(subcategory);
         });
+        res['data']['tourneyById']['competitors'].forEach(competitor => {
+          this.competitors.push(competitor);
+        });
+        res['data']['tourneyById']['judges'].forEach(judges => {
+          this.judges.push(judges);
+        });
+        this.tournamentType = res['data']['tourneyById']['type'];
         console.log(this.subcategories);
         if (this.subcategories.length > 0) {
           for (let i = 0; i < Object.keys(this.categoryTree).length; i++) {
@@ -475,7 +500,7 @@ export class RegisterComponent implements OnInit {
             updateTourney(
               _id: "${this.tournamentId}"
               input: {
-                name: "${this.tourneyRegistrationForm.value.name}"
+                name: "${this.tourneyName}"
                 type: "${this.tournamentType._id}"
                 startingOrder: ${startingOrder}
               }
@@ -591,7 +616,8 @@ export class RegisterComponent implements OnInit {
       this.competitors.map(attribute => {
         let entry = Object.entries(attribute)
         for (let i = 0; i < entry.length; i++) {
-          if((entry[i][0] === 'personalID') || (entry[i][0] === 'age') || (entry[i][0] === 'number')) {
+          if((entry[i][0] === 'personalID') || (entry[i][0] === 'age')) {
+          // if((entry[i][0] === 'personalID') || (entry[i][0] === 'age') || (entry[i][0] === 'number')) {
             this.competitorsToSave = this.competitorsToSave + ' ' + entry[i][0] + ': ' + entry[i][1];
           } else if (entry[i][0] === 'subcategory') {
             let entrySubcategory = Object.entries(attribute['subcategory']);
@@ -607,7 +633,7 @@ export class RegisterComponent implements OnInit {
                 }
               } else if (entrySubcategory[j][0] === 'code') {
                 this.competitorsToSave = this.competitorsToSave + ' ' + entrySubcategory[j][0] + ': ' + entrySubcategory[j][1];
-              } else {
+              } else if (entrySubcategory[j][0] === 'name'){
                 this.competitorsToSave = this.competitorsToSave + ' ' + entrySubcategory[j][0] + ': ' + ' "' + entrySubcategory[j][1] + '"';
               }
             }
@@ -622,6 +648,7 @@ export class RegisterComponent implements OnInit {
           this.competitorsToSave = this.competitorsToSave + "}, {";
         }
       });
+      console.log("Competitors to save")
       console.log(this.competitorsToSave);
     // } else if((modification === 'subcategories') && (Object.keys(this.subcategories[0]).length>0)) {
 
@@ -684,7 +711,7 @@ export class RegisterComponent implements OnInit {
           updateTourney(
             _id: "${this.tournamentId}"
             input: {
-            name: "${this.tourneyRegistrationForm.value.name}"
+            name: "${this.tourneyName}"
             type: "${this.tournamentType._id}"
             subcategories: ${this.subcategoriesToSave}
             }) {
@@ -712,7 +739,7 @@ export class RegisterComponent implements OnInit {
           updateTourney(
             _id: "${this.tournamentId}"
             input: {
-            name: "${this.tourneyRegistrationForm.value.name}"
+            name: "${this.tourneyName}"
             type: "${this.tournamentType._id}"
             competitors:  ${this.competitorsToSave}
             subcategories: ${this.subcategoriesToSave}
@@ -741,7 +768,7 @@ export class RegisterComponent implements OnInit {
           updateTourney(
             _id: "${this.tournamentId}"
             input: {
-            name: "${this.tourneyRegistrationForm.value.name}"
+            name: "${this.tourneyName}"
             type: "${this.tournamentType._id}"
             judges: ${this.judgesToSave}
             subcategories: ${this.subcategoriesToSave}
@@ -772,7 +799,7 @@ export class RegisterComponent implements OnInit {
           updateTourney(
             _id: "${this.tournamentId}"
             input: {
-            name: "${this.tourneyRegistrationForm.value.name}"
+            name: "${this.tourneyName}"
             type: "${this.tournamentType._id}"
             competitors:  ${this.competitorsToSave}
             judges: ${this.judgesToSave}
@@ -803,7 +830,7 @@ export class RegisterComponent implements OnInit {
           updateTourney(
             _id: "${this.tournamentId}"
             input: {
-            name: "${this.tourneyRegistrationForm.value.name}"
+            name: "${this.tourneyName}"
             type: "${this.tournamentType._id}"
             competitors:  ${this.competitorsToSave}
             judges: ${this.judgesToSave}
@@ -830,7 +857,7 @@ export class RegisterComponent implements OnInit {
     //     updateTourney(
     //       _id: "${this.tournamentId}"
     //       input: {
-    //       name: "${this.tourneyRegistrationForm.value.name}"
+    //       name: "${this.tourneyName}"
     //       number: 5
     //       type: "${this.tournamentType._id}"
     //       competitors:  ${this.competitorsToSave}
