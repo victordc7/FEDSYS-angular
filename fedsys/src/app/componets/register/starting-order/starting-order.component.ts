@@ -7,6 +7,7 @@ import {MatTreeFlatDataSource, MatTreeFlattener} from '@angular/material/tree';
 import {BehaviorSubject} from 'rxjs';
 
 import { ServiceService } from 'src/app/service.service';
+import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 
 /**
  * Category data with nested structure.
@@ -55,6 +56,10 @@ export class StartingOrderComponent implements OnInit {
   // Variables for StartingOrder
   public orderArray: [{index:number, childrens: Array<StartingOrder>}] = [{index: 0, childrens:[]}]; 
   public orderOverallArray: Array<StartingOrder> = [];
+
+  public previousOrder: any;
+
+  public ready = false;
 
   /**
    * Category Tree, buildinng initialization
@@ -134,56 +139,133 @@ export class StartingOrderComponent implements OnInit {
     console.log(this.dataInput);
     this.subcategories = this.dataInput.subcategories;
     this.categoriesArray = this.dataInput.categories;
-    this.categoriesArray[0].map((data, index) => {
-      data.index = index;
-      data.children = []
-    })
-    this.categoryTree = Object.assign({}, this.categoriesArray[0]);
-    this.initialize();
-
-    this.orderArray.splice(0,1);
-    for (let i = 0; i < Object.keys(this.categoryTree).length; i++) {
-      console.log(this.categoryTree[i]);
-      this.orderOverallArray.push({number: undefined, subcategoryCode: this.categoryTree[i].code, fase: 'overall', active: false})
-      for (let j = 0; j < Object.keys(this.subcategories[0]).length; j++) {
-        console.log(this.subcategories[0][j]['parent']);
-        if (this.categoryTree[i]['code'] === this.subcategories[0][j]['parent']['code']) {
-          this.orderArray.push({index: j, childrens: []});
-          console.log(this.orderArray);
-          this.orderArray[j]['childrens'].push({number: undefined, subcategoryCode: this.subcategories[0][j].code, fase: 'eliminatoria', active: false})
-          this.orderArray[j]['childrens'].push({number: undefined, subcategoryCode: this.subcategories[0][j].code, fase: 'semifinal', active: false})
-          this.orderArray[j]['childrens'].push({number: undefined, subcategoryCode: this.subcategories[0][j].code, fase: 'final1', active: false})
-          this.orderArray[j]['childrens'].push({number: undefined, subcategoryCode: this.subcategories[0][j].code, fase: 'final2', active: false})
-          this.orderArray[j]['childrens'].push({number: undefined, subcategoryCode: this.subcategories[0][j].code, fase: 'premiacion', active: false})
-          this.categoryTree[i]['children'].push({code: this.subcategories[0][j]['code'], name: this.subcategories[0][j]['name'], level: 1, index: j, count:0});
-          console.log(this.categoryTree);
+    this.subcategories[0].map(data => {
+      this.categoriesArray[0].forEach(element => {
+        if (element._id === data.parent._id) {
+          data.parent.name = element.name;
+          data.parent.code = element.code;
         }
+      });
+      console.log(data)
+    })
+    const body = {
+      query: `query{
+        tourneyById(_id: "${this.dataInput.tourneyId}") {
+          _id
+          startingOrder{
+            _id
+            number
+            subcategoryCode
+            fase
+            active
+          } 
+        }
+      }`
+    };
+    this.serverService.graphql(body).subscribe((res: any) => {
+      this.previousOrder = res.data.tourneyById.startingOrder;
+      console.log(this.previousOrder);
+      this.previousOrder.sort( function (a,b) {
+        if (a.subcategoryCode < b.subcategoryCode) {
+          return -1;
+        }
+        if (a.subcategoryCode >= b.subcategoryCode) {
+          return 1;
+        }
+      })
+      let startingOrderBySubcategory = [];
+      for (let i = 0; i < this.previousOrder.length; i++) {
+        if (i > 0) {
+          if (startingOrderBySubcategory[startingOrderBySubcategory.length - 1].code === this.previousOrder[i]['subcategoryCode']) {
+            startingOrderBySubcategory[startingOrderBySubcategory.length - 1]['childrens'].push(this.previousOrder[i])
+          } else {
+            startingOrderBySubcategory.push({code: this.previousOrder[i]['subcategoryCode'], childrens: [this.previousOrder[i]]})
+          }
+        } else {
+          startingOrderBySubcategory.push({code: this.previousOrder[i]['subcategoryCode'], childrens: [this.previousOrder[i]]})
+        }
+        
+      }
+      
+      console.log(startingOrderBySubcategory);
+
+      this.categoriesArray[0].map((data, index) => {
+        data.index = index;
+        data.children = []
+      })
+      this.categoryTree = Object.assign({}, this.categoriesArray[0]);
+      this.initialize();
+
+      this.orderArray.splice(0,1);
+      this.subcategories[0].sort( function (a,b) {
+        if (a.parent.code < b.parent.code) {
+          return -1;
+        }
+        if (a.parent.code >= b.parent.code) {
+          return 1;
+        }
+      })
+      for (let i = 0; i < Object.keys(this.categoryTree).length; i++) {
+        console.log(this.categoryTree[i]);
+        this.orderOverallArray.push({number: undefined, subcategoryCode: this.categoryTree[i].code, fase: 'overall', active: false})
+        for (let j = 0; j < Object.keys(this.subcategories[0]).length; j++) {
+          console.log(this.subcategories[0][j]['parent']);
+          for (let k = 0; k < startingOrderBySubcategory.length; k++) {
+            if (this.categoryTree[i].code === startingOrderBySubcategory[k]['code']) {
+              this.orderOverallArray[i] = startingOrderBySubcategory[k]['childrens'][0];
+            }
+            if (this.subcategories[0][j]['code'] === startingOrderBySubcategory[k]['code']) {
+              this.orderArray.push({index: j, childrens: []});
+              this.orderArray[j]['childrens'] = startingOrderBySubcategory[k]['childrens'];
+              console.log(this.orderArray[j]);
+            }
+          }
+          console.log(this.orderArray[j]);
+          if (this.categoryTree[i]['code'] === this.subcategories[0][j]['parent']['code'] && this.orderArray[j] === undefined ) {
+            this.orderArray.push({index: j, childrens: []});
+            console.log(this.orderArray);
+            this.orderArray[j]['childrens'].push({number: undefined, subcategoryCode: this.subcategories[0][j].code, fase: 'eliminatoria', active: false})
+            this.orderArray[j]['childrens'].push({number: undefined, subcategoryCode: this.subcategories[0][j].code, fase: 'semifinal', active: false})
+            this.orderArray[j]['childrens'].push({number: undefined, subcategoryCode: this.subcategories[0][j].code, fase: 'final1', active: false})
+            this.orderArray[j]['childrens'].push({number: undefined, subcategoryCode: this.subcategories[0][j].code, fase: 'final2', active: false})
+            this.orderArray[j]['childrens'].push({number: undefined, subcategoryCode: this.subcategories[0][j].code, fase: 'premiacion', active: false})
+            console.log(this.categoryTree);
+          }
+          if (this.categoryTree[i]['code'] === this.subcategories[0][j]['parent']['code'] ) {
+            this.categoryTree[i]['children'].push({code: this.subcategories[0][j]['code'], name: this.subcategories[0][j]['name'], level: 1, index: j, count:0});
+          }
+        }
+        
+        console.log(this.orderArray);
+        this.dataInput.competitors.forEach(competitor => {
+          this.categoryTree[i]['children'].forEach(subcategory => {
+            if (subcategory.code === competitor.subcategory.code) {
+              subcategory.count += 1;
+            }
+          });
+        });
+        this.dataChange.next(this.data);
       }
       console.log(this.orderArray);
-      this.dataInput.competitors.forEach(competitor => {
-        this.categoryTree[i]['children'].forEach(subcategory => {
-          if (subcategory.code === competitor.subcategory.code) {
-            subcategory.count += 1;
-          }
-        });
-      });
-      this.dataChange.next(this.data);
-    }
+      this.ready = true;
+    })
   }
 
   saveChanges() {
     const fases = [];
     this.orderArray.forEach(category => {
       category.childrens.forEach(subcategory => {
-        if (subcategory.active) {
-          fases.push(subcategory)
+        if (subcategory.number === undefined) {
+          subcategory.number = 0;
         }
+         fases.push(subcategory)
       });
     });
     this.orderOverallArray.forEach(category => {
-      if (category.active) {
-        fases.push(category)
+      if (category.number === undefined) {
+        category.number = 0;
       }
+      fases.push(category)
     });
     fases.sort(function (a, b) {
       if (a.number > b.number) {

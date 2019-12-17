@@ -465,7 +465,8 @@ export class RegisterComponent implements OnInit {
       data: {
         subcategories: this.subcategories,
         categories: this.categoriesArray,
-        competitors: this.competitors
+        competitors: this.competitors,
+        tourneyId: this.tournamentId
       },
       disableClose: true
     });
