@@ -2,6 +2,9 @@ import { Component, OnInit, Inject } from '@angular/core';
 import { FormControl, FormArray, FormGroup, Validators } from '@angular/forms';
 import {MAT_DIALOG_DATA, MatDialogRef, MatDialog} from "@angular/material";
 
+import {Observable} from 'rxjs';
+import {map, startWith} from 'rxjs/operators';
+
 import { Competitor } from '../../../models/competitor.model';
 import { ServiceService } from 'src/app/service.service';
 import { RegNewCompetitorsComponent } from '../reg-new-competitors/reg-new-competitors.component';
@@ -14,6 +17,8 @@ import { RegNewCompetitorsComponent } from '../reg-new-competitors/reg-new-compe
 
 export class RegCompetidoresComponent implements OnInit {
   competitorRegistrationForm: FormGroup;
+
+  buscarpor = new FormControl();
   genders = ['male', 'female'];
   public categoriesArray = [];
   public competitorsArray = [];
@@ -30,6 +35,7 @@ export class RegCompetidoresComponent implements OnInit {
   };
   public birthdate: Date;
   public ageCalculation: number;
+  filteredOptions: Observable<string[]>;
 
   public CalculateAge(): void {
     if (this.birthdate) {
@@ -47,22 +53,6 @@ export class RegCompetidoresComponent implements OnInit {
 
   ngOnInit() {
     console.log(this.dataInput[0])
-    const body = {
-      query:` query {
-        competitors
-        { _id
-          firstName
-        }
-      }`
-    };
-
-    // Initialize competitors
-    this.serverService.graphql(body)
-    .subscribe(res => {
-      this.competitorsArray.push(res['data']['competitors']);
-      // this.categoriesArray.push(res['data']['subcategories']);
-      console.log(this.categoriesArray)
-    });
     /**
     * Form creation and class variables initialization
     */
@@ -70,7 +60,6 @@ export class RegCompetidoresComponent implements OnInit {
         'firstName': new FormControl(null),
         'lastName': new FormControl(null),
         'personalID': new FormControl(null),
-        'date': new FormControl(null),
         'age': new FormControl(null),
         'gender': new FormControl('male'),
         'city': new FormControl(null),
@@ -83,7 +72,6 @@ export class RegCompetidoresComponent implements OnInit {
         'firstName': '',
         'lastName': '',
         'personalID': '',
-        'date': '',
         'age': '',
         'gender': '',
         'city': '',
@@ -107,6 +95,24 @@ export class RegCompetidoresComponent implements OnInit {
        this.competitorToModify = this.dataInput[0];
        this.fillForm(this.competitorToModify);
     }
+
+    this.filteredOptions = this.buscarpor.valueChanges
+      .pipe(
+        startWith(''),
+        map(value => typeof value === 'string' ? value : value),
+        map(name => name ? this._filter(name) : this.competitorsArray.slice())
+      );
+
+    this.loadCompetitors();
+  }
+
+  displayFn(user?): string | undefined {
+    return user ? user.personalID : undefined;
+  }
+  
+  completeForm() {
+    setTimeout( cb => this.fillForm(this.buscarpor.value), 1000);
+    console.log("el formulario cambio")
   }
 
   private setFormControlsValidators() {
@@ -213,5 +219,40 @@ export class RegCompetidoresComponent implements OnInit {
     if (this.competitorRegistrationForm.status === 'VALID'){
       this.dialogRef.close();
     }
+  }
+
+  private _filter(personalID): string[] {
+    const filterValue = personalID.toLowerCase();
+
+    return this.competitorsArray.filter(option => option.personalID.toLowerCase().indexOf(filterValue) === 0);
+  }
+
+  loadCompetitors() {
+    const body = {
+      query: ` query {
+        competitors {
+          _id
+          firstName
+          lastName
+          personalID
+          age
+          gender
+          city
+          phone
+          email
+        }
+      }`
+    };
+
+    // Initialize categories and subcategories
+    this.serverService.graphql(body).subscribe((res: any) => {
+      this.competitorsArray = res.data.competitors;
+      this.competitorsArray.map((competitor, ind, competitors) => {
+        competitor.personalID = competitor.personalID.toString();
+        if (ind === competitors.length - 1) {
+          console.log(this.competitorsArray);
+        }
+      })
+    });
   }
 }

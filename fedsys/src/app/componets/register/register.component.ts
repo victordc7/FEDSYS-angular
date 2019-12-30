@@ -257,6 +257,11 @@ export class RegisterComponent implements OnInit {
       }
       // if(this.subcategories[0].length > 0) {
         this.tourneyName = this.tourneyRegistrationForm.value.name;
+        console.log(this.tournamentType)
+        if (this.tournamentType === null || this.tournamentType._id === "") {
+          this.tournamentType = undefined
+          console.log(this.tournamentType._id)
+        }
         body = {
           query: `mutation {
             createTourney(input: {
