@@ -1,4 +1,23 @@
-<h1 ngIf="tournament.lenght > 0">{{tourney.name}}</h1>
+<h1>{{tourney.name}}</h1>
 <mat-list role="list">
-  <mat-list-item *ngFor="let subcat of subcategories" role="listitem">{{subcat[0].name}}</mat-list-item>
+  <mat-list-item *ngFor="let subcat of subcategories" role="listitem">{{subcat.name}}</mat-list-item>
 </mat-list>
+<table class="mat-elevation-z8">
+    <tr>
+        <th> numero </th>
+        <th> subcategoria </th>
+        <th> fase </th>
+    </tr>
+    <tr *ngFor="let element of startingOrder" [style.color]="element.isRealized ? 'lightgrey' : 'black'" [style.display]="element.active ? 'table-row' : 'none'"  (click)="element.isRealized = true">
+        <td>
+            {{element.number}}
+        </td>
+        <td>
+            {{element.subcategory}}
+        </td>
+        <td>
+            {{element.fase}}
+        </td>
+    </tr>
+</table>
+<button mat-raised-button color="accent" (click)="nextFase()">Siguiente fase</button>

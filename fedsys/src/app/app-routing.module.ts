@@ -34,7 +34,7 @@ const routes: Routes = [
       // ]
     },
     {
-      path: 'gestion_torneo',
+      path: 'gestion_torneo/:id',
       component: TourneyManagerComponent
     },
     { path: '**', redirectTo: 'inicio' },

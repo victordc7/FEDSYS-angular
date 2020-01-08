@@ -82,7 +82,7 @@ export class BeginTourneyComponent implements OnInit {
     this.tourneys.forEach(tourney => {
       if (this.tourneySelected === tourney._id) {
         this.tourneySelected = tourney
-        this.router.navigate(['/product-details', this.tourneySelected]);
+        this.router.navigate(['gestion_torneo', this.tourneySelected]);
         return
       }
     });
