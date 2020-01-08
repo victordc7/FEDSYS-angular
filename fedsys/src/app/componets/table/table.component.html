@@ -12,6 +12,8 @@
     <input type="number" [(ngModel)]="numeroJueces">
 </div>
 
+<h1>{{ tabla }}</h1>
+
 <!-- <div class="row" *ngIf="tabla !== 'escogerRondas'">
     <h3>
         Pegar competidores desde excel
@@ -57,7 +59,7 @@
                 <th>Estado</th>
                 <th *ngFor="let juez of jueces">Juez {{juez.numero}}</th>
                 <th>Cuenta Final</th>
-                <th>Lugar</th>
+                <th>Lugar</th> 
             </tr>
         </thead>
         <tbody>

@@ -26,6 +26,7 @@ import { NavbarComponent } from './navbar/navbar.component';
 import { RegNewCompetitorsComponent } from './componets/register/reg-new-competitors/reg-new-competitors.component';
 import { StartingOrderComponent } from './componets/register/starting-order/starting-order.component';
 import { BeginTourneyComponent } from './componets/begin-tourney/begin-tourney.component';
+import { TourneyManagerComponent } from './componets/tourney-manager/tourney-manager.component';
 
 
 @NgModule({
@@ -44,6 +45,7 @@ import { BeginTourneyComponent } from './componets/begin-tourney/begin-tourney.c
     NavbarComponent,
     StartingOrderComponent,
     BeginTourneyComponent,
+    TourneyManagerComponent,
   ],
 
   imports: [
