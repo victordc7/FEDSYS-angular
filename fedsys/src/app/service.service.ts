@@ -7,10 +7,15 @@ import { environment } from '../environments/environment';
 })
 export class ServiceService {
   url = environment.apiRoot
+  fase = {};
   constructor(
     private http: HttpClient
   ) { }
   graphql(data: object) {
     return this.http.post(this.url,data);
+  }
+
+  nextFase(data) {
+    this.fase = data;
   }
 }

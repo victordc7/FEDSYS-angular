@@ -15,6 +15,7 @@ export class TableComponent implements OnInit {
   public textareaResult;
   tabla = 'escogerRondas';
   numeroJueces = 9;
+  dataOrg: any;
   jueces = []
 
   competidores = [
@@ -32,7 +33,7 @@ export class TableComponent implements OnInit {
   nj: number;
   rondas = {eliminatoria: false, salida1: false, final1: false, final2: false}
   isCalc = false;
-  constructor() { }
+  constructor(private serverService: ServiceService) { }
 
   ngOnInit() {
     this.obtenerData()
@@ -473,10 +474,10 @@ export class TableComponent implements OnInit {
   }
 
   obtenerData() {
-    this.ordenarData()
+    this.dataOrg = this.serverService.fase;
+    this.updateVariables();
   }
-
-  ordenarData() {
-
+  updateVariables() {
+    this.competidores = this.dataOrg.competidores
   }
 }
