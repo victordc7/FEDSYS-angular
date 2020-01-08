@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ServiceService } from 'src/app/service.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-begin-tourney',
@@ -10,6 +11,7 @@ export class BeginTourneyComponent implements OnInit {
 
   constructor(
     private serverService: ServiceService,
+    private router: Router
   ) { }
 
   public tourneys = [];
@@ -80,6 +82,7 @@ export class BeginTourneyComponent implements OnInit {
     this.tourneys.forEach(tourney => {
       if (this.tourneySelected === tourney._id) {
         this.tourneySelected = tourney
+        this.router.navigate(['/product-details', this.tourneySelected]);
         return
       }
     });
