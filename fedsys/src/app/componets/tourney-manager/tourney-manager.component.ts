@@ -7,11 +7,18 @@ import { ServiceService } from 'src/app/service.service';
   templateUrl: './tourney-manager.component.html',
   styleUrls: ['./tourney-manager.component.css']
 })
+
 export class TourneyManagerComponent implements OnInit {
-  
-  constructor() { }
+
+  dataOrg = {};
+
+  constructor(private serverService: ServiceService) { }
 
   ngOnInit() {
+  }
+
+  nextFase() {
+    this.serverService.nextFase(this.dataOrg);
   }
 
 }

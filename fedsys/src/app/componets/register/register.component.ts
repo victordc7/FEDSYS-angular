@@ -6,6 +6,7 @@ import {MatTreeFlatDataSource, MatTreeFlattener} from '@angular/material/tree';
 import {BehaviorSubject} from 'rxjs';
 
 import { ServiceService } from 'src/app/service.service';
+
 import { RegCategoriesComponent } from './reg-categories/reg-categories.component';
 import { RegCompetidoresComponent } from './reg-competidores/reg-competidores.component';
 import { RegJudgesComponent } from './reg-judges/reg-judges.component';
@@ -257,11 +258,6 @@ export class RegisterComponent implements OnInit {
       }
       // if(this.subcategories[0].length > 0) {
         this.tourneyName = this.tourneyRegistrationForm.value.name;
-        console.log(this.tournamentType)
-        if (this.tournamentType === null || this.tournamentType._id === "") {
-          this.tournamentType = undefined
-          console.log(this.tournamentType._id)
-        }
         body = {
           query: `mutation {
             createTourney(input: {
