@@ -16,7 +16,7 @@ export class TableComponent implements OnInit {
   tabla = 'escogerRondas';
   numeroJueces = 9;
   dataOrg: any;
-  jueces = []
+  jueces = [{numero: 1, nombre: "juan"}, {numero: 1, nombre: "juan"}, {numero: 1, nombre: "juan"}, {numero: 1, nombre: "juan"}, {numero: 1, nombre: "juan"}];
 
   competidores = [
     {athlete: 1, firstName: 'Juan', lastName: 'Lopez', city: 'Barinas', age: 23, personalID: 1321, gender: 'male', subcategory: {_id: "3124124321",number: 1, name: 'categoria 1', parent:"124123412"}, resultados: [], subtotal1: 0, subtotal2: 0, total: 0, lugar: 0, empate: 0},
@@ -24,7 +24,7 @@ export class TableComponent implements OnInit {
     {athlete: 3, firstName: 'Luis', lastName: 'Lopez', city: 'Barinas', age: 23, personalID: 1323, gender: 'male', subcategory: {_id: "31241243213",number: 2, name: 'categoria 2', parent:"124123412"}, resultados: [], subtotal1: 0, subtotal2: 0, total: 0, lugar: 0, empate: 0},
     {athlete: 4, firstName: 'Ramon', lastName: 'Lopez', city: 'Barinas', age: 23, personalID: 1324, gender: 'male', subcategory: {_id: "31241243212",number: 4, name: 'categoria 4', parent:"124123412"}, resultados: [], subtotal1: 0, subtotal2: 0, total: 0, lugar: 0, empate: 0},
     {athlete: 5, firstName: 'Jorge', lastName: 'Lopez', city: 'Barinas', age: 23, personalID: 1325, gender: 'male', subcategory: {_id: "3124124321",number: 1, name: 'categoria 1', parent:"124123412"}, resultados: [], subtotal1: 0, subtotal2: 0, total: 0, lugar: 0, empate: 0}
-  ]
+  ];
 
   competidoresPorLugar = [];
   posicionesEmpate = [];
@@ -36,7 +36,7 @@ export class TableComponent implements OnInit {
   constructor(private serverService: ServiceService) { }
 
   ngOnInit() {
-    this.obtenerData()
+    this.obtenerData();
     
     this.nj = this.jueces.length + 2;
     this.competidores.forEach(competidor => {
@@ -475,7 +475,8 @@ export class TableComponent implements OnInit {
 
   obtenerData() {
     this.dataOrg = this.serverService.fase;
-    this.updateVariables();
+    this.tabla = this.dataOrg.tabla;
+    // this.updateVariables();
   }
   updateVariables() {
     this.competidores = this.dataOrg.competidores

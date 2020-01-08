@@ -1,5 +1,6 @@
 <mat-form-field>
     <mat-label>Escaja un torneo</mat-label>
+    {{tourneySelected}}
     <select
     [(ngModel)]="tourneySelected"
     matNativeControl 
@@ -14,6 +15,6 @@
     </select>
 </mat-form-field>
 <br>
-<button mat-raised-button color="primary" (click)="beginTourney()">
+<button mat-raised-button color="primary" [routerLink]="['/gestion_torneo', tourneySelected]">
     Empezar Torneo
 </button>
