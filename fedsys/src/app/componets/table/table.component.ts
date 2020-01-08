@@ -3,6 +3,8 @@ import {NgForm} from '@angular/forms';
 import { Alert } from 'selenium-webdriver';
 import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 
+import { ServiceService } from 'src/app/service.service';
+
 @Component({
   selector: 'app-table',
   templateUrl: './table.component.html',
@@ -13,15 +15,7 @@ export class TableComponent implements OnInit {
   public textareaResult;
   tabla = 'escogerRondas';
   numeroJueces = 9;
-  jueces = [
-    {numero: 1, nombre: 'Juan'},
-    {numero: 2, nombre: 'Pedro'},
-    {numero: 3, nombre: 'Luis'},
-    {numero: 4, nombre: 'Ramon'},
-    {numero: 5, nombre: 'Jorge'},
-    {numero: 6, nombre: 'Matias'},
-    {numero: 7, nombre: 'Laura'},
-  ]
+  jueces = []
 
   competidores = [
     {athlete: 1, firstName: 'Juan', lastName: 'Lopez', city: 'Barinas', age: 23, personalID: 1321, gender: 'male', subcategory: {_id: "3124124321",number: 1, name: 'categoria 1', parent:"124123412"}, resultados: [], subtotal1: 0, subtotal2: 0, total: 0, lugar: 0, empate: 0},
@@ -41,6 +35,8 @@ export class TableComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
+    this.obtenerData()
+    
     this.nj = this.jueces.length + 2;
     this.competidores.forEach(competidor => {
       this.jueces.forEach((juez, index) => {
@@ -474,5 +470,13 @@ export class TableComponent implements OnInit {
         competitor.resultados[index].comparacion = Math.floor(Math.random() * this.competidores.length) + 1;
       });
     });
+  }
+
+  obtenerData() {
+    this.ordenarData()
+  }
+
+  ordenarData() {
+
   }
 }
